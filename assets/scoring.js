@@ -94,14 +94,22 @@ export function runPlan(config, rows, todayExtra = {}) {
   const st = { buy: { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }, sell: { done: 0, last: -1e9, cum: 0 }, idxHi: 0, idxLo: 0 };
   // 倉位：w = 現貨佔策略資金的比例
   // 倉位以「現貨佔策略資金 %」控制：抄底批次是下限、減倉與趨勢保護是上限
-  const P = { w: config.position?.start ?? 30, buyAdded: 0, sellCut: 0, trendDone: 0 };
+  // 以市值計算：units = 現貨數量（以 BTC 計），cash = 套利池；每天依價格與套利收益更新
+  const start = config.position?.start ?? 30, apyDay = Math.pow(1 + (config.position?.poolApy ?? 0) / 100, 1 / 365);
+  const P = { units: null, cash: 100 - start, w: start, buyAdded: 0, sellCut: 0, trendDone: 0 };
   const fmt = v => Math.round(v * 10) / 10;
+  const mark = px => { const v = P.units * px; P.w = v / (v + P.cash) * 100; return v + P.cash; };
   const toTarget = (type, target, r, label) => {
-    const before = P.w, after = type === 'buy' ? Math.max(P.w, target) : Math.min(P.w, target);
-    const delta = fmt(Math.abs(after - before));
-    P.w = after;
+    const total = mark(r.price), spot = P.units * r.price, want = total * target / 100;
+    const before = P.w;
+    let move = 0;
+    if (type === 'buy' && spot < want) move = want - spot;
+    if (type === 'sell' && spot > want) move = -(spot - want);
+    P.units += move / r.price; P.cash -= move;
+    mark(r.price);
+    const delta = fmt(Math.abs(move) / total * 100);
     if (type === 'buy') P.buyAdded = fmt(P.buyAdded + delta); else P.sellCut = fmt(P.sellCut + delta);
-    const e = { date: r.date, price: r.price, type, label, target, delta, before: fmt(before), after: fmt(after) };
+    const e = { date: r.date, price: r.price, type, label, target, delta, before: fmt(before), after: fmt(P.w) };
     ledger.push(e); return e;
   };
   const moveText = (e, days, extra = '') => e.delta > 0
@@ -111,6 +119,9 @@ export function runPlan(config, rows, todayExtra = {}) {
   const out = [];
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i], isLast = i === rows.length - 1;
+    if (P.units == null && r.price) P.units = start / r.price;
+    if (i) P.cash *= apyDay;
+    if (r.price) mark(r.price);
     const b3 = minLast(rows, i, 'cbs', 3), s3 = minLast(rows, i, 'cts', 3);
     const bLv = levelFor(LB, b3), sLv = levelFor(LS, s3);
     // 提示類等級用 7 天中位數，避免在門檻附近天天跳動
