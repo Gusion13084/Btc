@@ -131,7 +131,7 @@ const BG = [
   ['etf', 'etf-flow-btc', ['etfFlow', 'etfFlowBtc', 'flow'], 'bgaux'],
   ['liq', 'btc-liquidations-1d', null, 'bgaux'],
   ['sthrp', 'sth-realized-price', ['sthRealizedPrice'], 'bgaux'],
-  ['profit', 'profit-loss', ['profitLoss', 'supplyInProfit'], 'bgaux'],
+  ['profit', 'supply-profit', ['supplyProfit', 'supplyInProfit'], 'bgaux'],  // 獲利中的 BTC 數量，下面換算成佔流通量 %
   ['whale', 'coins-addr-10K-1K-BTC', ['coinsAddr10K1KBtc'], 'bgaux'],
 ];
 const bgErr = { bgcore: [], bgaux: [] };
@@ -149,6 +149,7 @@ for (const [name, path, prefer, group] of BG) {
       rows = arr.map(o => [pickDate(o), pickKey(o, /long/i), pickKey(o, /short/i)]);
       if (rows.some(r => r[1] == null || r[2] == null)) throw new Error('找不到多空清算欄位：' + JSON.stringify(arr.at(-1)).slice(0, 120));
     } else rows = arr.map(o => [pickDate(o), pickNumber(o, prefer)]).filter(r => Number.isFinite(r[1]));
+    if (name === 'profit') rows = rows.map(r => [r[0], r[1] > 100 ? (r[1] / supplyAt(r[0])) * 100 : r[1]]);
     if (!rows.length) throw new Error('沒有資料');
     if (rows.some(r => !r[0])) throw new Error('找不到日期欄位：' + JSON.stringify(arr.at(-1)).slice(0, 120));
     S[name] = merge(S[name], rows);
@@ -209,6 +210,7 @@ const F = {
 };
 { const a = F.funding.v.filter(v => v != null).map(Math.abs).sort((x, y) => x - y); if (a.length && a[a.length >> 1] < 0.001) F.funding.v = F.funding.v.map(v => v == null ? null : v * 100); }
 { const a = F.profit.v.filter(v => v != null); if (a.length && Math.max(...a) <= 1) F.profit.v = F.profit.v.map(v => v == null ? null : v * 100); }
+{ const a = F.profit.v.filter(v => v != null); if (a.length && Math.max(...a) > 100.5) { console.warn('獲利籌碼數值超出 0–100%，略過'); F.profit.v = F.profit.v.map(() => null); } }
 const etf0 = F.etf.v.findIndex(v => v != null), liq0 = F.liqL.v.findIndex(v => v != null);
 const nz = (arr, i, i0) => i0 >= 0 && i >= i0 ? (arr[i] ?? 0) : 0;
 
