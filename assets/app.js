@@ -290,7 +290,6 @@ function viewOverview() {
   const prev = S.history.filter(h => h.date < S.latest.date).at(-1);
   const chg = prev ? (S.latest.btcPrice / prev.btcPrice - 1) * 100 : null;
   app.innerHTML = `
-    ${S.latest.legacy ? `<div class="notice">目前顯示的是從舊網站匯入的 ${esc(S.latest.date)} 數據，並已套用新評分規則。第一次每日排程執行後會換成即時抓取的數值，SSR 百分位、OI 萎縮、ETF 流量、清算與籌碼等新指標也會補齊。</div>` : ''}
     <section class="pricebar">
       <div class="p">${usd(S.latest.btcPrice)}<small>BTC</small></div>
       ${chg != null ? `<span class="mono" style="color:${chg >= 0 ? 'var(--buy)' : 'var(--sell)'}">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>` : ''}
