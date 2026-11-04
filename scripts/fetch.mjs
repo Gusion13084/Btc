@@ -96,8 +96,21 @@ if (!S.price.length) { console.error('沒有價格資料，無法計算'); proce
 // ETH 日線（OKX，用於 ETH/BTC 濾網）：第一次抓近 5 年，之後只補最新 100 天
 await load('eth');
 try {
-  let after = '', got = [];
-  for (let k = 0; k < (S.eth.length > 1000 ? 1 : 19); k++) {
+  let got = [];
+  // 歷史不足（需從 2018 年起，才能算 2022 年的近 4 年百分位）就往回補
+  const backfill = !S.eth.length || S.eth[0][0] > '2018-07-01';
+  let after = backfill && S.eth.length ? String(Date.parse(S.eth[0][0] + 'T00:00:00Z')) : '';
+  if (backfill && S.eth.length) {
+    for (let k = 0; k < 15; k++) {
+      const j = await getJSON(`https://www.okx.com/api/v5/market/history-candles?instId=ETH-USDT&bar=1Dutc&limit=100&after=${after}`);
+      const d = j.data || []; if (!d.length) break;
+      got.push(...d.map(c => [isoDay(+c[0] / 1000), +c[4]])); after = d[d.length - 1][0];
+      if (isoDay(+after / 1000) < '2018-07-01') break;
+      await new Promise(r => setTimeout(r, 150));
+    }
+    after = '';
+  }
+  for (let k = 0; k < (S.eth.length > 1000 ? 1 : 30); k++) {
     const j = await getJSON(`https://www.okx.com/api/v5/market/history-candles?instId=ETH-USDT&bar=1Dutc&limit=100${after ? `&after=${after}` : ''}`);
     const d = j.data || []; if (!d.length) break;
     got.push(...d.map(c => [isoDay(+c[0] / 1000), +c[4]])); after = d[d.length - 1][0];
