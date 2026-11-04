@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: 抓取指標並建立快照
         run: node scripts/fetch.mjs ${{ inputs.force && '--force' || '' }} ${{ github.event.schedule == '0 1 * * *' && '--fetch-only' || '' }}
       - name: 提交數據

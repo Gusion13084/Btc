@@ -119,7 +119,7 @@ function openModal(id) {
       </div>
       <p>${summary}</p>
       <p class="sub">${verdict(def, 'cbs', def.cbs, rb)} ${verdict(def, 'cts', def.cts, rt)}</p>
-      <div class="sub mono">最後更新：${twTime(ind?.fetchedAt)}${ind?.ok === false ? '・最近一次抓取失敗' : ''}</div>
+      <div class="sub mono">數據日期：${esc(ind?.asOf || '—')}${ind?.age >= 2 ? `（來源延遲 ${ind.age} 天）` : ''}・抓取於 ${twTime(ind?.fetchedAt)}${ind?.ok === false ? '・數據過舊' : ''}</div>
     </section>
     ${def.history?.length ? `<h4>歷史驗證</h4><ul class="hist">${def.history.map(h => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
     ${def.links?.length ? `<div class="m-links">查看圖表：${def.links.map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join('・')}</div>` : ''}
@@ -219,11 +219,11 @@ function indCard(def) {
       <button class="ind-name" data-ind="${def.id}" aria-haspopup="dialog">${esc(def.name)}${CHEV}</button>
       <div class="chips">${def.tier === 'info' ? '<span class="chip">參考</span>' : chip(b, 'buy', '抄底') + chip(t, 'sell', '止盈')}</div>
     </div>
-    ${def.type === 'state' ? '' : `<div class="ind-val"><span class="v">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct" title="近 4 年百分位">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}<span class="d">${esc(ind?.detail || '')}</span></div>`}
+    ${def.type === 'state' ? '' : `<div class="ind-val"><span class="v">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct" title="近 4 年百分位">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}${ind?.age >= 2 && ind?.asOf ? `<span class="pct lag" title="來源數據延遲，這是 ${esc(ind.asOf)} 的數值">至 ${shortDate(ind.asOf)}</span>` : ''}<span class="d">${esc(ind?.detail || '')}</span></div>`}
     ${strip(def, ind)}
     ${def.type === 'state' && ind?.detail ? `<div class="sub mono">${esc(ind.detail)}</div>` : ''}
     ${!ind ? '<div class="sub">新指標，第一次每日排程後取得數值</div>' : ''}
-    ${stale ? `<div class="stale">最近一次抓取失敗，顯示的是 ${esc(ind.date || '先前')} 的數值</div>` : ''}
+    ${stale && ind.value != null ? `<div class="stale">數據過舊（${esc(ind.asOf || '')}），暫以最後數值計分</div>` : stale ? '<div class="stale">暫無數據</div>' : ''}
   </article>`;
 }
 
@@ -522,7 +522,7 @@ function viewSources() {
         <div class="tbl-wrap"><table><tbody>${defs.map(d => { const ind = S.latest.indicators[d.id]; return `<tr>
           <td>${esc(d.name)}</td><td class="mono">${fmtVal(d, ind)}</td>
           <td class="${ind?.ok ? 'ok' : 'bad'}" style="font-weight:400">${ind?.ok ? '✓' : '✕'}</td>
-          <td class="sub mono">${esc(ind?.date || '—')}</td></tr>`; }).join('')}</tbody></table></div>
+          <td class="sub mono">${esc(ind?.asOf || ind?.date || '—')}</td></tr>`; }).join('')}</tbody></table></div>
       </section>`; }).join('')}</div>`;
 }
 
