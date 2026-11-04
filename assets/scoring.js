@@ -118,6 +118,14 @@ export function runPlan(config, rows, todayExtra = {}) {
     ? `把現貨提高到總資金的 ${e.target}%（已達到就不用加）${days > 1 ? `，分 ${days} 天執行` : ''}${extra}。`
     : `把現貨降到總資金的 ${e.target}%（已低於就不用賣）${days > 1 ? `，分 ${days} 天執行` : ''}${extra}。`;
   const ledger = [];
+  // ETH/BTC 濾網：ETH 相對便宜才配置 ETH，否則全買 BTC
+  const ethSplit = (row, bb) => {
+    const p = row?.ethPct, lim = config.ethFilter?.pct ?? 30;
+    if (!bb.btc) return '';
+    if (p == null) return `；買入部分 BTC ${bb.btc}% / ETH ${bb.eth}%`;
+    return p <= lim ? `；買入部分 BTC ${bb.btc}% / ETH ${bb.eth}%（ETH/BTC 在近 4 年 ${Math.round(p)}% 百分位，ETH 相對便宜）`
+      : `；這批全部買 BTC（ETH/BTC 在近 4 年 ${Math.round(p)}% 百分位，ETH 相對偏貴）`;
+  };
   const out = [];
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i], isLast = i === rows.length - 1;
@@ -168,7 +176,7 @@ export function runPlan(config, rows, todayExtra = {}) {
     const execS = st.sell.done && i - st.sell.last < LS.filter(l => l.batch)[st.sell.done - 1].batch.days;
     if (execB) {
       const bb = LB.filter(l => l.batch)[st.buy.done - 1].batch, day = i - st.buy.last + 1;
-      d = { tone: 'buy', title: `執行${bb.label}（第 ${day}/${bb.days} 天）`, action: moveText(st.buy.entry, bb.days, `${bb.btc ? `；買入部分 BTC ${bb.btc}% / ETH ${bb.eth}%` : ''}${bb.limit ? `，限價 ${bb.limit}` : ''}`) };
+      d = { tone: 'buy', title: `執行${bb.label}（第 ${day}/${bb.days} 天）`, action: moveText(st.buy.entry, bb.days, `${ethSplit(rows[st.buy.last], bb)}${bb.limit ? `，限價 ${bb.limit}` : ''}`) };
     } else if (execS) {
       const sb = LS.filter(l => l.batch)[st.sell.done - 1].batch, day = i - st.sell.last + 1;
       d = { tone: 'sell', title: `執行${sb.label}（第 ${day}/${sb.days} 天）`, action: moveText(st.sell.entry, sb.days, '，換回的穩定幣投入套利') };

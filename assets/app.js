@@ -47,7 +47,7 @@ async function load() {
   const base = S.bt.length ? S.bt : S.history.filter(h => !h.legacy).map(h => ({ date: h.date, price: h.btcPrice, cbs: h.cbs, cts: h.cts, idx: h.idx ?? null }));
   const lastBt = S.bt.at(-1);
   S.rows = base.filter(r => r.date < S.latest.date).concat([{ date: S.latest.date, price: S.latest.btcPrice, cbs: S.sc.cbs.score, cts: S.sc.cts.score, idx: S.latest.index ?? null,
-    cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null }]);
+    cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null, ethPct: S.latest.indicators.ethbtc?.fields?.p ?? lastBt?.ethPct ?? null }]);
   S.dec = decide(S.config, S.sc, S.rows, S.latest.index);
 }
 
@@ -653,6 +653,8 @@ function viewCalc() {
   let saved = {};
   try { saved = JSON.parse(localStorage.getItem(CALC_KEY) || '{}'); } catch {}
   const t = S.dec?.target, def = t?.cap ?? t?.floor ?? '';
+  const ep = S.latest.indicators.ethbtc?.fields?.p, lim = S.config.ethFilter?.pct ?? 30;
+  const btcDef = ep != null && ep > lim ? 100 : 65;
   const v = (k, d = '') => esc(saved[k] ?? d);
   app.innerHTML = `
     <div class="panel-head"><h2>倉位計算工具</h2><span class="sub">輸入你實際的持倉，算出要買賣多少才能達到目標比例</span></div>
@@ -669,8 +671,8 @@ function viewCalc() {
         </fieldset>
         <fieldset><legend>目標</legend>
           <label for="c_tgt">目標現貨比例（%）<input id="c_tgt" inputmode="decimal" value="${v('tgt', def)}"></label>
-          <label for="c_btcw">買入時 BTC 佔比（%）<input id="c_btcw" inputmode="decimal" value="${v('btcw', 65)}"></label>
-          <p class="sub">${def !== '' ? `目前生效中的目標：${esc(targetText(t))}，已自動帶入。` : '目前沒有生效中的目標，可自行輸入想要的比例。'}賣出時依 BTC 與 ETH 現有市值等比例賣出。</p>
+          <label for="c_btcw">買入時 BTC 佔比（%）<input id="c_btcw" inputmode="decimal" value="${btcDef}"></label>
+          <p class="sub">${def !== '' ? `目前生效中的目標：${esc(targetText(t))}，已自動帶入。` : '目前沒有生效中的目標，可自行輸入想要的比例。'}${ep != null ? `ETH/BTC 目前在近 4 年 ${Math.round(ep)}% 百分位，${ep > lim ? 'ETH 相對偏貴，買入預設全買 BTC' : 'ETH 相對便宜，買入預設 BTC 65% / ETH 35%'}。` : ''}賣出時依 BTC 與 ETH 現有市值等比例賣出。</p>
         </fieldset>
       </form>
       <div id="calcOut" class="calc-out" aria-live="polite"></div>
@@ -679,7 +681,7 @@ function viewCalc() {
   const num = id => { const x = parseFloat(String(document.getElementById(id).value).replace(/,/g, '')); return Number.isFinite(x) ? x : 0; };
   const run = () => {
     const btc = num('c_btc'), btcp = num('c_btcp'), eth = num('c_eth'), ethp = num('c_ethp'), cash = num('c_cash'), tgt = num('c_tgt'), btcw = Math.min(100, Math.max(0, num('c_btcw')));
-    try { localStorage.setItem(CALC_KEY, JSON.stringify({ btc: btc || '', eth: eth || '', cash: cash || '', tgt: document.getElementById('c_tgt').value, btcw })); } catch {}
+    try { localStorage.setItem(CALC_KEY, JSON.stringify({ btc: btc || '', eth: eth || '', cash: cash || '', tgt: document.getElementById('c_tgt').value })); } catch {}
     const vb = btc * btcp, ve = eth * ethp, spot = vb + ve, total = spot + cash;
     const out = document.getElementById('calcOut');
     if (!total) { out.innerHTML = '<p class="sub">輸入持倉後會顯示目前比例與需要買賣的數量。</p>'; return; }
@@ -706,8 +708,89 @@ function viewCalc() {
   run();
 }
 
+// ---------- 使用說明 ----------
+function viewGuide() {
+  const C = S.config, LB = C.levels.cbs, LS = C.levels.cts, T = C.trend;
+  const core = C.indicators.filter(d => (d.tier || 'core') === 'core'), aux = C.indicators.filter(d => d.tier === 'aux'), info = C.indicators.filter(d => d.tier === 'info');
+  const cbsMax = core.reduce((a, d) => a + ruleMax(d.cbs), 0), ctsMax = core.reduce((a, d) => a + ruleMax(d.cts), 0);
+  const lvRows = (L, side) => L.map((l, i) => `<tr><td class="mono">${l.min}${L[i + 1] ? '–' + (L[i + 1].min - 1) : '+'}</td><td>${esc(l.name)}</td><td class="wrap">${l.batch ? `現貨${side === 'cbs' ? '提高' : '降'}到總資金的 <b>${l.batch.target}%</b>` : esc(l.action)}</td></tr>`).join('');
+  app.innerHTML = `<article class="guide prose">
+    <h2>使用說明</h2>
+    <p class="lead">BTC 週期雷達每天整理鏈上、技術、情緒與資金流向等指標，判斷比特幣處在週期的哪個位置，並告訴你現貨應該佔總資金的多少比例。目標是在週期底部分批買進、在過熱或趨勢轉弱時分批減倉，其餘時間不動。</p>
+
+    <h3>每天只要看三件事</h3>
+    <ol>
+      <li><b>今日操作建議</b>：系統今天唯一的結論，例如「持有，不加不減」「執行第一批（第 2/3 天）」「趨勢保護第一段」。</li>
+      <li><b>目前目標倉位</b>：現貨應該不低於或不超過總資金的幾 %。拿你實際的比例比較，不在範圍內才需要動作；要買賣多少，用「計算工具」換算。</li>
+      <li><b>週期位置指數</b>：0–100，看市場是在變冷還是變熱。CBS、CTS 都是 0 分時，它仍會反映方向；30 天變化超過 10 點會特別提醒。</li>
+    </ol>
+
+    <h3>資金怎麼分</h3>
+    <p>策略資金分成兩塊：<b>套利池</b>（穩定幣，平時做資金費率或期現套利賺取收益）與<b>現貨</b>（BTC，條件允許時配置部分 ETH）。系統只控制一個數字：<b>現貨市值佔策略資金的比例</b>。緊急備用金不算在策略資金內。</p>
+
+    <h3>信號怎麼產生</h3>
+    <p><b>核心評分</b>由 ${core.length} 項指標組成：抄底評分 CBS 滿分 ${cbsMax}、止盈評分 CTS 滿分 ${ctsMax}。每項指標用兩種門檻計分，取較高分：</p>
+    <ul>
+      <li><b>手冊固定門檻</b>：來自歷史大底與大頂，例如 MVRV Z-Score 跌破 0、週線 RSI 跌破 30。</li>
+      <li><b>近 4 年相對位置</b>：數值落在近 4 年最低（或最高）的 10%、5%、2% 時給 1、2、3 分。週期一輪比一輪淺時，靠它維持反應。</li>
+    </ul>
+    <div class="tbl-wrap"><table><thead><tr><th>CBS 分數</th><th>等級</th><th>動作</th></tr></thead><tbody>${lvRows(LB, 'cbs')}</tbody></table></div>
+    <div class="tbl-wrap"><table><thead><tr><th>CTS 分數</th><th>等級</th><th>動作</th></tr></thead><tbody>${lvRows(LS, 'cts')}</tbody></table></div>
+
+    <h3>執行規則</h3>
+    <ul>
+      <li><b>持續 3 天才算數</b>：分數需連續 3 天達到等級門檻，避免一天的波動就觸發。</li>
+      <li><b>批次有記憶</b>：已執行的批次不會因分數上下跳動而重複或倒退；下一批距上一批至少 7 天。抄底第二批在價格較第一批再跌 20% 時、第三批在再跌 30% 時可提前。</li>
+      <li><b>假底部暫停</b>：買入後 CBS 跌回 8 分以下就暫停後續批次，已買部位續抱，CBS 重回 12 分並持續 3 天再繼續。</li>
+      <li><b>極端信號</b>：${(C.extremes?.cbs || []).map(x => esc(x.label)).join('、')} 任一出現，可提前啟動抄底第四批。</li>
+      <li><b>週期結束</b>：週期指數連續 30 天 ≥ 50，本輪抄底目標解除；連續 30 天 &lt; 40，本輪減倉上限解除。之後的新信號從第一批重新開始。</li>
+    </ul>
+
+    <h3>趨勢保護</h3>
+    <p>${esc(T?.note || '')}</p>
+    <ul>${(T?.stages || []).map(st => `<li>連續跌破 ${esc(T.maName)} ${st.days} 天：現貨降到總資金的 <b>${st.target}%</b> 以下。</li>`).join('')}</ul>
+    <p>這是保底機制。2025 年 10 月 BTC 漲到約 12.5 萬美元時，估值類指標都沒有過熱，止盈評分沒有觸發；回測中是趨勢保護在 11 月約 9.45 萬美元處啟動減倉。</p>
+
+    <h3>倉位怎麼執行</h3>
+    <ul>
+      <li><b>抄底是下限</b>：低於目標就買到目標，已經達到就不用加。</li>
+      <li><b>減倉是上限</b>：高於目標就賣到目標，已經低於就不用賣。</li>
+      <li><b>以市值計算</b>：幣價上漲會讓現貨比例自動變高，所以止盈時要以當下市值算。沒有信號時不做額外的再平衡。</li>
+      <li><b>ETH 濾網</b>：${esc(C.ethFilter?.note || '')}</li>
+      <li><b>計算工具</b>：輸入你的 BTC、ETH 數量與套利池金額，會算出目前比例，以及要達到目標需買賣多少美元與幣數。輸入的數字只存在你的瀏覽器。</li>
+    </ul>
+
+    <h3>其他區塊</h3>
+    <ul>
+      <li><b>輔助確認</b>（${aux.length} 項：ETF 流量、清算、籌碼結構等）：不改變等級，只看其他指標是否同步。確認度弱時，建議把分批天數拉長。</li>
+      <li><b>清算地圖</b>：依 OKX 未平倉量估算多空倉位的爆倉價分布。價格常被吸引到大型清算區，用來判斷短線可能被掃的方向；只代表 OKX 一家，不計分。</li>
+      <li><b>市場資訊</b>（${info.map(d => esc(d.name)).join('、')}）：僅供參考，不計分。</li>
+      <li><b>指標卡</b>：點任一張可看原理、評分區間與目前判斷。「4 年 xx%」是近 4 年百分位，「至 10/28」表示來源數據的日期。</li>
+    </ul>
+
+    <h3>數據與更新</h3>
+    <ul>
+      <li>每天台灣時間 09:00 抓數據，10:00 寫入當日快照，12:00 補抓失敗項目；GitHub 排程可能延遲 5–30 分鐘。</li>
+      <li>BGeometrics 免費方案的鏈上指標約延遲 7 天，ETF 約 5 天。系統會量測延遲，回測時每一天只用當時真正拿得到的數據，所以回測結果與實際使用一致。</li>
+      <li>「歷史紀錄」頁有每日快照、4 年回測與每一筆操作信號；改了設定，下次排程後回測會自動更新。</li>
+    </ul>
+
+    <h3>回測表現與限制（2022/11–2026/11）</h3>
+    <ul>
+      <li>依系統信號操作：期末約為起始資金的 3.9 倍，最大回撤 28%；同期一直持有 BTC 為 4.5 倍，最大回撤 53%。這套系統的價值主要在把回撤減半。</li>
+      <li>同樣的信號下，固定比例配置 ETH 的期末只有約 3.3 倍；ETH/BTC 濾網在這段期間全部改買 BTC。</li>
+      <li>數據只涵蓋一個週期。門檻與趨勢保護都是依這段歷史校準，未來的週期可能不同，請持續觀察。</li>
+    </ul>
+
+    <h3>調整設定</h3>
+    <p>所有門檻、等級、目標比例與說明都在 ${C.repo ? `<a href="https://github.com/${esc(C.repo)}/blob/main/config/indicators.json" target="_blank" rel="noopener">config/indicators.json</a>` : '<code>config/indicators.json</code>'}。「評分規則」頁列出目前每一項的完整門檻。</p>
+
+    <p class="sub">本網站依公開數據與既定規則自動判斷，僅供研究參考，不構成投資建議。請依自身風險承受能力決策。</p>
+  </article>`;
+}
+
 // ---------- 路由 ----------
-const views = { overview: viewOverview, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc };
+const views = { overview: viewOverview, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc, guide: viewGuide };
 function route() {
   killCharts();
   if (!modal.hidden) closeModal();

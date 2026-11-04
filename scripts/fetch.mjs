@@ -70,7 +70,7 @@ const pctRank = (arr, x) => ((arr.filter(v => v < x).length + 0.5 * arr.filter(v
 // ---------- 來源狀態與序列快取 ----------
 const meta = await read('data/series/_meta.json', {});
 const status = {};
-const NAMES = { price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', okx: 'OKX 合約數據' };
+const NAMES = { eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', okx: 'OKX 合約數據' };
 const setStatus = (k, ok, error = null) => { status[k] = { name: NAMES[k], ok, error, checkedAt: nowISO }; };
 const S = {};
 const now = {};
@@ -92,6 +92,22 @@ try {
   setStatus('price', true);
 } catch (e) { setStatus('price', false, e.message); }
 if (!S.price.length) { console.error('沒有價格資料，無法計算'); process.exit(1); }
+
+// ETH 日線（OKX，用於 ETH/BTC 濾網）：第一次抓近 5 年，之後只補最新 100 天
+await load('eth');
+try {
+  let after = '', got = [];
+  for (let k = 0; k < (S.eth.length > 1000 ? 1 : 19); k++) {
+    const j = await getJSON(`https://www.okx.com/api/v5/market/history-candles?instId=ETH-USDT&bar=1Dutc&limit=100${after ? `&after=${after}` : ''}`);
+    const d = j.data || []; if (!d.length) break;
+    got.push(...d.map(c => [isoDay(+c[0] / 1000), +c[4]])); after = d[d.length - 1][0];
+    await new Promise(r => setTimeout(r, 150));
+  }
+  if (!got.length) throw new Error('沒有資料');
+  S.eth = merge(S.eth, got);
+  try { const e = await getJSON('https://api.kraken.com/0/public/Ticker?pair=ETHUSD'); S.eth = merge(S.eth, [[isoDay(Date.now() / 1000), +Object.values(e.result)[0].c[0]]]); } catch {}
+  setStatus('eth', true);
+} catch (e) { setStatus('eth', false, e.message); }
 
 await load('fng');
 try {
@@ -224,6 +240,7 @@ for (const k of LAGGED) {
 }
 console.log('來源延遲（天）：' + LAGGED.map(k => `${k} ${LAG[k]}`).join('、'));
 const F = {
+  eth: align(S.eth, 1, 3),
   fng: align(SS.fng, 1, 3), hash: align(SS.hash, 1, 7), stable: align(SS.stable, 1, 7),
   mvrv: align(SS.mvrv, 1, 7), nupl: align(SS.nupl, 1, 7), puell: align(SS.puell, 1, 7), funding: align(SS.funding, 1, 7), oi: align(SS.oi, 1, 7),
   etf: align(SS.etf, 1, 0, false), liqL: align(SS.liq, 1, 0, false), liqS: align(SS.liq, 2, 0, false),
@@ -294,6 +311,7 @@ for (let i = 0; i < N; i++) {
     if (hl.length >= 40) set('liq', nz(F.liqL.v, i, liq0) + nz(F.liqS.v, i, liq0), { longPct: r4(pctRank(hl, hl.at(-1)), 1), shortPct: r4(pctRank(hs, hs.at(-1)), 1) });
   }
   if (F.sthrp.v[i]) set('sth_mvrv', c / F.sthrp.v[i]);
+  if (F.eth.v[i]) set('ethbtc', F.eth.v[i] / c);
   set('profit_supply', F.profit.v[i]);
   if (F.whale.v[i] != null && i >= 30 && F.whale.v[i - 30]) set('whale', (F.whale.v[i] / F.whale.v[i - 30] - 1) * 100);
 }
@@ -343,9 +361,9 @@ const backtest = [];
 for (let i = bt0; i < N; i++) {
   const s = scoreAll(config, indicatorsAt(i));
   const ma = sma(i, config.trend?.ma || 350);
-  backtest.push([cal[i], Math.round(close[i]), s.cbs.score, s.cts.score, s.cbs.confirm.pct, s.cts.confirm.pct, cycleIndex(i), ma ? Math.round(ma) : null]);
+  backtest.push([cal[i], Math.round(close[i]), s.cbs.score, s.cts.score, s.cbs.confirm.pct, s.cts.confirm.pct, cycleIndex(i), ma ? Math.round(ma) : null, P.ethbtc?.[i] ?? null]);
 }
-await write('data/backtest.json', { fields: ['date', 'price', 'cbs', 'cts', 'cbsConfirm', 'ctsConfirm', 'idx', 'ma50w'], rows: backtest }, false);
+await write('data/backtest.json', { fields: ['date', 'price', 'cbs', 'cts', 'cbsConfirm', 'ctsConfirm', 'idx', 'ma50w', 'ethPct'], rows: backtest }, false);
 
 // ---------- 今天的完整資料與說明文字 ----------
 const L = N - 1;
@@ -390,7 +408,7 @@ if (now.btcDom != null) ind.btcdom = { value: r4(now.btcDom, 2), fields: {} };
 if (lsr != null) { ind.lsr = { value: r4(lsr, 3), fields: {} }; detail.lsr = `多頭帳戶約 ${(lsr / (1 + lsr) * 100).toFixed(0)}%`; }
 
 // 指標對應的來源與資料新鮮度
-const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx' };
+const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth' };
 const lagOf = { mvrv: 'mvrv', nupl: 'nupl', puell: 'puell', hashribbons: 'hash', funding: 'funding', sth_mvrv: 'sthrp', profit_supply: 'profit', whale: 'whale', etf_flow: 'etf', liq: 'liq' };
 const ageOf = { mvrv: F.mvrv, nupl: F.nupl, puell: F.puell, fng: F.fng, hashribbons: F.hash, funding: F.funding, sth_mvrv: F.sthrp, profit_supply: F.profit, whale: F.whale, stable30: F.stable, ssr: F.stable };
 const lastReal = { etf_flow: S.etf.at(-1)?.[0], liq: S.liq.at(-1)?.[0] };
@@ -431,7 +449,7 @@ const entry = {
   indexZone: latest.indexZone,
 };
 { // 當天的操作建議（與儀表板同一套邏輯）
-  const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7] }));
+  const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7], ethPct: r[8] }));
   rows[rows.length - 1] = { ...rows[rows.length - 1], date: today, cbs: s.cbs.score, cts: s.cts.score, idx: latest.index };
   const d = decide(config, s, rows, latest.index);
   entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, target: d.target, last: d.position?.last ? { date: d.position.last.date, label: d.position.last.label, target: d.position.last.target, type: d.position.last.type } : null };

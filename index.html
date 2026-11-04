@@ -258,6 +258,14 @@ table.ledger td:first-child,table.ledger td:nth-child(3){white-space:nowrap}
 .calc-link:hover{text-decoration:underline}
 .pos-top b{font-size:14.5px}
 @media (max-width:520px){.calc fieldset{grid-template-columns:minmax(0,1fr)}}
+/* 使用說明 */
+.guide{display:grid;gap:12px;max-width:760px}
+.guide h2{font-size:24px}
+.guide h3{font-size:17px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.guide p,.guide li{font-size:15px;line-height:1.7}
+.guide ul,.guide ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.guide .lead{font-size:16px}
+.guide .tbl-wrap{margin:0}
 /* 週期位置指數 */
 .cindex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
 .ci-main{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
@@ -397,6 +405,7 @@ table.log tr.open td{background:var(--sunk)}
     <a href="#sources">數據狀態</a>
     <a href="#rules">評分規則</a>
     <a href="#calc">計算工具</a>
+    <a href="#guide">使用說明</a>
   </nav>
 </div></header>
 
