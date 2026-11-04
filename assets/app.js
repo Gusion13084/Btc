@@ -41,6 +41,7 @@ async function load() {
   [S.config, S.latest, S.history] = await Promise.all([get('config/indicators.json'), get('data/latest.json'), get('data/history.json')]);
   document.getElementById('siteName').textContent = S.config.siteName || 'BTC 週期雷達';
   S.sc = scoreAll(S.config, S.latest.indicators);
+  try { S.lm = await get('data/liqmap.json'); } catch { S.lm = null; }
   try { const b = await get('data/backtest.json'); S.bt = b.rows.map(r => Object.fromEntries(b.fields.map((f, i) => [f, r[i]]))); } catch { S.bt = []; }
   // 每日序列（用於變化量、持續天數）：優先用回測，沒有就用歷史快照；最後一天換成今天的即時分數
   const base = S.bt.length ? S.bt : S.history.filter(h => !h.legacy).map(h => ({ date: h.date, price: h.btcPrice, cbs: h.cbs, cts: h.cts, idx: h.idx ?? null }));
@@ -297,6 +298,41 @@ function indexCard() {
   </section>`;
 }
 
+const mUsd = v => v >= 1e9 ? '$' + (v / 1e9).toFixed(2) + 'B' : '$' + Math.round(v / 1e6) + 'M';
+function liqCard() {
+  const m = S.lm; if (!m || !m.buckets?.length) return '';
+  const max = Math.max(...m.buckets.map(b => Math.max(b.long, b.short)), 1);
+  const rows = m.buckets.filter(b => Math.abs(b.price / m.price - 1) <= 0.12);
+  let priceRowDone = false;
+  const bars = rows.map(b => {
+    let line = '';
+    if (!priceRowDone && b.price < m.price) { priceRowDone = true; line = `<div class="lq-now"><span class="mono">${usd(m.price)}</span><i></i><b>現價</b></div>`; }
+    const above = b.price >= m.price, v = above ? b.short : b.long;
+    const isTop = (above ? m.topShort : m.topLong).slice(0, 1).some(t => t.price === b.price);
+    return line + `<div class="lq-row ${above ? 'up' : 'dn'} ${isTop ? 'top' : ''}"><span class="mono">${usd(b.price)}</span><i style="width:${(v / max * 100).toFixed(1)}%"></i><em class="mono">${v >= 1e6 ? mUsd(v) : ''}</em></div>`;
+  }).join('') + (priceRowDone ? '' : `<div class="lq-now"><span class="mono">${usd(m.price)}</span><i></i><b>現價</b></div>`);
+  const u = m.near5.short, d = m.near5.long;
+  const ratio = u && d ? Math.max(u, d) / Math.min(u, d) : null;
+  const lean = !ratio || ratio < 1.3 ? '上下方清算量相近，短線方向不明顯。'
+    : d > u ? `現價下方 5% 內的多單清算約為上方的 ${ratio.toFixed(1)} 倍，下方流動性較集中，短線向下掃單的風險較高。`
+    : `現價上方 5% 內的空單清算約為下方的 ${ratio.toFixed(1)} 倍，上方流動性較集中，短線向上軋空的機率較高。`;
+  const tS = m.topShort[0], tL = m.topLong[0];
+  const daily = (m.daily || []).slice(-7);
+  const dmax = Math.max(1, ...daily.map(x => Math.max(x.long, x.short)));
+  return `<section class="panel lq" aria-label="清算地圖">
+    <div class="panel-head"><h2 style="font-size:18px">清算地圖</h2><span class="sub">OKX BTC 永續・估算・${twTime(m.generatedAt)}</span></div>
+    <div class="lq-sum">
+      ${tS ? `<div class="lq-k up"><span>上方最大空單清算區</span><b class="mono">${usd(tS.price)}</b><span class="mono">+${tS.dist}%・約 ${mUsd(tS.usd)}</span></div>` : ''}
+      ${tL ? `<div class="lq-k dn"><span>下方最大多單清算區</span><b class="mono">${usd(tL.price)}</b><span class="mono">${tL.dist}%・約 ${mUsd(tL.usd)}</span></div>` : ''}
+    </div>
+    <p class="lq-lean">${esc(lean)}<span class="sub">（±5% 內：上方空單 ${mUsd(u)}・下方多單 ${mUsd(d)}）</span></p>
+    <div class="lq-chart">${bars}</div>
+    ${daily.length ? `<div class="lq-daily"><div class="sub">全市場每日實際清算（BGeometrics，最新 ${esc(daily.at(-1).date)}）</div>
+      ${daily.map(x => `<div class="lqd"><span class="mono">${shortDate(x.date)}</span><span class="lqd-bars"><i class="dn" style="width:${(x.long / dmax * 100).toFixed(1)}%"></i><i class="up" style="width:${(x.short / dmax * 100).toFixed(1)}%"></i></span><span class="mono sub">多 ${mUsd(x.long)}・空 ${mUsd(x.short)}</span></div>`).join('')}</div>` : ''}
+    <p class="sub">估算方式：近 30 天 OKX 每小時新增的未平倉量視為新開倉，依 5–100 倍常見槓桿推算爆倉價，價格掃過的部位視為已清算。金額只代表 OKX 一家，用來看相對分布；價格常被吸引到大型清算區，屬盤勢輔助，不計分。</p>
+  </section>`;
+}
+
 function viewOverview() {
   const sc = S.sc;
   const prev = S.history.filter(h => h.date < S.latest.date).at(-1);
@@ -310,6 +346,7 @@ function viewOverview() {
     ${decisionCard()}
     ${indexCard()}
     <div class="scores">${scorePanel('cbs', sc.cbs, '抄底綜合評分 CBS')}${scorePanel('cts', sc.cts, '止盈綜合評分 CTS')}</div>
+    ${liqCard()}
     <p class="sub hint">點任一指標可查看原理、評分區間與目前判斷。</p>
     ${tierBlock('core', '核心指標', '依抄底策略手冊計分，決定 CBS / CTS 等級')}
     ${tierBlock('aux', '輔助確認指標', '資金流向、清算與籌碼結構，不改變等級，用來確認信號強弱')}

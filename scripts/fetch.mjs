@@ -173,6 +173,7 @@ try {
 
 try {
   const lm = await buildLiqMap(m => console.log(m));
+  lm.daily = (S.liq || []).slice(-14).map(r => ({ date: r[0], long: Math.round(r[1]), short: Math.round(r[2]) }));  // BGeometrics 全市場每日清算
   await write('data/liqmap.json', lm);
   NAMES.okxliq = 'OKX 清算地圖';
   setStatus('okxliq', !lm.notes.length || lm.buckets.length > 0, lm.notes.join('；') || null);

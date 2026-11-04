@@ -215,6 +215,31 @@ td.small{font-size:12.5px;line-height:1.7}
 .pos-meta{font-size:12.5px;line-height:1.5}
 table.ledger td{white-space:normal;font-size:13.5px}
 table.ledger td:first-child,table.ledger td:nth-child(3){white-space:nowrap}
+/* 清算地圖 */
+.lq-sum{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lq-k{display:grid;gap:2px;padding:10px 12px;border-radius:8px;background:var(--sunk);font-size:12.5px;color:var(--muted);border-left:3px solid var(--c)}
+.lq-k b{font-size:20px;color:var(--ink)}
+.lq-k.up{--c:var(--sell)} .lq-k.dn{--c:var(--buy)}
+.lq-lean{margin:0;font-size:14px}
+.lq-lean .sub{display:block;font-size:12px;margin-top:2px}
+.lq-chart{display:grid;gap:2px}
+.lq-row{display:grid;grid-template-columns:5.2em minmax(0,1fr) 4.5em;align-items:center;gap:8px;font-size:11.5px;height:12px}
+.lq-row span{color:var(--muted);text-align:right}
+.lq-row i{display:block;height:9px;border-radius:2px;background:var(--c);opacity:.55;min-width:1px}
+.lq-row.up{--c:var(--sell)} .lq-row.dn{--c:var(--buy)}
+.lq-row.top i{opacity:1}
+.lq-row em{font-style:normal;color:var(--muted);font-size:10.5px}
+.lq-now{display:grid;grid-template-columns:5.2em minmax(0,1fr) 4.5em;align-items:center;gap:8px;font-size:11.5px;margin:3px 0}
+.lq-now span{text-align:right;color:var(--accent);font-weight:600}
+.lq-now i{height:2px;background:var(--accent)}
+.lq-now b{color:var(--accent);font-size:11px}
+.lq-daily{display:grid;gap:4px;font-size:12px}
+.lqd{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;gap:8px;align-items:center}
+.lqd-bars{display:grid;gap:2px}
+.lqd-bars i{display:block;height:5px;border-radius:2px;min-width:1px}
+.lqd-bars i.dn{background:var(--buy)} .lqd-bars i.up{background:var(--sell)}
+.lq>.sub:last-child{font-size:12px;margin:0}
+@media (max-width:640px){.lq-k b{font-size:17px}.lqd .sub{font-size:10.5px}}
 /* 週期位置指數 */
 .cindex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
 .ci-main{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}

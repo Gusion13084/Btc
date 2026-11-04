@@ -18,6 +18,7 @@ const HOURS = 720;
 async function rubikPaged(path, log) {
   const all = new Map(); let end = '';
   for (let k = 0; k < 8 && all.size < HOURS; k++) {
+    if (k) await new Promise(r => setTimeout(r, 600)); // Rubik 限速約每 2 秒 5 次
     const d = await okx(path + (end ? `&end=${end}` : ''));
     const before = all.size;
     for (const r of d) all.set(+r[0], r);
@@ -56,6 +57,7 @@ export async function buildLiqMap(log = console.log) {
   }
   // 3) 主動買賣量，用來分配多空
   const taker = new Map();
+  await new Promise(r => setTimeout(r, 2500));
   try {
     const d = await rubikPaged(`/rubik/stat/taker-volume-contract?instId=BTC-USDT-SWAP&period=1H&limit=100`);
     for (const r of d) taker.set(+r[0], { sell: +r[1], buy: +r[2] });
@@ -103,21 +105,7 @@ export async function buildLiqMap(log = console.log) {
   const buckets = [...B.values()].sort((a, b) => b.price - a.price).map(b => ({ price: b.price, long: Math.round(b.long), short: Math.round(b.short) }));
   const sum = (f, a, b) => buckets.filter(x => x.price >= a && x.price < b).reduce((s, x) => s + x[f], 0);
   const top = (f, cond) => buckets.filter(cond).sort((a, b) => b[f] - a[f]).slice(0, 3).map(x => ({ price: x.price, usd: x[f], dist: +((x.price / price - 1) * 100).toFixed(1) }));
-  // 6) 實際強平紀錄
-  let realized = null;
-  try {
-    const d = await okx(`/public/liquidation-orders?instType=SWAP&instFamily=BTC-USDT&state=filled&limit=100`);
-    const det = d.flatMap(x => x.details || []);
-    log(`OKX 實際強平 ${det.length} 筆，樣本 ${JSON.stringify(det[0])}`);
-    const CT = 0.01; // BTC-USDT-SWAP 每張 0.01 BTC
-    const rows = det.map(x => ({ ts: +x.ts, px: +x.bkPx, usd: +x.sz * CT * +x.bkPx, side: (x.posSide === 'long' || (x.posSide !== 'short' && x.side === 'sell')) ? 'L' : 'S' })).filter(x => x.usd > 0);
-    if (rows.length) {
-      const t0 = Math.min(...rows.map(r => r.ts)), t1 = Math.max(...rows.map(r => r.ts));
-      const big = [...rows].sort((a, b) => b.usd - a.usd).slice(0, 5).map(r => ({ ts: r.ts, price: Math.round(r.px), usd: Math.round(r.usd), side: r.side }));
-      realized = { from: t0, to: t1, long: Math.round(rows.filter(r => r.side === 'L').reduce((s, r) => s + r.usd, 0)), short: Math.round(rows.filter(r => r.side === 'S').reduce((s, r) => s + r.usd, 0)), count: rows.length, big };
-    }
-  } catch (e) { notes.push('實際強平：' + e.message); }
-
+  const realized = null;
   return {
     generatedAt: new Date().toISOString(), price: Math.round(price), step, hours: candles.length, oiPoints: oi.size, method: oi.size >= 48 ? 'oi' : 'volume',
     buckets,
