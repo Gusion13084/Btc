@@ -347,12 +347,12 @@
  },
  {
   "date": "2026-11-04",
-  "btcPrice": 76425,
+  "btcPrice": 76334,
   "cbs": 0,
   "cts": 0,
   "cbsConfirm": 0,
-  "ctsConfirm": 0,
-  "idx": 35,
+  "ctsConfirm": 7,
+  "idx": 34.9,
   "cbsLevel": "無信號",
   "ctsLevel": "無信號",
   "action": "繼續期限套利，不動作",
@@ -361,34 +361,34 @@
    "nupl": 0.3349,
    "puell": 1.0514,
    "hashribbons": "normal",
-   "ssr": 5.20786,
-   "rsi_w": 49.86107,
-   "wma200": 1.12908,
-   "pi_bottom": 1.20544,
-   "pi_top": 0.49857,
+   "ssr": 5.2016,
+   "rsi_w": 49.74905,
+   "wma200": 1.12773,
+   "pi_bottom": 1.20542,
+   "pi_top": 0.49856,
    "fng": 34,
    "funding": 0.01,
    "etf_flow": -2873.48331,
    "liq": 29758342.0067,
-   "sth_mvrv": 1.00703,
+   "sth_mvrv": 1.00582,
    "profit_supply": 62.62036,
-   "whale": 0.43649,
-   "mayer": 1.04462,
-   "lsr": 2.5,
-   "btcdom": 59.21,
+   "whale": 0.10749,
+   "mayer": 1.04338,
+   "lsr": 2.65,
+   "btcdom": 59.25,
    "stable30": -3.99288
   },
   "pct": {
-   "mvrv": 39.9,
+   "mvrv": 40,
    "nupl": 38.9,
-   "puell": 50.7,
-   "ssr": 39.2,
+   "puell": 50.8,
+   "ssr": 39.1,
    "rsi_w": 33.5,
-   "wma200": 28.4,
+   "wma200": 28.3,
    "pi_bottom": 28.8,
    "pi_top": 31.4,
    "fng": 29.8,
-   "sth_mvrv": 40.2,
+   "sth_mvrv": 39.1,
    "profit_supply": 19,
    "mayer": 39.7
   },
@@ -463,7 +463,7 @@
    ],
    "lsr": [
     0,
-    0
+    1
    ],
    "btcdom": [
     null,
@@ -474,29 +474,29 @@
     null
    ]
   },
-  "indexZone": "中性",
+  "indexZone": "偏低",
   "decision": {
    "tone": "hold",
-   "title": "已完成第一批・預警進場",
-   "action": "系統在 2026-03-09（約 $68,447）觸發此批次。持有並等待：CBS 達到 16 分，且距第一批至少 7 天，即啟動第二批・確認加碼。",
+   "title": "持有，不加不減",
+   "action": "抄底與止盈都未達觀察門檻，套利資金照常運作、現貨續抱。",
    "notes": [
-    "週期指數 30 天下降 20 點，市場明顯轉弱。"
+    "週期指數 30 天下降 19 點，市場明顯轉弱。"
    ],
    "alloc": {
-    "buy": 20,
+    "buy": 0,
     "sell": 0
    },
    "position": {
-    "spot": 46,
+    "spot": 32,
     "last": {
-     "date": "2026-03-09",
-     "price": 68447,
-     "type": "buy",
-     "label": "第一批・預警進場",
+     "date": "2025-12-12",
+     "price": 90277,
+     "type": "sell",
+     "label": "趨勢保護第二段",
      "pct": 20,
-     "cum": 20,
-     "before": 32,
-     "after": 46
+     "cum": 50,
+     "before": 45,
+     "after": 32
     }
    }
   }
