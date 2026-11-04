@@ -1,0 +1,42 @@
+{
+ "mvrv": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-10-28"
+ },
+ "nupl": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-10-28"
+ },
+ "puell": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-10-28"
+ },
+ "funding": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-10-27"
+ },
+ "oi": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-11-02"
+ },
+ "etf": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-10-30"
+ },
+ "liq": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-11-02"
+ },
+ "sthrp": {
+  "fetched": "2026-11-04",
+  "ok": true,
+  "last": "2026-10-28"
+ }
+}
