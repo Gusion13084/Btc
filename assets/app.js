@@ -240,32 +240,38 @@ function tierBlock(tier, title, sub) {
   </section>`;
 }
 
+function targetText(t) {
+  if (!t) return '目前沒有生效中的目標，維持現有倉位。';
+  if (t.floor != null && t.cap != null) return `現貨維持在總資金的 ${t.floor}%–${t.cap}%`;
+  if (t.cap != null) return `現貨不超過總資金的 ${t.cap}%`;
+  if (t.floor != null) return `現貨至少佔總資金的 ${t.floor}%`;
+  return '目前沒有生效中的目標，維持現有倉位。';
+}
+
 function decisionCard() {
   const d = S.dec; if (!d) return '';
   const tone = { buy: 'buy', sell: 'sell', wait: 'wait', hold: 'hold' }[d.tone];
-  const bar = (lab, v, cls) => `<div class="alloc"><div class="alloc-top"><span>${lab}</span><b class="mono">${v}%</b></div><div class="alloc-bar ${cls}"><i style="width:${v}%"></i></div></div>`;
+  const last = d.position?.last;
+  const tgt = d.target && (d.target.floor != null || d.target.cap != null) ? (d.target.cap ?? d.target.floor) : null;
   return `<section class="decision ${tone}" aria-label="今日操作建議">
     <div class="eyebrow">今日操作建議</div>
     <h2>${esc(d.title)}</h2>
     <p class="dec-action">${esc(d.action)}</p>
     ${d.notes.length ? `<ul class="dec-notes">${d.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
-    <div class="allocs">
-      ${bar('本輪已加倉（佔總資金）', d.alloc.buy, 'buy')}
-      ${bar('本輪已減倉（佔總資金）', d.alloc.sell, 'sell')}
+    <div class="pos">
+      <div class="pos-top"><span>目前目標倉位</span><b class="mono">${esc(targetText(d.target))}</b></div>
+      ${last ? `<div class="pos-meta sub">上一個信號：${esc(last.date)} ${esc(last.label)} → 現貨${last.type === 'buy' ? '提高' : '降'}到 ${last.target}%</div>` : ''}
+      <div class="pos-meta sub">${resetHint(d)}</div>
+      <a class="calc-link" href="#calc${tgt != null ? '' : ''}">用計算工具換算要買賣多少 →</a>
     </div>
-    ${d.position ? `<div class="pos">
-      <div class="pos-top"><span>目前總倉位（建議）</span><span class="mono"><b>現貨 ${d.position.spot}%</b>・套利池 ${Math.round((100 - d.position.spot) * 10) / 10}%</span></div>
-      <div class="pos-bar"><i style="width:${d.position.spot}%"></i></div>
-      <div class="pos-meta sub">${resetHint(d)}${d.position.last ? `・上一筆：${esc(d.position.last.date)} ${esc(d.position.last.label)}（${usd(d.position.last.price)}，現貨 ${d.position.last.before}% → ${d.position.last.after}%）` : ''}</div>
-    </div>` : ''}
     <p class="sub">依手冊分批規則自動判斷，僅供參考，不構成投資建議。</p>
   </section>`;
 }
 
 function resetHint(d) {
   const t = [];
-  if (d.alloc.buy > 0) t.push('週期指數連續 30 天 ≥ 50 後，抄底進度歸零');
-  if (d.alloc.sell > 0) t.push('週期指數連續 30 天 < 40 後，減倉進度歸零');
+  if (d.target?.floor != null) t.push('週期指數連續 30 天 ≥ 50 後，抄底目標解除');
+  if (d.target?.cap != null) t.push('週期指數連續 30 天 < 40 後，減倉上限解除');
   return t.length ? t.join('；') + '。' : '';
 }
 
@@ -385,8 +391,8 @@ function viewHistory() {
     </section>
     ${S.dec?.ledger?.length ? `<section class="panel">
       <div class="panel-head"><h3 style="font-size:16px">操作紀錄</h3><span class="sub">系統依規則觸發的每一筆買入與減倉</span></div>
-      <div class="tbl-wrap"><table class="ledger"><thead><tr><th>日期</th><th>動作</th><th>BTC</th><th>建議現貨比例</th></tr></thead><tbody>
-      ${[...S.dec.ledger].reverse().map(l => `<tr><td class="mono">${esc(l.date)}</td><td><span class="dec-tag ${l.type === 'buy' ? 'buy' : 'sell'}">${esc(l.label)}</span><div class="sub">${l.type === 'buy' ? `目標現貨至少 ${l.target}%・加倉 ${l.delta > 0 ? '+' + l.delta + '%' : '0（已達標）'}` : `目標現貨最多 ${l.target}%・減倉 ${l.delta > 0 ? '-' + l.delta + '%' : '0（已達標）'}`}</div></td><td class="mono">${usd(l.price)}</td><td class="mono">${l.before}% → <b>${l.after}%</b></td></tr>`).join('')}
+      <div class="tbl-wrap"><table class="ledger"><thead><tr><th>日期</th><th>信號</th><th>BTC</th><th>目標現貨</th></tr></thead><tbody>
+      ${[...S.dec.ledger].reverse().map(l => `<tr><td class="mono">${esc(l.date)}</td><td><span class="dec-tag ${l.type === 'buy' ? 'buy' : 'sell'}">${esc(l.label)}</span></td><td class="mono">${usd(l.price)}</td><td class="mono"><b>${l.type === 'buy' ? '提高到' : '降到'} ${l.target}%</b></td></tr>`).join('')}
       </tbody></table></div>
       <p class="sub">${esc(S.config.position?.note || '')}</p>
     </section>` : ''}
@@ -421,7 +427,7 @@ function logRows() {
 function logDetail(r) {
   const dec = r.bt ? btDecision(r.i) : r.decision;
   const head = dec
-    ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.position ? `<span class="sub">建議現貨 ${dec.position.spot}%・套利池 ${Math.round((100 - dec.position.spot) * 10) / 10}%（本輪已加倉 ${dec.alloc.buy}%・已減倉 ${dec.alloc.sell}%）</span>` : dec.alloc ? `<span class="sub">抄底資金累計目標 ${dec.alloc.buy}%・現貨累計減倉目標 ${dec.alloc.sell}%</span>` : ''}</div>`
+    ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.target ? `<span class="sub">目標倉位：${esc(targetText(dec.target))}</span>` : ''}</div>`
     : `<div class="ld-dec"><b>${esc(r.action || '—')}</b><span class="sub">舊網站匯入紀錄，沒有逐項判斷。</span></div>`;
   if (!r.values) return head + (r.bt ? '<p class="sub">回測紀錄只保存分數；各指標數值從每日快照開始保存。</p>' : '');
   const defs = S.config.indicators.filter(d => r.values[d.id] != null);
@@ -641,8 +647,67 @@ function viewRules() {
     </section>`;
 }
 
+// ---------- 計算工具 ----------
+const CALC_KEY = 'radar.calc';
+function viewCalc() {
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(CALC_KEY) || '{}'); } catch {}
+  const t = S.dec?.target, def = t?.cap ?? t?.floor ?? '';
+  const v = (k, d = '') => esc(saved[k] ?? d);
+  app.innerHTML = `
+    <div class="panel-head"><h2>倉位計算工具</h2><span class="sub">輸入你實際的持倉，算出要買賣多少才能達到目標比例</span></div>
+    <section class="panel calc">
+      <form id="calcForm" autocomplete="off">
+        <fieldset><legend>現貨持倉</legend>
+          <label for="c_btc">BTC 數量<input id="c_btc" inputmode="decimal" placeholder="例：0.5" value="${v('btc')}"></label>
+          <label for="c_btcp">BTC 價格（USD）<input id="c_btcp" inputmode="decimal" value="${v('btcp', S.latest.btcPrice)}"></label>
+          <label for="c_eth">ETH 數量<input id="c_eth" inputmode="decimal" placeholder="沒有就留空" value="${v('eth')}"></label>
+          <label for="c_ethp">ETH 價格（USD）<input id="c_ethp" inputmode="decimal" value="${v('ethp', S.latest.ethPrice ? Math.round(S.latest.ethPrice) : '')}"></label>
+        </fieldset>
+        <fieldset><legend>套利池（穩定幣）</legend>
+          <label for="c_cash">金額（USD）<input id="c_cash" inputmode="decimal" placeholder="例：20000" value="${v('cash')}"></label>
+        </fieldset>
+        <fieldset><legend>目標</legend>
+          <label for="c_tgt">目標現貨比例（%）<input id="c_tgt" inputmode="decimal" value="${v('tgt', def)}"></label>
+          <label for="c_btcw">買入時 BTC 佔比（%）<input id="c_btcw" inputmode="decimal" value="${v('btcw', 65)}"></label>
+          <p class="sub">${def !== '' ? `目前生效中的目標：${esc(targetText(t))}，已自動帶入。` : '目前沒有生效中的目標，可自行輸入想要的比例。'}賣出時依 BTC 與 ETH 現有市值等比例賣出。</p>
+        </fieldset>
+      </form>
+      <div id="calcOut" class="calc-out" aria-live="polite"></div>
+    </section>`;
+  const f = document.getElementById('calcForm');
+  const num = id => { const x = parseFloat(String(document.getElementById(id).value).replace(/,/g, '')); return Number.isFinite(x) ? x : 0; };
+  const run = () => {
+    const btc = num('c_btc'), btcp = num('c_btcp'), eth = num('c_eth'), ethp = num('c_ethp'), cash = num('c_cash'), tgt = num('c_tgt'), btcw = Math.min(100, Math.max(0, num('c_btcw')));
+    try { localStorage.setItem(CALC_KEY, JSON.stringify({ btc: btc || '', eth: eth || '', cash: cash || '', tgt: document.getElementById('c_tgt').value, btcw })); } catch {}
+    const vb = btc * btcp, ve = eth * ethp, spot = vb + ve, total = spot + cash;
+    const out = document.getElementById('calcOut');
+    if (!total) { out.innerHTML = '<p class="sub">輸入持倉後會顯示目前比例與需要買賣的數量。</p>'; return; }
+    const cur = spot / total * 100, want = total * tgt / 100, diff = want - spot;
+    const money = x => '$' + Math.round(x).toLocaleString('en-US');
+    let act;
+    if (!tgt) act = '<p>請輸入目標現貨比例。</p>';
+    else if (Math.abs(diff) < total * 0.005) act = `<p class="calc-big">已在目標附近，不需調整。</p>`;
+    else if (diff > 0) {
+      const buyB = diff * btcw / 100, buyE = diff - buyB;
+      act = `<p class="calc-big buy">買入 ${money(diff)}</p><ul><li>BTC：${money(buyB)}${btcp ? `（約 ${(buyB / btcp).toFixed(5)} BTC）` : ''}</li>${buyE > 1 ? `<li>ETH：${money(buyE)}${ethp ? `（約 ${(buyE / ethp).toFixed(4)} ETH）` : ''}</li>` : ''}</ul>${diff > cash ? '<p class="stale">套利池金額不足以買到目標。</p>' : ''}`;
+    } else {
+      const sell = -diff, sb = spot ? sell * vb / spot : 0, se = sell - sb;
+      act = `<p class="calc-big sell">賣出 ${money(sell)}</p><ul><li>BTC：${money(sb)}${btcp ? `（約 ${(sb / btcp).toFixed(5)} BTC）` : ''}</li>${se > 1 ? `<li>ETH：${money(se)}${ethp ? `（約 ${(se / ethp).toFixed(4)} ETH）` : ''}</li>` : ''}</ul>`;
+    }
+    out.innerHTML = `
+      <div class="calc-now"><span>總資金 <b class="mono">${money(total)}</b></span><span>現貨 <b class="mono">${money(spot)}</b></span><span>目前比例 <b class="mono">${cur.toFixed(1)}%</b></span></div>
+      <div class="pos-bar"><i style="width:${Math.min(100, cur)}%"></i></div>
+      ${act}
+      ${tgt ? `<p class="sub">調整後：現貨 ${money(want)}・套利池 ${money(total - want)}（現貨 ${tgt}%）</p>` : ''}`;
+  };
+  f.addEventListener('input', run);
+  f.addEventListener('submit', e => e.preventDefault());
+  run();
+}
+
 // ---------- 路由 ----------
-const views = { overview: viewOverview, history: viewHistory, sources: viewSources, rules: viewRules };
+const views = { overview: viewOverview, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc };
 function route() {
   killCharts();
   if (!modal.hidden) closeModal();

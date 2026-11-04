@@ -240,6 +240,24 @@ table.ledger td:first-child,table.ledger td:nth-child(3){white-space:nowrap}
 .lqd-bars i.dn{background:var(--buy)} .lqd-bars i.up{background:var(--sell)}
 .lq>.sub:last-child{font-size:12px;margin:0}
 @media (max-width:640px){.lq-k b{font-size:17px}.lqd .sub{font-size:10.5px}}
+/* 計算工具 */
+.calc form{display:grid;gap:14px}
+.calc fieldset{border:1px solid var(--line);border-radius:10px;padding:10px 14px 14px;margin:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+.calc legend{font-size:13px;color:var(--muted);padding:0 6px}
+.calc fieldset .sub{grid-column:1/-1;margin:0;font-size:12.5px}
+.calc label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.calc input{font:inherit;font-family:var(--f-mono);font-size:16px;padding:9px 10px;border-radius:8px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);width:100%;min-width:0}
+.calc input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.calc-out{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.calc-now{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.calc-now b{color:var(--ink);font-size:15px}
+.calc-big{font-size:22px;font-weight:700;margin:0;font-family:var(--f-display)}
+.calc-big.buy{color:var(--buy)} .calc-big.sell{color:var(--sell)}
+.calc-out ul{margin:0;padding-left:18px;font-size:14px}
+.calc-link{font-size:13.5px;font-weight:500;color:var(--accent);text-decoration:none}
+.calc-link:hover{text-decoration:underline}
+.pos-top b{font-size:14.5px}
+@media (max-width:520px){.calc fieldset{grid-template-columns:minmax(0,1fr)}}
 /* 週期位置指數 */
 .cindex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
 .ci-main{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
@@ -306,7 +324,7 @@ table.log tr.open td{background:var(--sunk)}
   table.ledger td:nth-child(3){grid-column:2;grid-row:1;text-align:right}
   table.ledger td:nth-child(2){grid-column:1/-1;grid-row:2}
   table.ledger td:nth-child(4){grid-column:1/-1;grid-row:3}
-  table.ledger td:nth-child(4)::before{content:"建議現貨 ";color:var(--muted);font-family:var(--f-body);font-size:12px}
+  
 }
 /* 手機：評分並排、指標雙欄小卡，減少直向捲動 */
 @media (max-width:640px){
@@ -378,6 +396,7 @@ table.log tr.open td{background:var(--sunk)}
     <a href="#history">歷史紀錄</a>
     <a href="#sources">數據狀態</a>
     <a href="#rules">評分規則</a>
+    <a href="#calc">計算工具</a>
   </nav>
 </div></header>
 

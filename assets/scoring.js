@@ -110,11 +110,13 @@ export function runPlan(config, rows, todayExtra = {}) {
     const delta = fmt(Math.abs(move) / total * 100);
     if (type === 'buy') P.buyAdded = fmt(P.buyAdded + delta); else P.sellCut = fmt(P.sellCut + delta);
     const e = { date: r.date, price: r.price, type, label, target, delta, before: fmt(before), after: fmt(P.w) };
+    if (type === 'buy') { P.floor = target; P.cap = null; } else P.cap = P.cap == null ? target : Math.min(P.cap, target);
     ledger.push(e); return e;
   };
-  const moveText = (e, days, extra = '') => e.delta > 0
-    ? `把現貨${e.type === 'buy' ? '提高' : '降'}到 ${e.target}%：${e.before}% → ${e.after}%，${e.type === 'buy' ? '加倉' : '減倉'} ${e.delta}%（佔總資金）${days > 1 ? `，分 ${days} 天，每天約 ${fmt(e.delta / days)}%` : ''}${extra}。`
-    : `目前建議現貨 ${e.before}% 已${e.type === 'buy' ? '高' : '低'}於目標 ${e.target}%，本批不需${e.type === 'buy' ? '加倉' : '減倉'}。`;
+  // 只說目標比例；實際要買賣多少，用網站的計算工具依自己的持倉換算
+  const moveText = (e, days, extra = '') => e.type === 'buy'
+    ? `把現貨提高到總資金的 ${e.target}%（已達到就不用加）${days > 1 ? `，分 ${days} 天執行` : ''}${extra}。`
+    : `把現貨降到總資金的 ${e.target}%（已低於就不用賣）${days > 1 ? `，分 ${days} 天執行` : ''}${extra}。`;
   const ledger = [];
   const out = [];
   for (let i = 0; i < rows.length; i++) {
@@ -129,8 +131,8 @@ export function runPlan(config, rows, todayExtra = {}) {
     // 週期結束重置
     st.idxHi = (r.idx ?? 0) >= 50 ? st.idxHi + 1 : 0;
     st.idxLo = r.idx != null && r.idx < 40 ? st.idxLo + 1 : 0;
-    if (st.buy.done && st.idxHi >= 30) { st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.buyAdded = 0; }
-    if ((st.sell.done || P.sellCut) && st.idxLo >= 30) { st.sell = { done: 0, last: -1e9, cum: 0 }; P.sellCut = 0; }
+    if (st.buy.done && st.idxHi >= 30) { st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.buyAdded = 0; P.floor = null; }
+    if ((st.sell.done || P.sellCut) && st.idxLo >= 30) { st.sell = { done: 0, last: -1e9, cum: 0 }; P.sellCut = 0; P.cap = null; }
     const tr = trendState(config, rows.slice(Math.max(0, i - 500), i + 1));
     const ext = isLast ? (todayExtra.cbsExtremes || []) : [];
     let d = null;
@@ -176,14 +178,14 @@ export function runPlan(config, rows, todayExtra = {}) {
       const fresh = tr.below - tr.stage.days <= 7;
       d = fresh
         ? { tone: 'sell', title: tr.stage.label, action: st.trendEntry ? moveText(st.trendEntry, 1, '，換回的穩定幣投入套利') : tr.stage.text + '。' }
-        : { tone: 'hold', title: `${tr.stage.label}已完成`, action: `現貨已降到 ${fmt(P.w)}%，剩餘核心倉位續抱；價格重新站上 50 週均線前不加碼，等待 CBS 抄底信號。` };
+        : { tone: 'hold', title: `${tr.stage.label}已完成`, action: `現貨維持在總資金的 ${tr.stage.target}% 以下，剩餘核心倉位續抱；價格重新站上 50 週均線前不加碼，等待 CBS 抄底信號。` };
     } else if (st.buy.done) {
       const nb = LB.filter(l => l.batch)[st.buy.done];
       const lb = rows[st.buy.last];
-      d = { tone: 'hold', title: `已完成${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}`, action: `${lb ? `系統在 ${lb.date}（約 $${Math.round(lb.price).toLocaleString('en-US')}）觸發此批次，現貨調到 ${fmt(P.w)}%。` : ''}${nb ? `持有並等待：${nb.batch.trigger}，即啟動${nb.batch.label}（現貨提高到 ${nb.batch.target}%）。` : '四批已全部完成，現貨進入長期持有。'}` };
+      d = { tone: 'hold', title: `已完成${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}`, action: `${lb ? `系統在 ${lb.date}（約 $${Math.round(lb.price).toLocaleString('en-US')}）觸發此批次（現貨提高到 ${LB.filter(l => l.batch)[st.buy.done - 1].batch.target}%）。` : ''}${nb ? `持有並等待：${nb.batch.trigger}，即啟動${nb.batch.label}（現貨提高到 ${nb.batch.target}%）。` : '四批已全部完成，現貨進入長期持有。'}` };
     } else if (st.sell.done) {
       const ns = LS.filter(l => l.batch)[st.sell.done];
-      d = { tone: 'hold', title: `已完成${LS.filter(l => l.batch)[st.sell.done - 1].batch.label}`, action: ns ? `現貨維持 ${fmt(P.w)}%：${ns.batch.trigger}，即啟動${ns.batch.label}（現貨降到 ${ns.batch.target}%）。` : `減倉計畫已完成，現貨 ${fmt(P.w)}%，保留核心倉位。` };
+      d = { tone: 'hold', title: `已完成${LS.filter(l => l.batch)[st.sell.done - 1].batch.label}`, action: ns ? `現貨維持在 ${P.cap ?? ''}% 以下：${ns.batch.trigger}，即啟動${ns.batch.label}（現貨降到 ${ns.batch.target}%）。` : `減倉計畫已完成，保留核心倉位。` };
     } else if (bLv.index >= 3 || sLv.index >= 3) {
       d = { tone: 'wait', title: '等待批次間隔', action: '等級已達標，但距離上一批不足 7 天，明天起再評估。' };
     } else if (bMed.index >= 3 || sMed.index >= 3) {
@@ -209,6 +211,7 @@ export function runPlan(config, rows, todayExtra = {}) {
     } else if (tr.armed && tr.ma && r.price > tr.ma && r.price / tr.ma < 1.1) d.notes.push(`市場近期曾過熱，價格距離 50 週均線只剩 ${((r.price / tr.ma - 1) * 100).toFixed(1)}%，跌破 3 天將啟動趨勢保護減倉。`);
     d.alloc = { buy: P.buyAdded, sell: P.sellCut };
     d.position = { spot: fmt(P.w), last: ledger[ledger.length - 1] || null };
+    d.target = { floor: P.floor ?? null, cap: P.cap ?? null };
     d.trend = tr;
     out.push(d);
   }

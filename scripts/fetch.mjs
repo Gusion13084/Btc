@@ -73,6 +73,7 @@ const status = {};
 const NAMES = { price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', okx: 'OKX 合約數據' };
 const setStatus = (k, ok, error = null) => { status[k] = { name: NAMES[k], ok, error, checkedAt: nowISO }; };
 const S = {};
+const now = {};
 const load = async name => { S[name] = await read(`data/series/${name}.json`, []); };
 const save = async name => write(`data/series/${name}.json`, S[name], false);
 
@@ -87,6 +88,7 @@ try {
   const k = await getJSON('https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440');
   const kr = Object.values(k.result).find(Array.isArray).map(r => [isoDay(+r[0]), +r[4]]);
   S.price = merge(merge(S.price, base), kr);
+  try { const e = await getJSON('https://api.kraken.com/0/public/Ticker?pair=ETHUSD'); now.ethPrice = +Object.values(e.result)[0].c[0]; } catch {}
   setStatus('price', true);
 } catch (e) { setStatus('price', false, e.message); }
 if (!S.price.length) { console.error('沒有價格資料，無法計算'); process.exit(1); }
@@ -106,7 +108,6 @@ try {
 } catch (e) { setStatus('hash', false, e.message); }
 
 await load('stable');
-const now = {};
 try {
   const j = await getJSON('https://stablecoins.llama.fi/stablecoincharts/all');
   S.stable = merge(S.stable, j.map(c => [isoDay(+c.date), c.totalCirculatingUSD?.peggedUSD ?? c.totalCirculating?.peggedUSD]).filter(r => r[1] > 0));
@@ -409,6 +410,7 @@ latest.index = cycleIndex(L);
 latest.indexZone = indexZone(config, latest.index)?.name ?? null;
 latest.bgCalls = bgCalls;
 latest.lags = LAG;
+latest.ethPrice = now.ethPrice ?? latest.ethPrice ?? null;
 
 if (fetchOnly) {
   latest.pending = true;
@@ -432,7 +434,7 @@ const entry = {
   const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7] }));
   rows[rows.length - 1] = { ...rows[rows.length - 1], date: today, cbs: s.cbs.score, cts: s.cts.score, idx: latest.index };
   const d = decide(config, s, rows, latest.index);
-  entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, alloc: d.alloc, position: d.position };
+  entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, target: d.target, last: d.position?.last ? { date: d.position.last.date, label: d.position.last.label, target: d.position.last.target, type: d.position.last.type } : null };
   latest.ledger = d.ledger;
 }
 const hi = history.findIndex(h => h.date === today);
