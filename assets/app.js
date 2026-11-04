@@ -1,4 +1,4 @@
-import { scoreAll, scoreRule, ruleMax, parts, streak, decide, indexZone, levelFor } from './scoring.js';
+import { scoreAll, scoreRule, ruleMax, parts, streak, decide, indexZone, levelFor } from './scoring.js?v=__V__';
 
 const app = document.getElementById('app');
 const S = { config: null, latest: null, history: [], charts: [], sc: null, bt: [], rows: [] };

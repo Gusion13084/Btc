@@ -54,6 +54,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+      - name: 加上版本號（避免瀏覽器快取舊程式）
+        run: |
+          V=$(date +%s)
+          sed -i "s/__V__/$V/g" index.html assets/app.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
