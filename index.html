@@ -297,6 +297,17 @@ table.log tr.open td{background:var(--sunk)}
   table.log tr.ld-row{display:block}
   table.log tr.ld-row td{display:block;padding:10px 8px 14px}
 }
+@media (max-width:640px){
+  table.ledger thead{display:none}
+  table.ledger,table.ledger tbody{display:block}
+  table.ledger tr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:10px 2px;border-bottom:1px solid var(--line)}
+  table.ledger td{display:block;border:0;padding:0}
+  table.ledger td:nth-child(1){grid-column:1;grid-row:1;font-weight:600}
+  table.ledger td:nth-child(3){grid-column:2;grid-row:1;text-align:right}
+  table.ledger td:nth-child(2){grid-column:1/-1;grid-row:2}
+  table.ledger td:nth-child(4){grid-column:1/-1;grid-row:3}
+  table.ledger td:nth-child(4)::before{content:"建議現貨 ";color:var(--muted);font-family:var(--f-body);font-size:12px}
+}
 /* 手機：評分並排、指標雙欄小卡，減少直向捲動 */
 @media (max-width:640px){
   .decision{padding:12px 14px;gap:8px}

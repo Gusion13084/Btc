@@ -86,7 +86,6 @@ export function indexZone(config, v) {
 // 規則：等級需持續 3 天才算數；已執行的批次會被記住；下一批距上一批至少 7 天；
 //       買入批次執行後 CBS 跌回 8 分以下 → 暫停；指數連續 30 天 ≥ 50 視為抄底週期結束（重置）；
 //       減倉批次在指數連續 30 天 < 40 後重置。
-const buyCumAfter = n => [0, 20, 50, 80, 100][n] ?? 100;
 const minLast = (rows, i, k, n) => { let m = Infinity; for (let j = Math.max(0, i - n + 1); j <= i; j++) m = Math.min(m, rows[j][k] ?? 0); return m; };
 const medLast = (rows, i, k, n) => { const a = []; for (let j = Math.max(0, i - n + 1); j <= i; j++) a.push(rows[j][k] ?? 0); a.sort((x, y) => x - y); return a[a.length >> 1]; };
 
@@ -94,7 +93,20 @@ export function runPlan(config, rows, todayExtra = {}) {
   const LB = config.levels.cbs, LS = config.levels.cts, T = config.trend;
   const st = { buy: { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }, sell: { done: 0, last: -1e9, cum: 0 }, idxHi: 0, idxLo: 0 };
   // 倉位：w = 現貨佔策略資金的比例
-  const P = { w: (config.position?.start ?? 30) / 100, poolStart: null, spotStart: null, sellApplied: 0 };
+  // 倉位以「現貨佔策略資金 %」控制：抄底批次是下限、減倉與趨勢保護是上限
+  const P = { w: config.position?.start ?? 30, buyAdded: 0, sellCut: 0, trendDone: 0 };
+  const fmt = v => Math.round(v * 10) / 10;
+  const toTarget = (type, target, r, label) => {
+    const before = P.w, after = type === 'buy' ? Math.max(P.w, target) : Math.min(P.w, target);
+    const delta = fmt(Math.abs(after - before));
+    P.w = after;
+    if (type === 'buy') P.buyAdded = fmt(P.buyAdded + delta); else P.sellCut = fmt(P.sellCut + delta);
+    const e = { date: r.date, price: r.price, type, label, target, delta, before: fmt(before), after: fmt(after) };
+    ledger.push(e); return e;
+  };
+  const moveText = (e, days, extra = '') => e.delta > 0
+    ? `把現貨${e.type === 'buy' ? '提高' : '降'}到 ${e.target}%：${e.before}% → ${e.after}%，${e.type === 'buy' ? '加倉' : '減倉'} ${e.delta}%（佔總資金）${days > 1 ? `，分 ${days} 天，每天約 ${fmt(e.delta / days)}%` : ''}${extra}。`
+    : `目前建議現貨 ${e.before}% 已${e.type === 'buy' ? '高' : '低'}於目標 ${e.target}%，本批不需${e.type === 'buy' ? '加倉' : '減倉'}。`;
   const ledger = [];
   const out = [];
   for (let i = 0; i < rows.length; i++) {
@@ -106,8 +118,8 @@ export function runPlan(config, rows, todayExtra = {}) {
     // 週期結束重置
     st.idxHi = (r.idx ?? 0) >= 50 ? st.idxHi + 1 : 0;
     st.idxLo = r.idx != null && r.idx < 40 ? st.idxLo + 1 : 0;
-    if (st.buy.done && st.idxHi >= 30) { st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.poolStart = null; }
-    if (st.sell.done && st.idxLo >= 30) st.sell = { done: 0, last: -1e9, cum: 0 };
+    if (st.buy.done && st.idxHi >= 30) { st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.buyAdded = 0; }
+    if ((st.sell.done || P.sellCut) && st.idxLo >= 30) { st.sell = { done: 0, last: -1e9, cum: 0 }; P.sellCut = 0; }
     const tr = trendState(config, rows.slice(Math.max(0, i - 500), i + 1));
     const ext = isLast ? (todayExtra.cbsExtremes || []) : [];
     let d = null;
@@ -121,9 +133,8 @@ export function runPlan(config, rows, todayExtra = {}) {
       const gapOk = i - st.buy.last >= 7;
       if (!st.buy.paused && (lvOk || drop || extremeOk) && (st.buy.done === 0 || gapOk)) {
         st.buy.done = nextB; st.buy.last = i; if (nextB === 1) st.buy.firstPrice = r.price;
-        if (P.poolStart == null) P.poolStart = 1 - P.w;
-        const before = P.w; P.w = Math.min(1, P.w + P.poolStart * batchB.batch.pct / 100);
-        ledger.push({ date: r.date, price: r.price, type: 'buy', label: batchB.batch.label, pct: batchB.batch.pct, cum: buyCumAfter(nextB), before: Math.round(before * 100), after: Math.round(P.w * 100) });
+        st.buy.entry = toTarget('buy', batchB.batch.target, r, batchB.batch.label);
+        P.sellCut = 0; st.sell = { done: 0, last: -1e9, cum: 0 };
       }
     }
     if (st.buy.done && !st.buy.paused && (r.cbs ?? 0) <= 8) { st.buy.paused = true; st.buy.pausedAt = i; }
@@ -131,43 +142,37 @@ export function runPlan(config, rows, todayExtra = {}) {
     // --- 減倉批次 ---
     const nextS = st.sell.done + 1, batchS = LS.filter(l => l.batch)[nextS - 1];
     if (batchS && sLv.index >= LS.indexOf(batchS) && (st.sell.done === 0 || i - st.sell.last >= 7)) {
-      st.sell.done = nextS; st.sell.last = i; st.sell.cum += batchS.batch.pct;
+      st.sell.done = nextS; st.sell.last = i;
+      st.sell.entry = toTarget('sell', batchS.batch.target, r, batchS.batch.label);
     }
-    const sellCum = Math.max(st.sell.cum, tr.cum || 0);
-    if (sellCum > P.sellApplied) {
-      if (P.spotStart == null) P.spotStart = P.w;
-      const before = P.w, dPct = sellCum - P.sellApplied;
-      P.w = Math.max(0, P.w - P.spotStart * dPct / 100);
-      const viaTrend = (tr.cum || 0) >= st.sell.cum;
-      ledger.push({ date: r.date, price: r.price, type: 'sell', label: viaTrend && tr.stage ? tr.stage.label : (LS.filter(l => l.batch)[st.sell.done - 1]?.batch.label || '減倉'), pct: dPct, cum: sellCum, before: Math.round(before * 100), after: Math.round(P.w * 100) });
-      P.sellApplied = sellCum;
-    }
-    if (sellCum === 0 && P.sellApplied > 0) { P.sellApplied = 0; P.spotStart = null; }
-    const buyCum = (config.allocation?.cbs || [])[LB.indexOf(LB.filter(l => l.batch)[st.buy.done - 1]) ] ?? 0;
+    // 趨勢保護：每進入新的一段，就把現貨上限降到該段目標
+    const trCount = tr.stage ? T.stages.indexOf(tr.stage) + 1 : 0;
+    if (trCount > P.trendDone) { for (let k = P.trendDone; k < trCount; k++) st.trendEntry = toTarget('sell', T.stages[k].target, r, T.stages[k].label); }
+    P.trendDone = trCount;
 
     // --- 決定今天要說什麼（優先順序：正在執行 > 暫停 > 趨勢保護 > 已完成待命 > 預警/觀察 > 持有） ---
     const execB = st.buy.done && i - st.buy.last < LB.filter(l => l.batch)[st.buy.done - 1].batch.days;
     const execS = st.sell.done && i - st.sell.last < LS.filter(l => l.batch)[st.sell.done - 1].batch.days;
     if (execB) {
       const bb = LB.filter(l => l.batch)[st.buy.done - 1].batch, day = i - st.buy.last + 1;
-      d = { tone: 'buy', title: `執行${bb.label}（第 ${day}/${bb.days} 天）`, action: `投入抄底資金 ${bb.pct}%${bb.btc ? `（BTC ${bb.btc}% / ETH ${bb.eth}%）` : ''}，分 ${bb.days} 天平均買入${bb.limit ? `，限價 ${bb.limit}` : ''}。` };
+      d = { tone: 'buy', title: `執行${bb.label}（第 ${day}/${bb.days} 天）`, action: moveText(st.buy.entry, bb.days, `${bb.btc ? `；買入部分 BTC ${bb.btc}% / ETH ${bb.eth}%` : ''}${bb.limit ? `，限價 ${bb.limit}` : ''}`) };
     } else if (execS) {
       const sb = LS.filter(l => l.batch)[st.sell.done - 1].batch, day = i - st.sell.last + 1;
-      d = { tone: 'sell', title: `執行${sb.label}（第 ${day}/${sb.days} 天）`, action: `減倉現貨約 ${sb.pct}%，分 ${sb.days} 天賣出，換回的穩定幣投入套利。` };
+      d = { tone: 'sell', title: `執行${sb.label}（第 ${day}/${sb.days} 天）`, action: moveText(st.sell.entry, sb.days, '，換回的穩定幣投入套利') };
     } else if (st.buy.paused && i - st.buy.pausedAt <= 60) {
       d = { tone: 'wait', title: '暫停後續買入', action: `已執行到${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}，CBS 跌回 ${r.cbs} 分，可能是假底部。已買部位續抱，CBS 重回 12 分且持續 3 天再繼續。` };
     } else if (tr.stage) {
       const fresh = tr.below - tr.stage.days <= 7;
       d = fresh
-        ? { tone: 'sell', title: tr.stage.label, action: tr.stage.text + '。換回的穩定幣投入套利，保留 30–50% 核心倉位。' }
-        : { tone: 'hold', title: `${tr.stage.label}已完成`, action: `已依規則累計減倉約 ${tr.cum}%，剩餘核心倉位續抱；價格重新站上 50 週均線前不加碼，等待 CBS 抄底信號。` };
+        ? { tone: 'sell', title: tr.stage.label, action: st.trendEntry ? moveText(st.trendEntry, 1, '，換回的穩定幣投入套利') : tr.stage.text + '。' }
+        : { tone: 'hold', title: `${tr.stage.label}已完成`, action: `現貨已降到 ${fmt(P.w)}%，剩餘核心倉位續抱；價格重新站上 50 週均線前不加碼，等待 CBS 抄底信號。` };
     } else if (st.buy.done) {
       const nb = LB.filter(l => l.batch)[st.buy.done];
       const lb = rows[st.buy.last];
-      d = { tone: 'hold', title: `已完成${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}`, action: `${lb ? `系統在 ${lb.date}（約 $${Math.round(lb.price).toLocaleString('en-US')}）觸發此批次。` : ''}${nb ? `持有並等待：${nb.batch.trigger}，即啟動${nb.batch.label}。` : '四批已全部完成，現貨進入長期持有。'}` };
+      d = { tone: 'hold', title: `已完成${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}`, action: `${lb ? `系統在 ${lb.date}（約 $${Math.round(lb.price).toLocaleString('en-US')}）觸發此批次，現貨調到 ${fmt(P.w)}%。` : ''}${nb ? `持有並等待：${nb.batch.trigger}，即啟動${nb.batch.label}（現貨提高到 ${nb.batch.target}%）。` : '四批已全部完成，現貨進入長期持有。'}` };
     } else if (st.sell.done) {
       const ns = LS.filter(l => l.batch)[st.sell.done];
-      d = { tone: 'hold', title: `已完成${LS.filter(l => l.batch)[st.sell.done - 1].batch.label}`, action: ns ? `剩餘現貨續抱：${ns.batch.trigger}，即啟動${ns.batch.label}。` : '減倉計畫已完成，保留核心倉位。' };
+      d = { tone: 'hold', title: `已完成${LS.filter(l => l.batch)[st.sell.done - 1].batch.label}`, action: ns ? `現貨維持 ${fmt(P.w)}%：${ns.batch.trigger}，即啟動${ns.batch.label}（現貨降到 ${ns.batch.target}%）。` : `減倉計畫已完成，現貨 ${fmt(P.w)}%，保留核心倉位。` };
     } else if (bLv.index >= 3 || sLv.index >= 3) {
       d = { tone: 'wait', title: '等待批次間隔', action: '等級已達標，但距離上一批不足 7 天，明天起再評估。' };
     } else if (bMed.index >= 3 || sMed.index >= 3) {
@@ -186,13 +191,13 @@ export function runPlan(config, rows, todayExtra = {}) {
       d = { tone: 'hold', title: '持有，不加不減', action: '抄底與止盈都未達觀察門檻，套利資金照常運作、現貨續抱。' };
     }
     d.notes = [];
-    if (tr.stage && !d.title.startsWith('趨勢')) d.notes.push(`趨勢保護：跌破 50 週均線 ${tr.below} 天，累計減倉目標 ${tr.cum}%。`);
+    if (tr.stage && !d.title.startsWith('趨勢')) d.notes.push(`趨勢保護：跌破 50 週均線 ${tr.below} 天，現貨上限 ${tr.stage.target}%。`);
     else if (tr.stage) {
       d.notes.push(`前 120 天內市場曾過熱（${tr.armedBy}），之後跌破 50 週均線 $${Math.round(tr.ma).toLocaleString('en-US')} 已 ${tr.below} 天。`);
       if (tr.next) d.notes.push(`若再維持到第 ${tr.next.days} 天，執行${tr.next.label}。`);
     } else if (tr.armed && tr.ma && r.price > tr.ma && r.price / tr.ma < 1.1) d.notes.push(`市場近期曾過熱，價格距離 50 週均線只剩 ${((r.price / tr.ma - 1) * 100).toFixed(1)}%，跌破 3 天將啟動趨勢保護減倉。`);
-    d.alloc = { buy: buyCum, sell: sellCum };
-    d.position = { spot: Math.round(P.w * 100), last: ledger[ledger.length - 1] || null };
+    d.alloc = { buy: P.buyAdded, sell: P.sellCut };
+    d.position = { spot: fmt(P.w), last: ledger[ledger.length - 1] || null };
     d.trend = tr;
     out.push(d);
   }

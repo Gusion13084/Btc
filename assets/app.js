@@ -168,7 +168,7 @@ function scorePanel(side, s, label) {
       ${next ? `<span>距離「${esc(next.name)}」還差 <b class="mono">${next.min - s.score}</b> 分</span>` : '<span>已達最高等級</span>'}
       ${days ? `<span>此等級以上已持續 <b class="mono">${days}</b> 天</span>` : ''}
     </div>
-    ${b ? `<div class="batch"><b>${esc(b.label)}</b>・資金 ${b.pct}%${b.btc ? `（BTC ${b.btc}% / ETH ${b.eth}%）` : ''}・分 ${b.days} 天${b.limit ? `・限價 ${esc(b.limit)}` : ''}<br><span class="sub">${esc(b.trigger)}。${esc(b.note)}</span></div>` : ''}
+    ${b ? `<div class="batch"><b>${esc(b.label)}</b>・現貨${side === 'cbs' ? '提高' : '降'}到 ${b.target}%${b.btc ? `（買入部分 BTC ${b.btc}% / ETH ${b.eth}%）` : ''}・分 ${b.days} 天${b.limit ? `・限價 ${esc(b.limit)}` : ''}<br><span class="sub">${esc(b.trigger)}。${esc(b.note)}</span></div>` : ''}
     ${confirmRow(side, s)}
     ${s.extremes.length ? `<div class="extreme">極端${side === 'cbs' ? '底部' : '頂部'}信號：${s.extremes.map(x => esc(x.label)).join('、')}</div>` : ''}
   </section>`;
@@ -250,11 +250,11 @@ function decisionCard() {
     <p class="dec-action">${esc(d.action)}</p>
     ${d.notes.length ? `<ul class="dec-notes">${d.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
     <div class="allocs">
-      ${bar('本輪抄底累計投入', d.alloc.buy, 'buy')}
-      ${bar('本輪現貨累計減倉', d.alloc.sell, 'sell')}
+      ${bar('本輪已加倉（佔總資金）', d.alloc.buy, 'buy')}
+      ${bar('本輪已減倉（佔總資金）', d.alloc.sell, 'sell')}
     </div>
     ${d.position ? `<div class="pos">
-      <div class="pos-top"><span>目前總倉位（建議）</span><span class="mono"><b>現貨 ${d.position.spot}%</b>・套利池 ${100 - d.position.spot}%</span></div>
+      <div class="pos-top"><span>目前總倉位（建議）</span><span class="mono"><b>現貨 ${d.position.spot}%</b>・套利池 ${Math.round((100 - d.position.spot) * 10) / 10}%</span></div>
       <div class="pos-bar"><i style="width:${d.position.spot}%"></i></div>
       <div class="pos-meta sub">${resetHint(d)}${d.position.last ? `・上一筆：${esc(d.position.last.date)} ${esc(d.position.last.label)}（${usd(d.position.last.price)}，現貨 ${d.position.last.before}% → ${d.position.last.after}%）` : ''}</div>
     </div>` : ''}
@@ -386,7 +386,7 @@ function viewHistory() {
     ${S.dec?.ledger?.length ? `<section class="panel">
       <div class="panel-head"><h3 style="font-size:16px">操作紀錄</h3><span class="sub">系統依規則觸發的每一筆買入與減倉</span></div>
       <div class="tbl-wrap"><table class="ledger"><thead><tr><th>日期</th><th>動作</th><th>BTC</th><th>建議現貨比例</th></tr></thead><tbody>
-      ${[...S.dec.ledger].reverse().map(l => `<tr><td class="mono">${esc(l.date)}</td><td><span class="dec-tag ${l.type === 'buy' ? 'buy' : 'sell'}">${esc(l.label)}</span><div class="sub">${l.type === 'buy' ? `投入抄底資金 ${l.pct}%（本輪累計 ${l.cum}%）` : `減倉現貨 ${l.pct}%（本輪累計 ${l.cum}%）`}</div></td><td class="mono">${usd(l.price)}</td><td class="mono">${l.before}% → <b>${l.after}%</b></td></tr>`).join('')}
+      ${[...S.dec.ledger].reverse().map(l => `<tr><td class="mono">${esc(l.date)}</td><td><span class="dec-tag ${l.type === 'buy' ? 'buy' : 'sell'}">${esc(l.label)}</span><div class="sub">${l.type === 'buy' ? `目標現貨至少 ${l.target}%・加倉 ${l.delta > 0 ? '+' + l.delta + '%' : '0（已達標）'}` : `目標現貨最多 ${l.target}%・減倉 ${l.delta > 0 ? '-' + l.delta + '%' : '0（已達標）'}`}</div></td><td class="mono">${usd(l.price)}</td><td class="mono">${l.before}% → <b>${l.after}%</b></td></tr>`).join('')}
       </tbody></table></div>
       <p class="sub">${esc(S.config.position?.note || '')}</p>
     </section>` : ''}
@@ -421,7 +421,7 @@ function logRows() {
 function logDetail(r) {
   const dec = r.bt ? btDecision(r.i) : r.decision;
   const head = dec
-    ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.position ? `<span class="sub">建議現貨 ${dec.position.spot}%・套利池 ${100 - dec.position.spot}%（本輪抄底 ${dec.alloc.buy}%・本輪減倉 ${dec.alloc.sell}%）</span>` : dec.alloc ? `<span class="sub">抄底資金累計目標 ${dec.alloc.buy}%・現貨累計減倉目標 ${dec.alloc.sell}%</span>` : ''}</div>`
+    ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.position ? `<span class="sub">建議現貨 ${dec.position.spot}%・套利池 ${Math.round((100 - dec.position.spot) * 10) / 10}%（本輪已加倉 ${dec.alloc.buy}%・已減倉 ${dec.alloc.sell}%）</span>` : dec.alloc ? `<span class="sub">抄底資金累計目標 ${dec.alloc.buy}%・現貨累計減倉目標 ${dec.alloc.sell}%</span>` : ''}</div>`
     : `<div class="ld-dec"><b>${esc(r.action || '—')}</b><span class="sub">舊網站匯入紀錄，沒有逐項判斷。</span></div>`;
   if (!r.values) return head + (r.bt ? '<p class="sub">回測紀錄只保存分數；各指標數值從每日快照開始保存。</p>' : '');
   const defs = S.config.indicators.filter(d => r.values[d.id] != null);
@@ -588,8 +588,8 @@ function viewRules() {
   const batches = side => {
     const B = C.levels[side].filter(l => l.batch);
     const hasCoin = B.some(l => l.batch.btc);
-    return `<table><thead><tr><th>批次</th><th>分數</th><th>資金</th>${hasCoin ? '<th>BTC / ETH</th>' : ''}<th>天數</th>${hasCoin ? '<th>限價單</th>' : ''}<th>觸發條件與備註</th></tr></thead><tbody>${B.map(l => {
-      const b = l.batch; return `<tr><td><b>${esc(b.label)}</b></td><td class="mono">${l.min}+</td><td class="mono">${b.pct}%</td>${hasCoin ? `<td class="mono">${b.btc}% / ${b.eth}%</td>` : ''}<td class="mono">${b.days}</td>${hasCoin ? `<td>${esc(b.limit)}</td>` : ''}<td class="wrap">${esc(b.trigger)}。<span class="sub">${esc(b.note)}</span></td></tr>`; }).join('')}</tbody></table>`;
+    return `<table><thead><tr><th>批次</th><th>分數</th><th>目標現貨</th>${hasCoin ? '<th>BTC / ETH</th>' : ''}<th>天數</th>${hasCoin ? '<th>限價單</th>' : ''}<th>觸發條件與備註</th></tr></thead><tbody>${B.map(l => {
+      const b = l.batch; return `<tr><td><b>${esc(b.label)}</b></td><td class="mono">${l.min}+</td><td class="mono">${side === 'cbs' ? '≥ ' : '≤ '}${b.target}%</td>${hasCoin ? `<td class="mono">${b.btc}% / ${b.eth}%</td>` : ''}<td class="mono">${b.days}</td>${hasCoin ? `<td>${esc(b.limit)}</td>` : ''}<td class="wrap">${esc(b.trigger)}。<span class="sub">${esc(b.note)}</span></td></tr>`; }).join('')}</tbody></table>`;
   };
   const ext = side => (C.extremes?.[side] || []).map(x => esc(x.label)).join('、');
   const core = C.indicators.filter(d => (d.tier || 'core') === 'core');
@@ -620,7 +620,7 @@ function viewRules() {
     ${C.trend ? `<section class="panel prose">
       <h3 style="font-size:16px">趨勢保護（保底減倉）</h3>
       <p>${esc(C.trend.note)}</p>
-      <div class="tbl-wrap"><table><thead><tr><th>階段</th><th>條件</th><th>減倉</th></tr></thead><tbody>${C.trend.stages.map(st => `<tr><td><b>${esc(st.label)}</b></td><td class="wrap">連續跌破 ${esc(C.trend.maName)} ${st.days} 天</td><td class="mono">${st.pct}%</td></tr>`).join('')}</tbody></table></div>
+      <div class="tbl-wrap"><table><thead><tr><th>階段</th><th>條件</th><th>目標現貨</th></tr></thead><tbody>${C.trend.stages.map(st => `<tr><td><b>${esc(st.label)}</b></td><td class="wrap">連續跌破 ${esc(C.trend.maName)} ${st.days} 天</td><td class="mono">≤ ${st.target}%</td></tr>`).join('')}</tbody></table></div>
       <p class="sub">回測（2022/11 至今）只在 2025/11/14 觸發一次（$94,517），之後 180 天最低跌 33%；2024 年中與 2025 年 2 月的回調都沒有誤觸發。樣本只有一個週期，請持續觀察。</p>
     </section>` : ''}
     <section class="panel">
