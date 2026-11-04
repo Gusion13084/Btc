@@ -347,12 +347,12 @@
  },
  {
   "date": "2026-11-04",
-  "btcPrice": 76521,
+  "btcPrice": 76869,
   "cbs": 0,
   "cts": 0,
   "cbsConfirm": 0,
   "ctsConfirm": 7,
-  "idx": 35,
+  "idx": 35.3,
   "cbsLevel": "無信號",
   "ctsLevel": "無信號",
   "action": "繼續期限套利，不動作",
@@ -361,36 +361,36 @@
    "nupl": 0.3349,
    "puell": 1.0514,
    "hashribbons": "normal",
-   "ssr": 5.21429,
-   "rsi_w": 49.97764,
-   "wma200": 1.13048,
-   "pi_bottom": 1.20545,
-   "pi_top": 0.49857,
+   "ssr": 5.23803,
+   "rsi_w": 50.40941,
+   "wma200": 1.13559,
+   "pi_bottom": 1.20552,
+   "pi_top": 0.49858,
    "fng": 34,
    "funding": 0.01,
    "etf_flow": -2873.48331,
    "liq": 29758342.0067,
-   "sth_mvrv": 1.00828,
+   "sth_mvrv": 1.01287,
    "profit_supply": 62.62036,
    "whale": 0.10749,
-   "mayer": 1.04592,
-   "lsr": 2.66,
-   "btcdom": 59.28,
+   "mayer": 1.05065,
+   "lsr": 2.59,
+   "btcdom": 59.27,
    "stable30": -3.99195
   },
   "pct": {
    "mvrv": 40,
    "nupl": 38.9,
    "puell": 50.8,
-   "ssr": 39.3,
-   "rsi_w": 34.2,
-   "wma200": 28.5,
-   "pi_bottom": 28.8,
+   "ssr": 39.8,
+   "rsi_w": 35,
+   "wma200": 28.9,
+   "pi_bottom": 28.9,
    "pi_top": 31.4,
    "fng": 29.8,
-   "sth_mvrv": 39.5,
+   "sth_mvrv": 40.6,
    "profit_supply": 19,
-   "mayer": 39.7
+   "mayer": 40.4
   },
   "items": {
    "mvrv": [
@@ -487,16 +487,16 @@
     "sell": 0
    },
    "position": {
-    "spot": 32,
+    "spot": 35,
     "last": {
      "date": "2025-12-12",
      "price": 90277,
      "type": "sell",
      "label": "趨勢保護第二段",
-     "pct": 20,
-     "cum": 50,
-     "before": 45,
-     "after": 32
+     "target": 35,
+     "delta": 15,
+     "before": 50,
+     "after": 35
     }
    }
   }
