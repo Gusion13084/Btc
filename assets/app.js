@@ -248,6 +248,11 @@ function targetText(t) {
   return '目前沒有生效中的目標，維持現有倉位。';
 }
 
+function introHint() {
+  let seen = false; try { seen = localStorage.getItem('radar.intro') === '1'; } catch {}
+  return seen ? '' : `<div class="intro" id="intro"><span>第一次使用？先看三分鐘的<a href="#guide">使用說明 →</a></span><button type="button" aria-label="不再顯示" onclick="try{localStorage.setItem('radar.intro','1')}catch(e){};this.parentNode.remove()">×</button></div>`;
+}
+
 function decisionCard() {
   const d = S.dec; if (!d) return '';
   const tone = { buy: 'buy', sell: 'sell', wait: 'wait', hold: 'hold' }[d.tone];
@@ -366,6 +371,7 @@ function viewOverview() {
       ${chg != null ? `<span class="mono" style="color:${chg >= 0 ? 'var(--buy)' : 'var(--sell)'}">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>` : ''}
       <span class="sub">${S.latest.pending ? `今日數據抓取中，10:00 補齊後寫入快照・更新於 ${twTime(S.latest.updatedAt)}` : `快照 ${esc(S.latest.date)}・定稿於 ${twTime(S.latest.snapshotAt || S.latest.updatedAt)}`}</span>
     </section>
+    ${introHint()}
     ${decisionCard()}
     ${indexCard()}
     <div class="scores">${scorePanel('cbs', sc.cbs, '抄底綜合評分 CBS')}${scorePanel('cts', sc.cts, '止盈綜合評分 CTS')}</div>
@@ -812,7 +818,7 @@ function route() {
   killCharts();
   if (!modal.hidden) closeModal();
   const v = views[location.hash.slice(1)] ? location.hash.slice(1) : 'overview';
-  document.querySelectorAll('nav.tabs a').forEach(a => { if (a.getAttribute('href') === '#' + v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  document.querySelectorAll('nav.tabs a, a.help').forEach(a => { if (a.getAttribute('href') === '#' + v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   views[v]();
   window.scrollTo(0, 0);
 }
