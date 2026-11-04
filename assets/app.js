@@ -589,6 +589,7 @@ function viewRules() {
     <section class="panel">
       <h3 style="font-size:16px">執行規則</h3>
       <p class="sub prose">等級需持續 3 天才算數；已執行的批次會被記住，不會因分數上下跳動而重複或倒退；下一批距上一批至少 7 天（第二批在價格較第一批再跌 20% 時可提前，第三批在再跌 30% 時可提前）；買入後 CBS 跌回 8 分以下暫停後續批次，重回 12 分並持續 3 天再繼續；週期指數連續 30 天 ≥ 50 視為抄底週期結束。</p>
+      <p class="sub prose">回測與操作紀錄已模擬各來源的實際延遲（例如鏈上指標約晚 7 天），每一天只用當時真正拿得到的數據，結果與實際上線時一致。</p>
     </section>
     <section class="panel">
       <h3 style="font-size:16px">輔助確認指標</h3>

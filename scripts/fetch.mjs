@@ -201,12 +201,23 @@ function rsiW(arr) {
   for (let i = n + 1; i < arr.length; i++) { const d = arr[i] - arr[i - 1]; g = (g * 13 + Math.max(d, 0)) / n; l = (l * 13 + Math.max(-d, 0)) / n; }
   return l === 0 ? 100 : 100 - 100 / (1 + g / l);
 }
+// ---------- 模擬來源延遲：歷史上每一天只用「當天實際拿得到」的數據 ----------
+// BGeometrics 免費方案與 Blockchain.com 算力有數天延遲。量出每個序列目前的延遲天數，
+// 把整段歷史的日期往後挪同樣天數，回測、操作紀錄與今天的判斷就和實際上線時一致。
+const LAGGED = ['mvrv', 'nupl', 'puell', 'funding', 'oi', 'etf', 'liq', 'sthrp', 'profit', 'whale', 'hash'];
+const LAG = {}, SS = { ...S };
+for (const k of LAGGED) {
+  const last = S[k]?.at(-1)?.[0];
+  if (!last) { LAG[k] = 0; continue; }
+  LAG[k] = Math.max(0, Math.min(14, Math.round((Date.parse(cal[N - 1]) - Date.parse(last)) / 86400000)));
+  SS[k] = LAG[k] ? S[k].map(r => [addDays(r[0], LAG[k]), ...r.slice(1)]) : S[k];
+}
+console.log('來源延遲（天）：' + LAGGED.map(k => `${k} ${LAG[k]}`).join('、'));
 const F = {
-  // BGeometrics 免費方案與 Blockchain.com 算力約延遲一週，向前填補上限設 14 天
-  fng: align(S.fng, 1, 3), hash: align(S.hash, 1, 14), stable: align(S.stable, 1, 7),
-  mvrv: align(S.mvrv, 1, 14), nupl: align(S.nupl, 1, 14), puell: align(S.puell, 1, 14), funding: align(S.funding, 1, 14), oi: align(S.oi, 1, 14),
-  etf: align(S.etf, 1, 0, false), liqL: align(S.liq, 1, 0, false), liqS: align(S.liq, 2, 0, false),
-  sthrp: align(S.sthrp, 1, 14), profit: align(S.profit, 1, 14), whale: align(S.whale, 1, 14),
+  fng: align(SS.fng, 1, 3), hash: align(SS.hash, 1, 7), stable: align(SS.stable, 1, 7),
+  mvrv: align(SS.mvrv, 1, 7), nupl: align(SS.nupl, 1, 7), puell: align(SS.puell, 1, 7), funding: align(SS.funding, 1, 7), oi: align(SS.oi, 1, 7),
+  etf: align(SS.etf, 1, 0, false), liqL: align(SS.liq, 1, 0, false), liqS: align(SS.liq, 2, 0, false),
+  sthrp: align(SS.sthrp, 1, 7), profit: align(SS.profit, 1, 7), whale: align(SS.whale, 1, 7),
 };
 { const a = F.funding.v.filter(v => v != null).map(Math.abs).sort((x, y) => x - y); if (a.length && a[a.length >> 1] < 0.001) F.funding.v = F.funding.v.map(v => v == null ? null : v * 100); }
 { const a = F.profit.v.filter(v => v != null); if (a.length && Math.max(...a) <= 1) F.profit.v = F.profit.v.map(v => v == null ? null : v * 100); }
@@ -277,7 +288,7 @@ for (let i = 0; i < N; i++) {
   if (F.whale.v[i] != null && i >= 30 && F.whale.v[i - 30]) set('whale', (F.whale.v[i] / F.whale.v[i - 30] - 1) * 100);
 }
 // ETF 與清算是「每日事件」：最後一筆真實資料之後的日子視為未知，沿用最後一天的計算結果
-for (const [id, rows] of [['etf_flow', S.etf], ['liq', S.liq]]) {
+for (const [id, rows] of [['etf_flow', SS.etf], ['liq', SS.liq]]) {
   const last = rows.at(-1)?.[0]; if (!last || !V[id]) continue;
   const li = cal.indexOf(last); if (li < 0) continue;
   for (let i = li + 1; i < N && i - li <= 14; i++) { V[id][i] = V[id][li]; FX[i][id] = FX[li][id]; }
@@ -370,13 +381,14 @@ if (lsr != null) { ind.lsr = { value: r4(lsr, 3), fields: {} }; detail.lsr = `�
 
 // 指標對應的來源與資料新鮮度
 const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx' };
+const lagOf = { mvrv: 'mvrv', nupl: 'nupl', puell: 'puell', hashribbons: 'hash', funding: 'funding', sth_mvrv: 'sthrp', profit_supply: 'profit', whale: 'whale', etf_flow: 'etf', liq: 'liq' };
 const ageOf = { mvrv: F.mvrv, nupl: F.nupl, puell: F.puell, fng: F.fng, hashribbons: F.hash, funding: F.funding, sth_mvrv: F.sthrp, profit_supply: F.profit, whale: F.whale, stable30: F.stable, ssr: F.stable };
 const lastReal = { etf_flow: S.etf.at(-1)?.[0], liq: S.liq.at(-1)?.[0] };
 const maxAge = { etf_flow: 10, liq: 10, fng: 3 };
 latest.indicators = {};
 for (const d of defs) {
   const x = ind[d.id], src = srcOf[d.id] || 'price';
-  let age = ageOf[d.id]?.age?.[L] ?? 0;
+  let age = (ageOf[d.id]?.age?.[L] ?? 0) + (LAG[lagOf[d.id]] || 0);
   if (lastReal[d.id]) age = Math.round((Date.parse(cal[L]) - Date.parse(lastReal[d.id])) / 86400000);
   const ok = !!x && age <= (maxAge[d.id] ?? 14);
   const asOf = addDays(cal[L], -age);
@@ -387,6 +399,7 @@ latest.date = today; latest.updatedAt = nowISO; latest.btcPrice = Math.round(clo
 latest.index = cycleIndex(L);
 latest.indexZone = indexZone(config, latest.index)?.name ?? null;
 latest.bgCalls = bgCalls;
+latest.lags = LAG;
 
 if (fetchOnly) {
   latest.pending = true;
