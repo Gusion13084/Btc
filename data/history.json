@@ -347,12 +347,12 @@
  },
  {
   "date": "2026-11-04",
-  "btcPrice": 77179,
+  "btcPrice": 77354,
   "cbs": 0,
   "cts": 0,
   "cbsConfirm": 0,
   "ctsConfirm": 7,
-  "idx": 35.6,
+  "idx": 35.7,
   "cbsLevel": "無信號",
   "ctsLevel": "無信號",
   "action": "繼續期限套利，不動作",
@@ -361,36 +361,38 @@
    "nupl": 0.3349,
    "puell": 1.0514,
    "hashribbons": "normal",
-   "ssr": 5.25915,
-   "rsi_w": 50.79991,
-   "wma200": 1.14015,
-   "pi_bottom": 1.20557,
+   "ssr": 5.27105,
+   "rsi_w": 51.02252,
+   "wma200": 1.14271,
+   "pi_bottom": 1.2056,
    "pi_top": 0.4986,
    "fng": 34,
    "funding": 0.01,
    "etf_flow": -2873.48331,
    "liq": 29758342.0067,
-   "sth_mvrv": 1.01696,
+   "sth_mvrv": 1.01926,
    "profit_supply": 62.62036,
    "whale": 0.10749,
-   "mayer": 1.05487,
-   "lsr": 2.58,
+   "mayer": 1.05724,
+   "lsr": 2.55,
    "btcdom": 59.32,
-   "stable30": -3.99195
+   "stable30": -3.99195,
+   "ethbtc": 0.02949
   },
   "pct": {
    "mvrv": 40,
    "nupl": 38.9,
    "puell": 50.8,
    "ssr": 40,
-   "rsi_w": 35.9,
-   "wma200": 29.5,
+   "rsi_w": 36.4,
+   "wma200": 29.8,
    "pi_bottom": 28.9,
    "pi_top": 31.4,
    "fng": 29.8,
-   "sth_mvrv": 41.6,
+   "sth_mvrv": 42.2,
    "profit_supply": 19,
-   "mayer": 41.2
+   "mayer": 41.4,
+   "ethbtc": 20.7
   },
   "items": {
    "mvrv": [
@@ -470,6 +472,10 @@
     null
    ],
    "stable30": [
+    null,
+    null
+   ],
+   "ethbtc": [
     null,
     null
    ]
