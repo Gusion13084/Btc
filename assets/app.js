@@ -248,13 +248,24 @@ function decisionCard() {
     <h2>${esc(d.title)}</h2>
     <p class="dec-action">${esc(d.action)}</p>
     ${d.notes.length ? `<ul class="dec-notes">${d.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
+    <div class="allocs">
+      ${bar('本輪抄底累計投入', d.alloc.buy, 'buy')}
+      ${bar('本輪現貨累計減倉', d.alloc.sell, 'sell')}
+    </div>
     ${d.position ? `<div class="pos">
-      <div class="pos-top"><span>建議倉位</span><span class="mono"><b>現貨 ${d.position.spot}%</b>・套利池 ${100 - d.position.spot}%</span></div>
+      <div class="pos-top"><span>目前總倉位（建議）</span><span class="mono"><b>現貨 ${d.position.spot}%</b>・套利池 ${100 - d.position.spot}%</span></div>
       <div class="pos-bar"><i style="width:${d.position.spot}%"></i></div>
-      <div class="pos-meta sub">本輪抄底已投入 ${d.alloc.buy}%・本輪已減倉 ${d.alloc.sell}%${d.position.last ? `・上一筆：${esc(d.position.last.date)} ${esc(d.position.last.label)}（${usd(d.position.last.price)}，現貨 ${d.position.last.before}% → ${d.position.last.after}%）` : ''}</div>
+      <div class="pos-meta sub">${resetHint(d)}${d.position.last ? `・上一筆：${esc(d.position.last.date)} ${esc(d.position.last.label)}（${usd(d.position.last.price)}，現貨 ${d.position.last.before}% → ${d.position.last.after}%）` : ''}</div>
     </div>` : ''}
     <p class="sub">依手冊分批規則自動判斷，僅供參考，不構成投資建議。</p>
   </section>`;
+}
+
+function resetHint(d) {
+  const t = [];
+  if (d.alloc.buy > 0) t.push('週期指數連續 30 天 ≥ 50 後，抄底進度歸零');
+  if (d.alloc.sell > 0) t.push('週期指數連續 30 天 < 40 後，減倉進度歸零');
+  return t.length ? t.join('；') + '。' : '';
 }
 
 function sparkline(vals, w = 300, h = 56) {
