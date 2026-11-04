@@ -347,12 +347,12 @@
  },
  {
   "date": "2026-11-04",
-  "btcPrice": 76629,
+  "btcPrice": 76425,
   "cbs": 0,
   "cts": 0,
   "cbsConfirm": 0,
   "ctsConfirm": 0,
-  "idx": 35.1,
+  "idx": 35,
   "cbsLevel": "無信號",
   "ctsLevel": "無信號",
   "action": "繼續期限套利，不動作",
@@ -361,36 +361,36 @@
    "nupl": 0.3349,
    "puell": 1.0514,
    "hashribbons": "normal",
-   "ssr": 5.22111,
-   "rsi_w": 50.11094,
-   "wma200": 1.13206,
-   "pi_bottom": 1.20547,
+   "ssr": 5.20786,
+   "rsi_w": 49.86107,
+   "wma200": 1.12908,
+   "pi_bottom": 1.20544,
    "pi_top": 0.49857,
    "fng": 34,
    "funding": 0.01,
    "etf_flow": -2873.48331,
    "liq": 29758342.0067,
-   "sth_mvrv": 1.00971,
+   "sth_mvrv": 1.00703,
    "profit_supply": 62.62036,
    "whale": 0.43649,
-   "mayer": 1.04739,
-   "lsr": 2.47,
-   "btcdom": 59.29,
-   "stable30": -3.98185
+   "mayer": 1.04462,
+   "lsr": 2.5,
+   "btcdom": 59.21,
+   "stable30": -3.99288
   },
   "pct": {
    "mvrv": 39.9,
    "nupl": 38.9,
    "puell": 50.7,
-   "ssr": 39.5,
-   "rsi_w": 34.3,
-   "wma200": 28.7,
+   "ssr": 39.2,
+   "rsi_w": 33.5,
+   "wma200": 28.4,
    "pi_bottom": 28.8,
    "pi_top": 31.4,
    "fng": 29.8,
-   "sth_mvrv": 40.6,
+   "sth_mvrv": 40.2,
    "profit_supply": 19,
-   "mayer": 40
+   "mayer": 39.7
   },
   "items": {
    "mvrv": [
@@ -478,13 +478,26 @@
   "decision": {
    "tone": "hold",
    "title": "已完成第一批・預警進場",
-   "action": "持有並等待：CBS 達到 16 分，且距第一批至少 7 天，即啟動第二批・確認加碼。",
+   "action": "系統在 2026-03-09（約 $68,447）觸發此批次。持有並等待：CBS 達到 16 分，且距第一批至少 7 天，即啟動第二批・確認加碼。",
    "notes": [
     "週期指數 30 天下降 20 點，市場明顯轉弱。"
    ],
    "alloc": {
     "buy": 20,
     "sell": 0
+   },
+   "position": {
+    "spot": 46,
+    "last": {
+     "date": "2026-03-09",
+     "price": 68447,
+     "type": "buy",
+     "label": "第一批・預警進場",
+     "pct": 20,
+     "cum": 20,
+     "before": 32,
+     "after": 46
+    }
    }
   }
  }
