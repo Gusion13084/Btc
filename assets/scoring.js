@@ -147,7 +147,8 @@ export function runPlan(config, rows, todayExtra = {}) {
         : { tone: 'hold', title: `${tr.stage.label}已完成`, action: `已依規則累計減倉約 ${tr.cum}%，剩餘核心倉位續抱；價格重新站上 50 週均線前不加碼，等待 CBS 抄底信號。` };
     } else if (st.buy.done) {
       const nb = LB.filter(l => l.batch)[st.buy.done];
-      d = { tone: 'hold', title: `已完成${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}`, action: nb ? `持有並等待：${nb.batch.trigger}，即啟動${nb.batch.label}。` : '四批已全部完成，現貨進入長期持有。' };
+      const lb = rows[st.buy.last];
+      d = { tone: 'hold', title: `已完成${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}`, action: `${lb ? `系統在 ${lb.date}（約 $${Math.round(lb.price).toLocaleString('en-US')}）觸發此批次。` : ''}${nb ? `持有並等待：${nb.batch.trigger}，即啟動${nb.batch.label}。` : '四批已全部完成，現貨進入長期持有。'}` };
     } else if (st.sell.done) {
       const ns = LS.filter(l => l.batch)[st.sell.done];
       d = { tone: 'hold', title: `已完成${LS.filter(l => l.batch)[st.sell.done - 1].batch.label}`, action: ns ? `剩餘現貨續抱：${ns.batch.trigger}，即啟動${ns.batch.label}。` : '減倉計畫已完成，保留核心倉位。' };
