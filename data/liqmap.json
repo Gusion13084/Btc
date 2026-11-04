@@ -1,217 +1,342 @@
 {
- "generatedAt": "2026-11-04T04:34:00.745Z",
- "price": 76612,
+ "generatedAt": "2026-11-04T04:35:19.226Z",
+ "price": 76571,
  "step": 400,
  "hours": 800,
- "oiPoints": 100,
+ "oiPoints": 800,
  "method": "oi",
  "buckets": [
   {
+   "price": 88000,
+   "long": 0,
+   "short": 1141387
+  },
+  {
+   "price": 87600,
+   "long": 0,
+   "short": 32380531
+  },
+  {
+   "price": 87200,
+   "long": 0,
+   "short": 31216609
+  },
+  {
+   "price": 86800,
+   "long": 0,
+   "short": 9784173
+  },
+  {
+   "price": 86400,
+   "long": 0,
+   "short": 23806193
+  },
+  {
    "price": 86000,
    "long": 0,
-   "short": 595477
+   "short": 13853052
   },
   {
    "price": 85600,
    "long": 0,
-   "short": 4247970
+   "short": 24034952
   },
   {
    "price": 85200,
    "long": 0,
-   "short": 11471176
+   "short": 25360343
   },
   {
    "price": 84800,
    "long": 0,
-   "short": 16976908
+   "short": 37580887
   },
   {
    "price": 84400,
    "long": 0,
-   "short": 1934085
+   "short": 41533747
   },
   {
    "price": 84000,
    "long": 0,
-   "short": 13374686
+   "short": 38665025
+  },
+  {
+   "price": 83600,
+   "long": 0,
+   "short": 13613242
   },
   {
    "price": 83200,
    "long": 0,
-   "short": 2176936
+   "short": 12724683
+  },
+  {
+   "price": 82800,
+   "long": 0,
+   "short": 33913038
+  },
+  {
+   "price": 82400,
+   "long": 0,
+   "short": 32829745
+  },
+  {
+   "price": 82000,
+   "long": 0,
+   "short": 11022024
+  },
+  {
+   "price": 81600,
+   "long": 0,
+   "short": 11547192
   },
   {
    "price": 81200,
    "long": 0,
-   "short": 1734052
+   "short": 1855333
   },
   {
    "price": 80800,
    "long": 0,
-   "short": 6003261
+   "short": 6838966
   },
   {
    "price": 80400,
    "long": 0,
-   "short": 9446541
+   "short": 14348702
   },
   {
    "price": 80000,
    "long": 0,
-   "short": 16209899
+   "short": 20835698
   },
   {
    "price": 79600,
    "long": 0,
-   "short": 11297267
+   "short": 49083559
   },
   {
    "price": 79200,
    "long": 0,
-   "short": 7777937
+   "short": 14497008
   },
   {
    "price": 78800,
    "long": 0,
-   "short": 8100362
+   "short": 10513888
   },
   {
    "price": 78400,
    "long": 0,
-   "short": 3491649
+   "short": 3346348
   },
   {
    "price": 78000,
    "long": 0,
-   "short": 6319688
+   "short": 6381744
   },
   {
    "price": 77600,
    "long": 0,
-   "short": 930025
+   "short": 1017378
   },
   {
    "price": 77200,
    "long": 0,
-   "short": 1316560
+   "short": 1271663
   },
   {
    "price": 76800,
    "long": 0,
-   "short": 620017
+   "short": 678252
   },
   {
    "price": 76000,
-   "long": 736488,
+   "long": 678252,
    "short": 0
   },
   {
    "price": 75600,
-   "long": 3667717,
+   "long": 6074555,
    "short": 0
   },
   {
    "price": 75200,
-   "long": 11136866,
+   "long": 24848512,
    "short": 0
   },
   {
    "price": 74800,
-   "long": 13247790,
+   "long": 37375655,
    "short": 0
   },
   {
    "price": 74400,
-   "long": 12448472,
+   "long": 26951974,
    "short": 0
   },
   {
    "price": 74000,
-   "long": 11515279,
+   "long": 64970014,
    "short": 0
   },
   {
    "price": 73600,
-   "long": 3350012,
+   "long": 34772952,
    "short": 0
   },
   {
    "price": 73200,
-   "long": 2042620,
+   "long": 24940235,
+   "short": 0
+  },
+  {
+   "price": 72800,
+   "long": 15991738,
+   "short": 0
+  },
+  {
+   "price": 72400,
+   "long": 17703327,
+   "short": 0
+  },
+  {
+   "price": 72000,
+   "long": 37145585,
+   "short": 0
+  },
+  {
+   "price": 71600,
+   "long": 3931909,
+   "short": 0
+  },
+  {
+   "price": 71200,
+   "long": 11224079,
    "short": 0
   },
   {
    "price": 70800,
-   "long": 3706463,
+   "long": 3535483,
    "short": 0
   },
   {
    "price": 70400,
-   "long": 11898986,
+   "long": 11572254,
    "short": 0
   },
   {
    "price": 70000,
-   "long": 18056690,
+   "long": 22382499,
    "short": 0
   },
   {
    "price": 69600,
-   "long": 1968844,
+   "long": 28997096,
    "short": 0
   },
   {
    "price": 69200,
-   "long": 13439351,
+   "long": 30520277,
    "short": 0
   },
   {
    "price": 68800,
-   "long": 2042620,
+   "long": 3211984,
+   "short": 0
+  },
+  {
+   "price": 68400,
+   "long": 3415094,
+   "short": 0
+  },
+  {
+   "price": 68000,
+   "long": 3016911,
+   "short": 0
+  },
+  {
+   "price": 67600,
+   "long": 1962682,
+   "short": 0
+  },
+  {
+   "price": 67200,
+   "long": 4383208,
+   "short": 0
+  },
+  {
+   "price": 66800,
+   "long": 6916298,
+   "short": 0
+  },
+  {
+   "price": 66400,
+   "long": 12131437,
+   "short": 0
+  },
+  {
+   "price": 66000,
+   "long": 4955300,
+   "short": 0
+  },
+  {
+   "price": 65600,
+   "long": 15020297,
+   "short": 0
+  },
+  {
+   "price": 65200,
+   "long": 16333321,
+   "short": 0
+  },
+  {
+   "price": 64800,
+   "long": 1702284,
    "short": 0
   }
  ],
  "near5": {
-  "long": 58145244,
-  "short": 65509945
+  "long": 236603887,
+  "short": 107625538
  },
  "near10": {
-  "long": 107215578,
-  "short": 88798880
+  "long": 403616396,
+  "short": 284983488
  },
  "topLong": [
   {
-   "price": 70000,
-   "usd": 18056690,
-   "dist": -8.6
-  },
-  {
-   "price": 69200,
-   "usd": 13439351,
-   "dist": -9.7
+   "price": 74000,
+   "usd": 64970014,
+   "dist": -3.4
   },
   {
    "price": 74800,
-   "usd": 13247790,
-   "dist": -2.4
+   "usd": 37375655,
+   "dist": -2.3
+  },
+  {
+   "price": 72000,
+   "usd": 37145585,
+   "dist": -6
   }
  ],
  "topShort": [
   {
-   "price": 84800,
-   "usd": 16976908,
-   "dist": 10.7
+   "price": 79600,
+   "usd": 49083559,
+   "dist": 4
   },
   {
-   "price": 80000,
-   "usd": 16209899,
-   "dist": 4.4
+   "price": 84400,
+   "usd": 41533747,
+   "dist": 10.2
   },
   {
    "price": 84000,
-   "usd": 13374686,
-   "dist": 9.6
+   "usd": 38665025,
+   "dist": 9.7
   }
  ],
  "realized": {
@@ -253,5 +378,7 @@
    }
   ]
  },
- "notes": []
+ "notes": [
+  "主動買賣量：/rubik/stat/taker-volume-contract HTTP 429"
+ ]
 }

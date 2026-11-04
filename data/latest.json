@@ -1,7 +1,7 @@
 {
  "date": "2026-11-04",
- "updatedAt": "2026-11-04T04:33:56.825Z",
- "btcPrice": 76529,
+ "updatedAt": "2026-11-04T04:35:12.489Z",
+ "btcPrice": 76496,
  "legacy": false,
  "indicators": {
   "mvrv": {
@@ -13,7 +13,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-28",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgcore",
    "age": 7
   },
@@ -26,7 +26,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-28",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgcore",
    "age": 7
   },
@@ -39,7 +39,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-28",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgcore",
    "age": 7
   },
@@ -50,12 +50,12 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-28",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "hash",
    "age": 7
   },
   "ssr": {
-   "value": 5.2149,
+   "value": 5.21265,
    "fields": {
     "pct": 39.3,
     "p": 39.3,
@@ -65,46 +65,46 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "stable",
    "age": 0
   },
   "rsi_w": {
-   "value": 49.98858,
+   "value": 49.94805,
    "fields": {
-    "p": 34.2
+    "p": 33.9
    },
    "detail": "週收盤 $78,239",
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "price",
    "age": 0
   },
   "wma200": {
-   "value": 1.13061,
+   "value": 1.13012,
    "fields": {
     "p": 28.5
    },
-   "detail": "BTC $76,529 / 200WMA $67,689",
+   "detail": "BTC $76,496 / 200WMA $67,689",
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "price",
    "age": 0
   },
   "pi_bottom": {
-   "value": 1.20546,
+   "value": 1.20545,
    "fields": {
     "p": 28.8
    },
-   "detail": "150EMA $76,507 / 471DMA×0.745 $63,467",
+   "detail": "150EMA $76,506 / 471DMA×0.745 $63,467",
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "price",
    "age": 0
   },
@@ -113,11 +113,11 @@
    "fields": {
     "p": 31.4
    },
-   "detail": "111DMA $75,603 / 350DMA×2 $151,641",
+   "detail": "111DMA $75,603 / 350DMA×2 $151,640",
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "price",
    "age": 0
   },
@@ -131,7 +131,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "fng",
    "age": 0
   },
@@ -145,7 +145,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-27",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgcore",
    "age": 8
   },
@@ -159,7 +159,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-30",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgaux",
    "age": 5
   },
@@ -174,12 +174,12 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-02",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgaux",
    "age": 2
   },
   "sth_mvrv": {
-   "value": 1.0084,
+   "value": 1.00796,
    "fields": {
     "p": 39.5
    },
@@ -187,7 +187,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-10-28",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgaux",
    "age": 7
   },
@@ -200,7 +200,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-03",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgaux",
    "age": 1
   },
@@ -211,20 +211,20 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-02",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "bgaux",
    "age": 2
   },
   "mayer": {
-   "value": 1.04604,
+   "value": 1.04559,
    "fields": {
-    "p": 39.8
+    "p": 39.7
    },
    "detail": "200DMA $73,161",
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "price",
    "age": 0
   },
@@ -235,7 +235,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "okx",
    "age": 0
   },
@@ -246,7 +246,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "market",
    "age": 0
   },
@@ -257,7 +257,7 @@
    "ok": true,
    "date": "2026-11-04",
    "asOf": "2026-11-04",
-   "fetchedAt": "2026-11-04T04:33:56.825Z",
+   "fetchedAt": "2026-11-04T04:35:12.489Z",
    "source": "stable",
    "age": 0
   }
@@ -267,62 +267,62 @@
    "name": "BTC 價格（Blockchain.com + Kraken）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "fng": {
    "name": "Alternative.me 恐懼貪婪",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "hash": {
    "name": "Blockchain.com 算力",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "stable": {
    "name": "DefiLlama 穩定幣",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "market": {
    "name": "CoinGecko 市值",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "bgcore": {
    "name": "BGeometrics 核心",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "bgaux": {
    "name": "BGeometrics 輔助",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "okx": {
    "name": "OKX 合約數據",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   },
   "okxliq": {
    "name": "OKX 清算地圖",
    "ok": true,
-   "error": null,
-   "checkedAt": "2026-11-04T04:33:56.825Z"
+   "error": "主動買賣量：/rubik/stat/taker-volume-contract HTTP 429",
+   "checkedAt": "2026-11-04T04:35:12.489Z"
   }
  },
  "index": 35,
  "indexZone": "中性",
  "bgCalls": 0,
  "pending": false,
- "snapshotAt": "2026-11-04T04:33:56.825Z",
+ "snapshotAt": "2026-11-04T04:35:12.489Z",
  "ledger": [
   {
    "date": "2022-11-11",
