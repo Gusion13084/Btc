@@ -207,6 +207,14 @@ td.small{font-size:12.5px;line-height:1.7}
 .alloc-bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
 .alloc-bar i{display:block;height:100%}
 .alloc-bar.buy i{background:var(--buy)} .alloc-bar.sell i{background:var(--sell)}
+.pos{display:grid;gap:6px}
+.pos-top{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+.pos-top b{color:var(--ink);font-size:15px}
+.pos-bar{height:10px;border-radius:5px;background:color-mix(in srgb,var(--buy) 25%,var(--sunk));overflow:hidden}
+.pos-bar i{display:block;height:100%;background:var(--accent)}
+.pos-meta{font-size:12.5px;line-height:1.5}
+table.ledger td{white-space:normal;font-size:13.5px}
+table.ledger td:first-child,table.ledger td:nth-child(3){white-space:nowrap}
 /* 週期位置指數 */
 .cindex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
 .ci-main{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}

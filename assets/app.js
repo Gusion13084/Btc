@@ -248,10 +248,11 @@ function decisionCard() {
     <h2>${esc(d.title)}</h2>
     <p class="dec-action">${esc(d.action)}</p>
     ${d.notes.length ? `<ul class="dec-notes">${d.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
-    <div class="allocs">
-      ${bar('抄底資金累計投入目標', d.alloc.buy, 'buy')}
-      ${bar('現貨累計減倉目標', d.alloc.sell, 'sell')}
-    </div>
+    ${d.position ? `<div class="pos">
+      <div class="pos-top"><span>建議倉位</span><span class="mono"><b>現貨 ${d.position.spot}%</b>・套利池 ${100 - d.position.spot}%</span></div>
+      <div class="pos-bar"><i style="width:${d.position.spot}%"></i></div>
+      <div class="pos-meta sub">本輪抄底已投入 ${d.alloc.buy}%・本輪已減倉 ${d.alloc.sell}%${d.position.last ? `・上一筆：${esc(d.position.last.date)} ${esc(d.position.last.label)}（${usd(d.position.last.price)}，現貨 ${d.position.last.before}% → ${d.position.last.after}%）` : ''}</div>
+    </div>` : ''}
     <p class="sub">依手冊分批規則自動判斷，僅供參考，不構成投資建議。</p>
   </section>`;
 }
@@ -334,6 +335,13 @@ function viewHistory() {
       <div class="chart-box"><canvas id="c2" aria-label="單一指標數值走勢與門檻線"></canvas></div>
       <div class="sub" id="indNote"></div>
     </section>
+    ${S.dec?.ledger?.length ? `<section class="panel">
+      <div class="panel-head"><h3 style="font-size:16px">操作紀錄</h3><span class="sub">系統依規則觸發的每一筆買入與減倉</span></div>
+      <div class="tbl-wrap"><table class="ledger"><thead><tr><th>日期</th><th>動作</th><th>BTC</th><th>建議現貨比例</th></tr></thead><tbody>
+      ${[...S.dec.ledger].reverse().map(l => `<tr><td class="mono">${esc(l.date)}</td><td><span class="dec-tag ${l.type === 'buy' ? 'buy' : 'sell'}">${esc(l.label)}</span><div class="sub">${l.type === 'buy' ? `投入抄底資金 ${l.pct}%（本輪累計 ${l.cum}%）` : `減倉現貨 ${l.pct}%（本輪累計 ${l.cum}%）`}</div></td><td class="mono">${usd(l.price)}</td><td class="mono">${l.before}% → <b>${l.after}%</b></td></tr>`).join('')}
+      </tbody></table></div>
+      <p class="sub">${esc(S.config.position?.note || '')}</p>
+    </section>` : ''}
     <section class="panel" id="logPanel"></section>`;
   renderLog();
   drawHistory(sel);
@@ -365,7 +373,7 @@ function logRows() {
 function logDetail(r) {
   const dec = r.bt ? btDecision(r.i) : r.decision;
   const head = dec
-    ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.alloc ? `<span class="sub">抄底資金累計目標 ${dec.alloc.buy}%・現貨累計減倉目標 ${dec.alloc.sell}%</span>` : ''}</div>`
+    ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.position ? `<span class="sub">建議現貨 ${dec.position.spot}%・套利池 ${100 - dec.position.spot}%（本輪抄底 ${dec.alloc.buy}%・本輪減倉 ${dec.alloc.sell}%）</span>` : dec.alloc ? `<span class="sub">抄底資金累計目標 ${dec.alloc.buy}%・現貨累計減倉目標 ${dec.alloc.sell}%</span>` : ''}</div>`
     : `<div class="ld-dec"><b>${esc(r.action || '—')}</b><span class="sub">舊網站匯入紀錄，沒有逐項判斷。</span></div>`;
   if (!r.values) return head + (r.bt ? '<p class="sub">回測紀錄只保存分數；各指標數值從每日快照開始保存。</p>' : '');
   const defs = S.config.indicators.filter(d => r.values[d.id] != null);

@@ -86,12 +86,16 @@ export function indexZone(config, v) {
 // 規則：等級需持續 3 天才算數；已執行的批次會被記住；下一批距上一批至少 7 天；
 //       買入批次執行後 CBS 跌回 8 分以下 → 暫停；指數連續 30 天 ≥ 50 視為抄底週期結束（重置）；
 //       減倉批次在指數連續 30 天 < 40 後重置。
+const buyCumAfter = n => [0, 20, 50, 80, 100][n] ?? 100;
 const minLast = (rows, i, k, n) => { let m = Infinity; for (let j = Math.max(0, i - n + 1); j <= i; j++) m = Math.min(m, rows[j][k] ?? 0); return m; };
 const medLast = (rows, i, k, n) => { const a = []; for (let j = Math.max(0, i - n + 1); j <= i; j++) a.push(rows[j][k] ?? 0); a.sort((x, y) => x - y); return a[a.length >> 1]; };
 
 export function runPlan(config, rows, todayExtra = {}) {
   const LB = config.levels.cbs, LS = config.levels.cts, T = config.trend;
   const st = { buy: { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }, sell: { done: 0, last: -1e9, cum: 0 }, idxHi: 0, idxLo: 0 };
+  // 倉位：w = 現貨佔策略資金的比例
+  const P = { w: (config.position?.start ?? 30) / 100, poolStart: null, spotStart: null, sellApplied: 0 };
+  const ledger = [];
   const out = [];
   for (let i = 0; i < rows.length; i++) {
     const r = rows[i], isLast = i === rows.length - 1;
@@ -102,7 +106,7 @@ export function runPlan(config, rows, todayExtra = {}) {
     // 週期結束重置
     st.idxHi = (r.idx ?? 0) >= 50 ? st.idxHi + 1 : 0;
     st.idxLo = r.idx != null && r.idx < 40 ? st.idxLo + 1 : 0;
-    if (st.buy.done && st.idxHi >= 30) st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 };
+    if (st.buy.done && st.idxHi >= 30) { st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.poolStart = null; }
     if (st.sell.done && st.idxLo >= 30) st.sell = { done: 0, last: -1e9, cum: 0 };
     const tr = trendState(config, rows.slice(Math.max(0, i - 500), i + 1));
     const ext = isLast ? (todayExtra.cbsExtremes || []) : [];
@@ -117,6 +121,9 @@ export function runPlan(config, rows, todayExtra = {}) {
       const gapOk = i - st.buy.last >= 7;
       if (!st.buy.paused && (lvOk || drop || extremeOk) && (st.buy.done === 0 || gapOk)) {
         st.buy.done = nextB; st.buy.last = i; if (nextB === 1) st.buy.firstPrice = r.price;
+        if (P.poolStart == null) P.poolStart = 1 - P.w;
+        const before = P.w; P.w = Math.min(1, P.w + P.poolStart * batchB.batch.pct / 100);
+        ledger.push({ date: r.date, price: r.price, type: 'buy', label: batchB.batch.label, pct: batchB.batch.pct, cum: buyCumAfter(nextB), before: Math.round(before * 100), after: Math.round(P.w * 100) });
       }
     }
     if (st.buy.done && !st.buy.paused && (r.cbs ?? 0) <= 8) { st.buy.paused = true; st.buy.pausedAt = i; }
@@ -127,6 +134,15 @@ export function runPlan(config, rows, todayExtra = {}) {
       st.sell.done = nextS; st.sell.last = i; st.sell.cum += batchS.batch.pct;
     }
     const sellCum = Math.max(st.sell.cum, tr.cum || 0);
+    if (sellCum > P.sellApplied) {
+      if (P.spotStart == null) P.spotStart = P.w;
+      const before = P.w, dPct = sellCum - P.sellApplied;
+      P.w = Math.max(0, P.w - P.spotStart * dPct / 100);
+      const viaTrend = (tr.cum || 0) >= st.sell.cum;
+      ledger.push({ date: r.date, price: r.price, type: 'sell', label: viaTrend && tr.stage ? tr.stage.label : (LS.filter(l => l.batch)[st.sell.done - 1]?.batch.label || '減倉'), pct: dPct, cum: sellCum, before: Math.round(before * 100), after: Math.round(P.w * 100) });
+      P.sellApplied = sellCum;
+    }
+    if (sellCum === 0 && P.sellApplied > 0) { P.sellApplied = 0; P.spotStart = null; }
     const buyCum = (config.allocation?.cbs || [])[LB.indexOf(LB.filter(l => l.batch)[st.buy.done - 1]) ] ?? 0;
 
     // --- 決定今天要說什麼（優先順序：正在執行 > 暫停 > 趨勢保護 > 已完成待命 > 預警/觀察 > 持有） ---
@@ -176,9 +192,11 @@ export function runPlan(config, rows, todayExtra = {}) {
       if (tr.next) d.notes.push(`若再維持到第 ${tr.next.days} 天，執行${tr.next.label}。`);
     } else if (tr.armed && tr.ma && r.price > tr.ma && r.price / tr.ma < 1.1) d.notes.push(`市場近期曾過熱，價格距離 50 週均線只剩 ${((r.price / tr.ma - 1) * 100).toFixed(1)}%，跌破 3 天將啟動趨勢保護減倉。`);
     d.alloc = { buy: buyCum, sell: sellCum };
+    d.position = { spot: Math.round(P.w * 100), last: ledger[ledger.length - 1] || null };
     d.trend = tr;
     out.push(d);
   }
+  out.ledger = ledger;
   return out;
 }
 
@@ -201,6 +219,7 @@ export function decide(config, sc, rows, index) {
   out.notes = out.notes.filter(Boolean);
   out.deltas = { idx7: delta('idx', 7), idx30: d30i, cbs7: delta('cbs', 7), cts7: delta('cts', 7), cbs30: delta('cbs', 30), cts30: delta('cts', 30) };
   out.plan = plan;
+  out.ledger = plan.ledger;
   return out;
 }
 

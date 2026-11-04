@@ -410,7 +410,8 @@ const entry = {
   const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7] }));
   rows[rows.length - 1] = { ...rows[rows.length - 1], date: today, cbs: s.cbs.score, cts: s.cts.score, idx: latest.index };
   const d = decide(config, s, rows, latest.index);
-  entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, alloc: d.alloc };
+  entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, alloc: d.alloc, position: d.position };
+  latest.ledger = d.ledger;
 }
 const hi = history.findIndex(h => h.date === today);
 if (hi >= 0) history[hi] = entry; else history.push(entry);
