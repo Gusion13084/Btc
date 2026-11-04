@@ -115,3 +115,107 @@ export async function buildLiqMap(log = console.log) {
     realized, notes,
   };
 }
+
+// ---------- 多交易所版本（Coinalyze，需要免費 API 金鑰） ----------
+const CZ = 'https://api.coinalyze.net/v1';
+const PREFER = ['binance', 'bybit', 'okx', 'bitget', 'deribit', 'hyperliquid', 'gate', 'bitmex', 'coinbase', 'kraken'];
+async function cz(path, key, log) {
+  for (let t = 0; t < 3; t++) {
+    const r = await fetch(CZ + path, { headers: { ...UA, api_key: key }, signal: AbortSignal.timeout(40000) });
+    if (r.status === 429) { const w = (+r.headers.get('retry-after') || 30) + 1; log(`Coinalyze 限速，等待 ${w} 秒`); await sleep(w * 1000); continue; }
+    if (!r.ok) throw new Error(`Coinalyze ${path.split('?')[0]} HTTP ${r.status}`);
+    return r.json();
+  }
+  throw new Error('Coinalyze 限速重試失敗');
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+export async function buildLiqMapMulti(key, log = console.log) {
+  const exs = await cz('/exchanges', key, log);
+  const exName = new Map(exs.map(e => [e.code, e.name]));
+  const mk = await cz('/future-markets', key, log);
+  const cand = mk.filter(m => m.base_asset === 'BTC' && m.is_perpetual && ['USDT', 'USD', 'USDC'].includes(m.quote_asset) && m.has_ohlcv_data)
+    .map(m => ({ ...m, ex: (exName.get(m.symbol.split('.').pop()) || m.exchange || '').toString() }))
+    .filter(m => PREFER.some(p => m.ex.toLowerCase().includes(p)))
+    .sort((a, b) => PREFER.findIndex(p => a.ex.toLowerCase().includes(p)) - PREFER.findIndex(p => b.ex.toLowerCase().includes(p)));
+  // 每個交易所最多取 2 個主要合約（USDT 與幣本位），總數上限 10，以符合每分鐘 40 次限制
+  const pick = [], perEx = {};
+  for (const m of cand) { const k = m.ex; if ((perEx[k] || 0) >= 2 || pick.length >= 10) continue; perEx[k] = (perEx[k] || 0) + 1; pick.push(m); }
+  if (!pick.length) throw new Error('找不到 BTC 永續合約');
+  const syms = pick.map(m => m.symbol).join(',');
+  const to = Math.floor(Date.now() / 1000), from = to - HOURS * 3600;
+  const q = `symbols=${encodeURIComponent(syms)}&interval=1hour&from=${from}&to=${to}`;
+  const oiR = await cz(`/open-interest-history?${q}&convert_to_usd=true`, key, log);
+  await sleep(+process.env.CZ_WAIT_MS || 62000); // 每個 symbol 算一次呼叫：分三個時段送出，避免超過每分鐘 40 次
+  const pxR = await cz(`/ohlcv-history?${q}`, key, log);
+  await sleep(+process.env.CZ_WAIT_MS || 62000);
+  const lqR = await cz(`/liquidation-history?${q}&convert_to_usd=true`, key, log);
+  const by = (arr) => new Map((arr || []).map(x => [x.symbol, x.history || []]));
+  const OI = by(oiR), PX = by(pxR), LQ = by(lqR);
+  log(`Coinalyze：${pick.map(m => `${m.ex}:${m.symbol}`).join('、')}；OI 樣本 ${JSON.stringify((oiR[0]?.history || [])[0])}；K 線樣本 ${JSON.stringify((pxR[0]?.history || [])[0])}；清算樣本 ${JSON.stringify((lqR[0]?.history || []).at(-1))}`);
+  let pos = [], ref = null, used = [];
+  for (const m of pick) {
+    const oi = new Map((OI.get(m.symbol) || []).map(h => [h.t, h.c]));
+    const px = (PX.get(m.symbol) || []).filter(h => h.c > 0);
+    if (oi.size < 48 || px.length < 48) continue;
+    used.push(m.ex);
+    if (!ref || px.length > ref.length) ref = px;
+    let mine = [], prev = null;
+    for (const c of px) {
+      mine = mine.filter(p => p.side === 'L' ? c.l > p.px : c.h < p.px);
+      const cur = oi.get(c.t);
+      if (cur != null && prev != null) {
+        const d = cur - prev;
+        if (d > 0) {
+          const lr = c.v > 0 && c.bv != null ? Math.min(1, Math.max(0, c.bv / c.v)) : 0.5;
+          const entry = (c.h + c.l + c.c) / 3;
+          for (const [lev, w] of LEV) {
+            mine.push({ side: 'L', px: entry * (1 - 1 / lev + MMR), usd: d * lr * w });
+            mine.push({ side: 'S', px: entry * (1 + 1 / lev - MMR), usd: d * (1 - lr) * w });
+          }
+        } else if (d < 0 && prev > 0) { const k = Math.max(0, 1 + d / prev); mine.forEach(p => p.usd *= k); }
+      }
+      if (cur != null) prev = cur;
+    }
+    pos.push(...mine);
+  }
+  if (!ref) throw new Error('Coinalyze 數據不足');
+  const price = ref.at(-1).c;
+  const out = bucketize(pos, price);
+  // 實際清算：每小時多空清算額，依當小時價格分桶（近 7 天）與 24 小時合計
+  const pxAt = new Map(ref.map(h => [h.t, h.c]));
+  const real = new Map(); let l24 = 0, s24 = 0, l7 = 0, s7 = 0;
+  for (const m of pick) for (const h of LQ.get(m.symbol) || []) {
+    const age = to - h.t; if (age > 7 * 86400) continue;
+    const p = pxAt.get(h.t); const L = +h.l || 0, Sx = +h.s || 0;
+    l7 += L; s7 += Sx; if (age <= 86400) { l24 += L; s24 += Sx; }
+    if (!p) continue;
+    const k = Math.floor(p / out.step) * out.step; const b = real.get(k) || { price: k, long: 0, short: 0 };
+    b.long += L; b.short += Sx; real.set(k, b);
+  }
+  const realTop = [...real.values()].map(b => ({ ...b, total: b.long + b.short })).sort((a, b) => b.total - a.total).slice(0, 5)
+    .map(b => ({ price: b.price, long: Math.round(b.long), short: Math.round(b.short) }));
+  return { ...out, generatedAt: new Date().toISOString(), price: Math.round(price), hours: ref.length, method: 'coinalyze',
+    exchanges: [...new Set(used)], symbols: pick.map(m => m.symbol),
+    realized: { h24: { long: Math.round(l24), short: Math.round(s24) }, d7: { long: Math.round(l7), short: Math.round(s7) }, top: realTop }, notes: [] };
+}
+
+function bucketize(pos, price) {
+  const step = Math.max(100, Math.round(price * 0.005 / 50) * 50);
+  const lo = price * 0.85, hi = price * 1.15;
+  const B = new Map();
+  for (const p of pos) {
+    if (p.px < lo || p.px > hi || p.usd < 1) continue;
+    const k = Math.floor(p.px / step) * step;
+    const b = B.get(k) || { price: k, long: 0, short: 0 };
+    p.side === 'L' ? (b.long += p.usd) : (b.short += p.usd);
+    B.set(k, b);
+  }
+  const buckets = [...B.values()].sort((a, b) => b.price - a.price).map(b => ({ price: b.price, long: Math.round(b.long), short: Math.round(b.short) }));
+  const sum = (f, a, b) => buckets.filter(x => x.price >= a && x.price < b).reduce((s, x) => s + x[f], 0);
+  const top = (f, cond) => buckets.filter(cond).sort((a, b) => b[f] - a[f]).slice(0, 3).map(x => ({ price: x.price, usd: x[f], dist: +((x.price / price - 1) * 100).toFixed(1) }));
+  return { step, buckets,
+    near5: { long: Math.round(sum('long', price * 0.95, price)), short: Math.round(sum('short', price, price * 1.05)) },
+    near10: { long: Math.round(sum('long', price * 0.9, price)), short: Math.round(sum('short', price, price * 1.1)) },
+    topLong: top('long', x => x.price < price), topShort: top('short', x => x.price > price) };
+}

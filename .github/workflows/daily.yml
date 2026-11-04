@@ -34,6 +34,8 @@ jobs:
         with:
           node-version: 22
       - name: 抓取指標並建立快照
+        env:
+          COINALYZE_API_KEY: ${{ secrets.COINALYZE_API_KEY }}
         run: node scripts/fetch.mjs ${{ inputs.force && '--force' || '' }} ${{ github.event.schedule == '0 1 * * *' && '--fetch-only' || '' }}
       - name: 提交數據
         run: |

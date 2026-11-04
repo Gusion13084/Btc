@@ -348,16 +348,22 @@ function liqCard() {
   const daily = (m.daily || []).slice(-7);
   const dmax = Math.max(1, ...daily.map(x => Math.max(x.long, x.short)));
   return `<section class="panel lq" aria-label="清算地圖">
-    <div class="panel-head"><h2 style="font-size:18px">清算地圖</h2><span class="sub">OKX BTC 永續・估算・${twTime(m.generatedAt)}</span></div>
+    <div class="panel-head"><h2 style="font-size:18px">清算地圖</h2><span class="sub">${m.method === 'coinalyze' ? `${esc((m.exchanges || []).join('、'))} 合計` : 'OKX BTC 永續'}・估算・${twTime(m.generatedAt)}</span></div>
     <div class="lq-sum">
       ${tS ? `<div class="lq-k up"><span>上方最大空單清算區</span><b class="mono">${usd(tS.price)}</b><span class="mono">+${tS.dist}%・約 ${mUsd(tS.usd)}</span></div>` : ''}
       ${tL ? `<div class="lq-k dn"><span>下方最大多單清算區</span><b class="mono">${usd(tL.price)}</b><span class="mono">${tL.dist}%・約 ${mUsd(tL.usd)}</span></div>` : ''}
     </div>
     <p class="lq-lean">${esc(lean)}<span class="sub">（±5% 內：上方空單 ${mUsd(u)}・下方多單 ${mUsd(d)}）</span></p>
     <div class="lq-chart">${bars}</div>
+    ${m.realized?.h24 ? `<div class="lq-real">
+      <div class="sub">實際已發生的清算（各交易所合計）</div>
+      <div class="lq-real-row"><span>近 24 小時</span><span class="mono">多單 <b class="dn">${mUsd(m.realized.h24.long)}</b>・空單 <b class="up">${mUsd(m.realized.h24.short)}</b></span></div>
+      <div class="lq-real-row"><span>近 7 天</span><span class="mono">多單 <b class="dn">${mUsd(m.realized.d7.long)}</b>・空單 <b class="up">${mUsd(m.realized.d7.short)}</b></span></div>
+      ${m.realized.top?.length ? `<div class="sub">近 7 天清算最集中的價位：${m.realized.top.slice(0, 3).map(t => `${usd(t.price)}（${mUsd(t.long + t.short)}）`).join('、')}</div>` : ''}
+    </div>` : ''}
     ${daily.length ? `<div class="lq-daily"><div class="sub">全市場每日實際清算（BGeometrics，最新 ${esc(daily.at(-1).date)}）</div>
       ${daily.map(x => `<div class="lqd"><span class="mono">${shortDate(x.date)}</span><span class="lqd-bars"><i class="dn" style="width:${(x.long / dmax * 100).toFixed(1)}%"></i><i class="up" style="width:${(x.short / dmax * 100).toFixed(1)}%"></i></span><span class="mono sub">多 ${mUsd(x.long)}・空 ${mUsd(x.short)}</span></div>`).join('')}</div>` : ''}
-    <p class="sub">估算方式：近 30 天 OKX 每小時新增的未平倉量視為新開倉，依 5–100 倍常見槓桿推算爆倉價，價格掃過的部位視為已清算。金額只代表 OKX 一家，用來看相對分布；價格常被吸引到大型清算區，屬盤勢輔助，不計分。</p>
+    <p class="sub">估算方式：近 30 天${m.method === 'coinalyze' ? '各交易所' : ' OKX'}每小時新增的未平倉量視為新開倉，依主動買賣比例分配多空、依 5–100 倍常見槓桿推算爆倉價，價格掃過的部位視為已清算。所有清算熱力圖（包括 CoinGlass）都是類似的估算，交易所不會公開個別倉位；${m.method === 'coinalyze' ? '涵蓋上列主要交易所，' : '目前只涵蓋 OKX 一家，'}用來看相對分布。屬盤勢輔助，不計分。數據來源：${m.method === 'coinalyze' ? '<a href="https://coinalyze.net" target="_blank" rel="noopener">Coinalyze</a>' : 'OKX'}。</p>
   </section>`;
 }
 

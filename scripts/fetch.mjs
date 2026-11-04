@@ -3,7 +3,7 @@
 // 好處：今天的數值和回測用的是完全相同的計算；改了門檻，下次執行回測就會跟著更新。
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { scoreAll, indexZone, decide } from '../assets/scoring.js';
-import { buildLiqMap } from './liqmap.mjs';
+import { buildLiqMap, buildLiqMapMulti } from './liqmap.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const read = async (p, fb) => { try { return JSON.parse(await readFile(new URL(p, ROOT), 'utf8')); } catch { return fb; } };
@@ -202,10 +202,15 @@ try {
 } catch (e) { setStatus('okx', false, e.message); }
 
 try {
-  const lm = await buildLiqMap(m => console.log(m));
+  let lm = null;
+  if (process.env.COINALYZE_API_KEY) {
+    try { lm = await buildLiqMapMulti(process.env.COINALYZE_API_KEY, m => console.log(m)); }
+    catch (e) { console.warn('多交易所清算地圖失敗，改用 OKX：', e.message); }
+  }
+  if (!lm) { lm = await buildLiqMap(m => console.log(m)); lm.exchanges = ['OKX']; }
   lm.daily = (S.liq || []).slice(-14).map(r => ({ date: r[0], long: Math.round(r[1]), short: Math.round(r[2]) }));  // BGeometrics 全市場每日清算
   await write('data/liqmap.json', lm);
-  NAMES.okxliq = 'OKX 清算地圖';
+  NAMES.okxliq = lm.method === 'coinalyze' ? `清算地圖（${lm.exchanges.join('、')}）` : 'OKX 清算地圖';
   setStatus('okxliq', !lm.notes.length || lm.buckets.length > 0, lm.notes.join('；') || null);
   console.log(`清算地圖：${lm.method}、${lm.hours} 小時、${lm.buckets.length} 個價位、上方最大 ${JSON.stringify(lm.topShort[0])}、下方最大 ${JSON.stringify(lm.topLong[0])}`);
 } catch (e) { NAMES.okxliq = 'OKX 清算地圖'; setStatus('okxliq', false, e.message); console.warn('清算地圖失敗：', e.message); }
