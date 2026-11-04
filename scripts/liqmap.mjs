@@ -137,10 +137,19 @@ export async function buildLiqMapMulti(key, log = console.log) {
   const cand = mk.filter(m => m.base_asset === 'BTC' && m.is_perpetual && ['USDT', 'USD', 'USDC'].includes(m.quote_asset) && m.has_ohlcv_data)
     .map(m => ({ ...m, ex: (exName.get(m.symbol.split('.').pop()) || m.exchange || '').toString() }))
     .filter(m => PREFER.some(p => m.ex.toLowerCase().includes(p)))
-    .sort((a, b) => PREFER.findIndex(p => a.ex.toLowerCase().includes(p)) - PREFER.findIndex(p => b.ex.toLowerCase().includes(p)));
-  // 每個交易所最多取 2 個主要合約（USDT 與幣本位），總數上限 10，以符合每分鐘 40 次限制
+    .sort((a, b) => {
+      const ea = PREFER.findIndex(p => a.ex.toLowerCase().includes(p)), eb = PREFER.findIndex(p => b.ex.toLowerCase().includes(p));
+      const q = m => ({ USDT: 0, USD: 1, USDC: 2 })[m.quote_asset] ?? 3;
+      return ea - eb || q(a) - q(b) || a.symbol.length - b.symbol.length;
+    });
+  // 前三大交易所（Binance、Bybit、OKX）各取 USDT 與幣本位 2 個合約，其他交易所各取 1 個，總數上限 10（每分鐘 40 次限制）
   const pick = [], perEx = {};
-  for (const m of cand) { const k = m.ex; if ((perEx[k] || 0) >= 2 || pick.length >= 10) continue; perEx[k] = (perEx[k] || 0) + 1; pick.push(m); }
+  for (const m of cand) {
+    const k = m.ex, big = ['binance', 'bybit', 'okx'].some(p => k.toLowerCase().includes(p));
+    if ((perEx[k] || 0) >= (big ? 2 : 1) || pick.length >= 10) continue;
+    if (perEx[k] && m.quote_asset === 'USDC') continue;
+    perEx[k] = (perEx[k] || 0) + 1; pick.push(m);
+  }
   if (!pick.length) throw new Error('找不到 BTC 永續合約');
   const syms = pick.map(m => m.symbol).join(',');
   const to = Math.floor(Date.now() / 1000), from = to - HOURS * 3600;
