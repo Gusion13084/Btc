@@ -258,14 +258,31 @@ function decisionCard() {
     <h2>${esc(d.title)}</h2>
     <p class="dec-action">${esc(d.action)}</p>
     ${d.notes.length ? `<ul class="dec-notes">${d.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}
-    <div class="pos">
-      <div class="pos-top"><span>目前目標倉位</span><b class="mono">${esc(targetText(d.target))}</b></div>
-      ${last ? `<div class="pos-meta sub">上一個信號：${esc(last.date)} ${esc(last.label)} → 現貨${last.type === 'buy' ? '提高' : '降'}到 ${last.target}%</div>` : ''}
-      <div class="pos-meta sub">${resetHint(d)}</div>
-      <a class="calc-link" href="#calc${tgt != null ? '' : ''}">用計算工具換算要買賣多少 →</a>
-    </div>
+    ${posBlock(d)}
     <p class="sub">依手冊分批規則自動判斷，僅供參考，不構成投資建議。</p>
   </section>`;
+}
+
+function posBlock(d) {
+  const t = d.target || {}, last = d.position?.last;
+  const active = t.cap ?? t.floor;
+  const spot = active ?? last?.target ?? S.config.position?.start ?? 30;
+  const pool = 100 - spot;
+  const src = active != null
+    ? `生效中：${esc(targetText(t))}`
+    : last ? `依據 ${esc(last.date)} ${esc(last.label)}；目前沒有新信號，維持此比例` : '尚未出現任何信號，使用起始比例';
+  return `<div class="pos big">
+      <div class="eyebrow">建議總倉位（佔策略資金）</div>
+      <div class="pos-nums">
+        <div class="pn spot"><span>現貨</span><b class="mono">${spot}%</b></div>
+        <div class="pn pool"><span>套利池</span><b class="mono">${pool}%</b></div>
+      </div>
+      <div class="pos-bar2"><i class="s" style="width:${spot}%"></i><i class="p" style="width:${pool}%"></i></div>
+      <div class="pos-src">${src}</div>
+      ${resetHint(d) ? `<div class="pos-meta sub">${resetHint(d)}</div>` : ''}
+      <a class="calc-link" href="#calc">用計算工具換算要買賣多少 →</a>
+    </div>
+`;
 }
 
 function resetHint(d) {
