@@ -347,12 +347,12 @@
  },
  {
   "date": "2026-11-04",
-  "btcPrice": 76893,
+  "btcPrice": 77000,
   "cbs": 0,
   "cts": 0,
-  "cbsConfirm": 0,
+  "cbsConfirm": 14,
   "ctsConfirm": 0,
-  "idx": 36.8,
+  "idx": 35.2,
   "cbsLevel": "無信號",
   "ctsLevel": "無信號",
   "action": "繼續期限套利，不動作",
@@ -361,35 +361,36 @@
    "nupl": 0.3349,
    "puell": 1.0514,
    "hashribbons": "normal",
-   "ssr": 5.2226,
-   "rsi_w": 50.44005,
-   "wma200": 1.13595,
-   "pi_bottom": 1.20552,
+   "ssr": 5.2463,
+   "rsi_w": 50.57331,
+   "wma200": 1.13751,
+   "pi_bottom": 1.20554,
    "pi_top": 0.49859,
    "fng": 34,
-   "funding": null,
-   "etf_flow": -8121.4075,
-   "liq": 0,
-   "sth_mvrv": 1.0132,
-   "profit_supply": null,
-   "whale": null,
-   "mayer": 1.05099,
-   "lsr": 2.44,
+   "funding": 0.01,
+   "etf_flow": -2873.48331,
+   "liq": 29758342.0067,
+   "sth_mvrv": 1.01459,
+   "profit_supply": 1.49721,
+   "whale": 0.43649,
+   "mayer": 1.05243,
+   "lsr": 2.43,
    "btcdom": 59.29,
-   "stable30": -3.67762
+   "stable30": -3.98039
   },
   "pct": {
    "mvrv": 39.9,
    "nupl": 38.9,
    "puell": 50.7,
-   "ssr": 39.5,
-   "rsi_w": 35,
-   "wma200": 28.9,
+   "ssr": 39.8,
+   "rsi_w": 35.2,
+   "wma200": 29.1,
    "pi_bottom": 28.9,
    "pi_top": 31.4,
    "fng": 29.8,
-   "sth_mvrv": 41.7,
-   "mayer": 40.4
+   "sth_mvrv": 42.2,
+   "profit_supply": 15.4,
+   "mayer": 40.6
   },
   "items": {
    "mvrv": [
@@ -449,7 +450,7 @@
     0
    ],
    "profit_supply": [
-    0,
+    2,
     0
    ],
    "whale": [
@@ -479,7 +480,7 @@
    "title": "持有，不加不減",
    "action": "抄底與止盈都未達觀察門檻，套利資金照常運作、現貨續抱。",
    "notes": [
-    "週期指數 30 天下降 18 點，市場明顯轉弱，留意 CBS 是否接近 6 分。"
+    "週期指數 30 天下降 20 點，市場明顯轉弱，留意 CBS 是否接近 6 分。"
    ],
    "alloc": {
     "buy": 0,
