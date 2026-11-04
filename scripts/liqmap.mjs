@@ -14,6 +14,18 @@ async function okx(path) {
 const LEV = [[5, 0.15], [10, 0.30], [25, 0.30], [50, 0.15], [100, 0.10]];
 const MMR = 0.004;
 const HOURS = 720;
+// Rubik 統計一次最多 100 筆：用 end（毫秒）往回翻頁；若參數無效（拿到重複資料）就停止
+async function rubikPaged(path, log) {
+  const all = new Map(); let end = '';
+  for (let k = 0; k < 8 && all.size < HOURS; k++) {
+    const d = await okx(path + (end ? `&end=${end}` : ''));
+    const before = all.size;
+    for (const r of d) all.set(+r[0], r);
+    if (!d.length || all.size === before) break;
+    end = String(Math.min(...d.map(r => +r[0])) - 1);
+  }
+  return [...all.values()];
+}
 
 export async function buildLiqMap(log = console.log) {
   const notes = [];
@@ -31,7 +43,7 @@ export async function buildLiqMap(log = console.log) {
   // 2) 每小時未平倉量（USD）
   let oi = new Map();
   try {
-    const d = await okx(`/rubik/stat/contracts/open-interest-history?instId=BTC-USDT-SWAP&period=1H&limit=${HOURS}`);
+    const d = await rubikPaged(`/rubik/stat/contracts/open-interest-history?instId=BTC-USDT-SWAP&period=1H&limit=100`);
     for (const r of d) { const row = Array.isArray(r) ? r : [r.ts, r.oi, r.oiCcy, r.oiUsd]; const usd = +row[3] || (+row[2] * price); if (usd) oi.set(+row[0], usd); }
     log(`OKX OI 歷史 ${oi.size} 筆，樣本 ${JSON.stringify(d[0])}`);
   } catch (e) { notes.push('OI 歷史：' + e.message); }
@@ -45,7 +57,7 @@ export async function buildLiqMap(log = console.log) {
   // 3) 主動買賣量，用來分配多空
   const taker = new Map();
   try {
-    const d = await okx(`/rubik/stat/taker-volume-contract?instId=BTC-USDT-SWAP&period=1H&limit=${HOURS}`);
+    const d = await rubikPaged(`/rubik/stat/taker-volume-contract?instId=BTC-USDT-SWAP&period=1H&limit=100`);
     for (const r of d) taker.set(+r[0], { sell: +r[1], buy: +r[2] });
     log(`OKX 主動買賣 ${taker.size} 筆，樣本 ${JSON.stringify(d[0])}`);
   } catch (e) { notes.push('主動買賣量：' + e.message); }
@@ -53,7 +65,9 @@ export async function buildLiqMap(log = console.log) {
   // 4) 模擬倉位
   let pos = []; // {px, side:'L'|'S', usd}
   let prevOi = null, used = 0;
+  const firstOi = oi.size >= 48 ? Math.min(...oi.keys()) : 0;
   for (const c of candles) {
+    if (c.ts < firstOi) continue;
     // 先清算本小時被掃到的倉位
     pos = pos.filter(p => p.side === 'L' ? c.l > p.px : c.h < p.px);
     const cur = oi.get(c.ts);
