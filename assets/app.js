@@ -44,7 +44,9 @@ async function load() {
   try { const b = await get('data/backtest.json'); S.bt = b.rows.map(r => Object.fromEntries(b.fields.map((f, i) => [f, r[i]]))); } catch { S.bt = []; }
   // 每日序列（用於變化量、持續天數）：優先用回測，沒有就用歷史快照；最後一天換成今天的即時分數
   const base = S.bt.length ? S.bt : S.history.filter(h => !h.legacy).map(h => ({ date: h.date, price: h.btcPrice, cbs: h.cbs, cts: h.cts, idx: h.idx ?? null }));
-  S.rows = base.filter(r => r.date < S.latest.date).concat([{ date: S.latest.date, price: S.latest.btcPrice, cbs: S.sc.cbs.score, cts: S.sc.cts.score, idx: S.latest.index ?? null }]);
+  const lastBt = S.bt.at(-1);
+  S.rows = base.filter(r => r.date < S.latest.date).concat([{ date: S.latest.date, price: S.latest.btcPrice, cbs: S.sc.cbs.score, cts: S.sc.cts.score, idx: S.latest.index ?? null,
+    cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null }]);
   S.dec = decide(S.config, S.sc, S.rows, S.latest.index);
 }
 
@@ -278,6 +280,7 @@ function indexCard() {
     </div>
     <div class="ci-bar">${zones.map((zz, i) => `<span style="flex:${(zones[i + 1]?.min ?? 100) - zz.min}">${esc(zz.name)}</span>`).join('')}${v != null ? `<i style="left:${v}%"></i>` : ''}</div>
     ${sparkline(ser)}
+    ${S.dec?.trend?.ma ? `<div class="ci-ma mono">50 週均線 ${usd(S.dec.trend.ma)}・價格${S.latest.btcPrice >= S.dec.trend.ma ? '高於' : '低於'} ${Math.abs((S.latest.btcPrice / S.dec.trend.ma - 1) * 100).toFixed(1)}%${S.dec.trend.armed ? '・趨勢保護待命中' : ''}</div>` : ''}
     <p class="sub">${v == null ? '第一次每日排程後，會用近 4 年歷史計算各指標的相對位置。' : '12 項指標在近 4 年中的平均相對位置：0 代表 4 年最低、100 代表 4 年最高。線圖為近 180 天走勢。'}</p>
   </section>`;
 }
@@ -347,14 +350,10 @@ const lvClass = (lv, side) => !lv || /無信號/.test(lv) ? '' : side;
 
 // 回測紀錄沒有存操作建議，依當天分數用同一套邏輯推算
 function btDecision(i) {
-  const B = S.bt, r = B[i];
-  const mk = (side, score, conf) => {
-    const bands = S.config.confirm?.bands || [];
-    return { score, level: levelFor(S.config.levels[side], score ?? 0), extremes: [], confirm: { pct: conf, band: conf == null ? null : levelFor(bands, conf) } };
-  };
-  const sc = { cbs: mk('cbs', r.cbs, r.cbsConfirm), cts: mk('cts', r.cts, r.ctsConfirm) };
-  const d = decide(S.config, sc, B.slice(Math.max(0, i - 60), i + 1), r.idx);
-  return { ...d, cbsLevel: sc.cbs.level.name, ctsLevel: sc.cts.level.name };
+  // 回測紀錄與今天共用同一份逐日計畫（S.dec.plan 與 S.rows 一一對應）
+  const r = S.bt[i], p = S.dec?.plan?.[i];
+  return { ...(p || { tone: 'hold', title: '—', action: '', notes: [] }),
+    cbsLevel: levelFor(S.config.levels.cbs, r.cbs ?? 0).name, ctsLevel: levelFor(S.config.levels.cts, r.cts ?? 0).name };
 }
 
 function logRows() {
@@ -562,6 +561,16 @@ function viewRules() {
       <div class="tbl-wrap"><table><thead><tr><th>指標</th><th>抄底得分</th><th>止盈得分</th></tr></thead>
       <tbody>${C.indicators.filter(d => (d.tier || 'core') === 'core').map(d => `<tr class="click" data-ind="${d.id}"><td><b>${esc(d.name)}</b><div class="sub">${esc(d.group)}・最高 ${ruleMax(d.cbs)} / ${ruleMax(d.cts)} 分</div></td><td class="mono small">${ruleText(d.cbs, d)}</td><td class="mono small">${ruleText(d.cts, d)}</td></tr>`).join('')}</tbody></table></div>
       <p class="sub">點任一列可查看完整說明。</p>
+    </section>
+    ${C.trend ? `<section class="panel prose">
+      <h3 style="font-size:16px">趨勢保護（保底減倉）</h3>
+      <p>${esc(C.trend.note)}</p>
+      <div class="tbl-wrap"><table><thead><tr><th>階段</th><th>條件</th><th>減倉</th></tr></thead><tbody>${C.trend.stages.map(st => `<tr><td><b>${esc(st.label)}</b></td><td class="wrap">連續跌破 ${esc(C.trend.maName)} ${st.days} 天</td><td class="mono">${st.pct}%</td></tr>`).join('')}</tbody></table></div>
+      <p class="sub">回測（2022/11 至今）只在 2025/11/14 觸發一次（$94,517），之後 180 天最低跌 33%；2024 年中與 2025 年 2 月的回調都沒有誤觸發。樣本只有一個週期，請持續觀察。</p>
+    </section>` : ''}
+    <section class="panel">
+      <h3 style="font-size:16px">執行規則</h3>
+      <p class="sub prose">等級需持續 3 天才算數；已執行的批次會被記住，不會因分數上下跳動而重複或倒退；下一批距上一批至少 7 天（第二批在價格較第一批再跌 20% 時可提前，第三批在再跌 30% 時可提前）；買入後 CBS 跌回 8 分以下暫停後續批次，重回 12 分並持續 3 天再繼續；週期指數連續 30 天 ≥ 50 視為抄底週期結束。</p>
     </section>
     <section class="panel">
       <h3 style="font-size:16px">輔助確認指標</h3>

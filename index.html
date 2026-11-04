@@ -223,6 +223,7 @@ td.small{font-size:12.5px;line-height:1.7}
 .sp-line{fill:none;stroke:var(--ink);stroke-width:1.6;vector-effect:non-scaling-stroke}
 .sp-dot{fill:var(--accent)}
 .cindex>.sub{margin:0;font-size:12.5px}
+.ci-ma{font-size:12.5px;color:var(--muted)}
 .delta{font-size:12px;color:var(--muted);margin-top:4px}
 .pct{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
 .chart-box.tall{height:360px}
@@ -257,7 +258,8 @@ table.log tr.open td{background:var(--sunk)}
   table.log tr.open{background:var(--sunk)}
   .c-date{grid-area:date;font-weight:600} .c-price{grid-area:price;text-align:right} .c-cbs{grid-area:cbs} .c-cts{grid-area:cts} .c-idx{grid-area:idx;text-align:right} .c-dec{grid-area:dec;min-width:0}
   .c-cbs::before,.c-cts::before,.c-idx::before{content:attr(data-l) " ";font-size:11px;color:var(--muted);font-family:var(--f-body)}
-  .c-cbs .sub,.c-cts .sub{display:inline;margin-left:4px;font-size:11px}
+  .c-cbs .sub,.c-cts .sub{display:none}
+  .c-dec{text-align:left}
   table.log tr.ld-row{display:block}
   table.log tr.ld-row td{display:block;padding:10px 8px 14px}
 }

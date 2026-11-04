@@ -321,9 +321,10 @@ if (bt0 < 0) bt0 = Math.max(0, N - WINDOW);
 const backtest = [];
 for (let i = bt0; i < N; i++) {
   const s = scoreAll(config, indicatorsAt(i));
-  backtest.push([cal[i], Math.round(close[i]), s.cbs.score, s.cts.score, s.cbs.confirm.pct, s.cts.confirm.pct, cycleIndex(i)]);
+  const ma = sma(i, config.trend?.ma || 350);
+  backtest.push([cal[i], Math.round(close[i]), s.cbs.score, s.cts.score, s.cbs.confirm.pct, s.cts.confirm.pct, cycleIndex(i), ma ? Math.round(ma) : null]);
 }
-await write('data/backtest.json', { fields: ['date', 'price', 'cbs', 'cts', 'cbsConfirm', 'ctsConfirm', 'idx'], rows: backtest }, false);
+await write('data/backtest.json', { fields: ['date', 'price', 'cbs', 'cts', 'cbsConfirm', 'ctsConfirm', 'idx', 'ma50w'], rows: backtest }, false);
 
 // ---------- 今天的完整資料與說明文字 ----------
 const L = N - 1;
@@ -406,8 +407,8 @@ const entry = {
   indexZone: latest.indexZone,
 };
 { // 當天的操作建議（與儀表板同一套邏輯）
-  const rows = backtest.map(r => ({ date: r[0], cbs: r[2], cts: r[3], idx: r[6] }));
-  rows[rows.length - 1] = { date: today, cbs: s.cbs.score, cts: s.cts.score, idx: latest.index };
+  const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7] }));
+  rows[rows.length - 1] = { ...rows[rows.length - 1], date: today, cbs: s.cbs.score, cts: s.cts.score, idx: latest.index };
   const d = decide(config, s, rows, latest.index);
   entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, alloc: d.alloc };
 }
