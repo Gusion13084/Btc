@@ -3,6 +3,7 @@
 // 好處：今天的數值和回測用的是完全相同的計算；改了門檻，下次執行回測就會跟著更新。
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { scoreAll, indexZone, decide } from '../assets/scoring.js';
+import { buildLiqMap } from './liqmap.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const read = async (p, fb) => { try { return JSON.parse(await readFile(new URL(p, ROOT), 'utf8')); } catch { return fb; } };
@@ -170,6 +171,13 @@ try {
   setStatus('okx', true);
 } catch (e) { setStatus('okx', false, e.message); }
 
+try {
+  const lm = await buildLiqMap(m => console.log(m));
+  await write('data/liqmap.json', lm);
+  NAMES.okxliq = 'OKX 清算地圖';
+  setStatus('okxliq', !lm.notes.length || lm.buckets.length > 0, lm.notes.join('；') || null);
+  console.log(`清算地圖：${lm.method}、${lm.hours} 小時、${lm.buckets.length} 個價位、上方最大 ${JSON.stringify(lm.topShort[0])}、下方最大 ${JSON.stringify(lm.topLong[0])}`);
+} catch (e) { NAMES.okxliq = 'OKX 清算地圖'; setStatus('okxliq', false, e.message); console.warn('清算地圖失敗：', e.message); }
 for (const k of Object.keys(S)) await save(k);
 await write('data/series/_meta.json', meta);
 
