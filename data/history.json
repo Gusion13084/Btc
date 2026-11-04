@@ -1,0 +1,348 @@
+[
+ {
+  "date": "2026-09-27",
+  "btcPrice": 84291,
+  "cbs": 8,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-09-28",
+  "btcPrice": 84060,
+  "cbs": 8,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-09-29",
+  "btcPrice": 83210,
+  "cbs": 7,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-09-30",
+  "btcPrice": 83375,
+  "cbs": 8,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-01",
+  "btcPrice": 83486,
+  "cbs": 7,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-02",
+  "btcPrice": 84755,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-03",
+  "btcPrice": 84626,
+  "cbs": 7,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-04",
+  "btcPrice": 84777,
+  "cbs": 7,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-05",
+  "btcPrice": 86498,
+  "cbs": 7,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-06",
+  "btcPrice": 86059,
+  "cbs": 8,
+  "cts": 4,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "預警信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-07",
+  "btcPrice": 85471,
+  "cbs": 7,
+  "cts": 4,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "預警信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-08",
+  "btcPrice": 83459,
+  "cbs": 7,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-09",
+  "btcPrice": 81765,
+  "cbs": 7,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-10",
+  "btcPrice": 82529,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-11",
+  "btcPrice": 82901,
+  "cbs": 7,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-12",
+  "btcPrice": 83861,
+  "cbs": 7,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-13",
+  "btcPrice": 81486,
+  "cbs": 7,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-14",
+  "btcPrice": 83346,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-15",
+  "btcPrice": 81747,
+  "cbs": 8,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-16",
+  "btcPrice": 82255,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-17",
+  "btcPrice": 81482,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-18",
+  "btcPrice": 81522,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-19",
+  "btcPrice": 82236,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-20",
+  "btcPrice": 81642,
+  "cbs": 8,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-21",
+  "btcPrice": 82873,
+  "cbs": 8,
+  "cts": 3,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-22",
+  "btcPrice": 84078,
+  "cbs": 8,
+  "cts": 2,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-24",
+  "btcPrice": 80573,
+  "cbs": 9,
+  "cts": 2,
+  "cbsLevel": "預警信號",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-25",
+  "btcPrice": 80801,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-26",
+  "btcPrice": 80113,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-27",
+  "btcPrice": 80135,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-28",
+  "btcPrice": 80633,
+  "cbs": 7,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-29",
+  "btcPrice": 80950,
+  "cbs": 9,
+  "cts": 1,
+  "cbsLevel": "預警信號",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-30",
+  "btcPrice": 77008,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-10-31",
+  "btcPrice": 77495,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-11-01",
+  "btcPrice": 77614,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-11-02",
+  "btcPrice": 78128,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true
+ },
+ {
+  "date": "2026-11-03",
+  "btcPrice": 77096,
+  "cbs": 8,
+  "cts": 1,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "legacy": true,
+  "values": {
+   "mvrv": 0.8725,
+   "nupl": 0.3323,
+   "puell": 1.1399,
+   "hashribbons": "normal",
+   "ssr": 6.234,
+   "rsi_w": 50.82,
+   "wma200": 1.136,
+   "pi_bottom": null,
+   "pi_top": 0.4955,
+   "fng": 26,
+   "funding": 0.0091
+  }
+ }
+]

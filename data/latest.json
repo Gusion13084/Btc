@@ -1,0 +1,126 @@
+{
+ "date": "2026-11-03",
+ "updatedAt": "2026-11-03T01:10:02Z",
+ "btcPrice": 77096,
+ "legacy": true,
+ "indicators": {
+  "mvrv": {
+   "value": 0.8725,
+   "detail": "",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "bgeometrics"
+  },
+  "nupl": {
+   "value": 0.3323,
+   "detail": "",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "bgeometrics"
+  },
+  "puell": {
+   "value": 1.1399,
+   "detail": "",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "bgeometrics"
+  },
+  "hashribbons": {
+   "value": "normal",
+   "detail": "SMA30 1047 EH/s / SMA60 1005 EH/s",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "blockchain"
+  },
+  "ssr": {
+   "value": 6.234,
+   "detail": "穩定幣 $255.4B（USDT $179.9B・USDC $71.0B）",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "defillama"
+  },
+  "rsi_w": {
+   "value": 50.82,
+   "detail": "",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "kraken"
+  },
+  "wma200": {
+   "value": 1.136,
+   "detail": "BTC $77,104 / 200WMA $67,848",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "kraken"
+  },
+  "pi_top": {
+   "value": 0.4955,
+   "detail": "111DMA $75,313 / 350DMA×2 $151,996",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "kraken"
+  },
+  "pi_bottom": {
+   "value": null,
+   "detail": "新指標，首次排程後才有數值",
+   "ok": false,
+   "source": "kraken"
+  },
+  "fng": {
+   "value": 26,
+   "detail": "Fear",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "alternative"
+  },
+  "funding": {
+   "value": 0.0091,
+   "detail": "OI $10.85B",
+   "ok": true,
+   "date": "2026-11-03",
+   "fetchedAt": "2026-11-03T01:10:02Z",
+   "source": "bgeometrics"
+  }
+ },
+ "sources": {
+  "kraken": {
+   "name": "Kraken OHLC",
+   "ok": true,
+   "error": null,
+   "checkedAt": "2026-11-03T01:10:02Z"
+  },
+  "alternative": {
+   "name": "Alternative.me",
+   "ok": true,
+   "error": null,
+   "checkedAt": "2026-11-03T01:10:02Z"
+  },
+  "blockchain": {
+   "name": "Blockchain.com",
+   "ok": true,
+   "error": null,
+   "checkedAt": "2026-11-03T01:10:02Z"
+  },
+  "defillama": {
+   "name": "DefiLlama + CoinGecko",
+   "ok": true,
+   "error": null,
+   "checkedAt": "2026-11-03T01:10:02Z"
+  },
+  "bgeometrics": {
+   "name": "BGeometrics",
+   "ok": true,
+   "error": null,
+   "checkedAt": "2026-11-03T01:10:02Z"
+  }
+ }
+}

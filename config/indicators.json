@@ -1,0 +1,2149 @@
+{
+ "version": 2,
+ "siteName": "BTC 週期雷達",
+ "repo": "Gusion13084/Btc",
+ "levels": {
+  "cbs": [
+   {
+    "min": 0,
+    "name": "無信號",
+    "action": "繼續期限套利，不動作"
+   },
+   {
+    "min": 6,
+    "name": "觀察期",
+    "action": "開始關注市場，準備資金"
+   },
+   {
+    "min": 9,
+    "name": "預警信號",
+    "action": "停止新增套利倉位，保留現金"
+   },
+   {
+    "min": 12,
+    "name": "一級抄底",
+    "action": "啟動第一批買入（20% 資金）",
+    "batch": {
+     "label": "第一批・預警進場",
+     "pct": 20,
+     "btc": 65,
+     "eth": 35,
+     "days": 3,
+     "limit": "當日收盤價 -2% 至 -3%",
+     "trigger": "CBS 首次達到 12 分，且持續 3 天以上",
+     "note": "無強制停損；CBS 跌回 8 分以下時暫停後續批次"
+    }
+   },
+   {
+    "min": 16,
+    "name": "二級抄底",
+    "action": "啟動第二批買入（30% 資金）",
+    "batch": {
+     "label": "第二批・確認加碼",
+     "pct": 30,
+     "btc": 65,
+     "eth": 35,
+     "days": 5,
+     "limit": "當日收盤價 -1% 至 -2%",
+     "trigger": "CBS 達到 16 分，且距第一批至少 7 天",
+     "note": "若第一批後價格再跌超過 20%，可提前觸發"
+    }
+   },
+   {
+    "min": 20,
+    "name": "三級抄底",
+    "action": "啟動第三批買入（30% 資金）",
+    "batch": {
+     "label": "第三批・深度加碼",
+     "pct": 30,
+     "btc": 60,
+     "eth": 40,
+     "days": 7,
+     "limit": "當日收盤價 -3% 至 -5%",
+     "trigger": "CBS 達到 20 分，或價格較第一批均價再跌 30% 以上",
+     "note": "主力倉位，需有心理準備承受短期進一步下跌"
+    }
+   },
+   {
+    "min": 24,
+    "name": "四級抄底",
+    "action": "啟動第四批買入（20% 資金）",
+    "batch": {
+     "label": "第四批・終極底部",
+     "pct": 20,
+     "btc": 55,
+     "eth": 45,
+     "days": 3,
+     "limit": "當日最低價 -5% 至 -10%",
+     "trigger": "CBS 達到 24 分，或出現任一極端信號",
+     "note": "可能永遠不會觸發；未觸發時這 20% 繼續留在套利池"
+    }
+   }
+  ],
+  "cts": [
+   {
+    "min": 0,
+    "name": "無信號",
+    "action": "持續持有，等待牛市發展"
+   },
+   {
+    "min": 6,
+    "name": "觀察期",
+    "action": "檢查止盈計畫，留意過熱跡象"
+   },
+   {
+    "min": 9,
+    "name": "預警信號",
+    "action": "停止新增現貨，準備分批減倉"
+   },
+   {
+    "min": 12,
+    "name": "一級止盈",
+    "action": "減倉第一批（現貨約 15%）",
+    "batch": {
+     "label": "第一批・試探減倉",
+     "pct": 15,
+     "days": 3,
+     "trigger": "CTS 達到 12 分，且持續 3 天以上",
+     "note": "換回的穩定幣投入期限套利"
+    }
+   },
+   {
+    "min": 16,
+    "name": "二級止盈",
+    "action": "減倉第二批（現貨約 20%）",
+    "batch": {
+     "label": "第二批・確認減倉",
+     "pct": 20,
+     "days": 5,
+     "trigger": "CTS 達到 16 分，且距第一批至少 7 天",
+     "note": "價格續創新高時可分 5 天均勻賣出"
+    }
+   },
+   {
+    "min": 20,
+    "name": "三級止盈",
+    "action": "減倉第三批（現貨約 20%）",
+    "batch": {
+     "label": "第三批・頂部減倉",
+     "pct": 20,
+     "days": 3,
+     "trigger": "CTS 達到 20 分，或出現任一極端頂部信號",
+     "note": "累計約 55%，保留 30–50% 核心倉位永不賣出"
+    }
+   }
+  ]
+ },
+ "extremes": {
+  "cbs": [
+   {
+    "id": "fng",
+    "dir": "below",
+    "t": 8,
+    "label": "恐懼貪婪指數 < 8"
+   },
+   {
+    "id": "rsi_w",
+    "dir": "below",
+    "t": 25,
+    "label": "週線 RSI < 25"
+   },
+   {
+    "id": "nupl",
+    "dir": "below",
+    "t": -0.2,
+    "label": "NUPL < -0.2"
+   }
+  ],
+  "cts": [
+   {
+    "id": "mvrv",
+    "dir": "above",
+    "t": 7,
+    "label": "MVRV Z-Score > 7"
+   },
+   {
+    "id": "pi_top",
+    "dir": "atleast",
+    "t": 1,
+    "label": "Pi Cycle Top 觸發"
+   },
+   {
+    "id": "rsi_w",
+    "dir": "above",
+    "t": 85,
+    "label": "週線 RSI > 85"
+   },
+   {
+    "id": "puell",
+    "dir": "above",
+    "t": 4,
+    "label": "Puell Multiple > 4"
+   }
+  ]
+ },
+ "indicators": [
+  {
+   "id": "mvrv",
+   "name": "MVRV Z-Score",
+   "group": "鏈上指標",
+   "source": "bgeometrics",
+   "links": [
+    [
+     "Glassnode",
+     "https://studio.glassnode.com/metrics?a=BTC&m=market.MvrvZScore"
+    ],
+    [
+     "MacroMicro",
+     "https://en.macromicro.me/charts/30335/bitcoin-mvrv-zscore"
+    ]
+   ],
+   "principle": "衡量比特幣市值相對於已實現市值的標準化偏差。已實現市值以每枚比特幣最後一次鏈上移動時的價格計算，代表市場整體的成本基礎。",
+   "howto": "當價格遠低於持有者平均成本，Z-Score 進入負值，歷史上是強烈的底部信號；高於 7 代表市場極度過熱，歷史上對應週期頂部。",
+   "history": [
+    "2018 年 12 月底部：約 -0.3 至 -0.5",
+    "2020 年 3 月底部：短暫跌至負值",
+    "2022 年 11 月底部：約 -0.2 至 -0.4",
+    "2017、2021 年頂部：皆高於 7"
+   ],
+   "decimals": 4,
+   "scale": [
+    -1,
+    8
+   ],
+   "cbs": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "below",
+      "zero": [
+       "≥ 0.5",
+       "中性偏多，觀望"
+      ],
+      "tiers": [
+       {
+        "t": 0.5,
+        "pts": 1,
+        "range": "0 – 0.5",
+        "state": "接近底部區域"
+       },
+       {
+        "t": 0,
+        "pts": 2,
+        "range": "-0.5 – 0",
+        "state": "底部信號觸發"
+       },
+       {
+        "t": -0.5,
+        "pts": 3,
+        "range": "< -0.5",
+        "state": "強烈底部信號"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "> 10%",
+       "不在 4 年低位區"
+      ],
+      "tiers": [
+       {
+        "t": 10,
+        "pts": 1,
+        "range": "最低 10%",
+        "state": "4 年相對低位"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "最低 5%",
+        "state": "4 年明顯低位"
+       },
+       {
+        "t": 2,
+        "pts": 3,
+        "range": "最低 2%",
+        "state": "4 年極端低位"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "above",
+      "zero": [
+       "≤ 5",
+       "牛市中段，正常持有"
+      ],
+      "tiers": [
+       {
+        "t": 5,
+        "pts": 1,
+        "range": "5 – 6",
+        "state": "估值偏高"
+       },
+       {
+        "t": 6,
+        "pts": 2,
+        "range": "6 – 7",
+        "state": "過熱，準備減倉"
+       },
+       {
+        "t": 7,
+        "pts": 3,
+        "range": "> 7",
+        "state": "泡沫頂部，考慮減倉"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "nupl",
+   "name": "NUPL 淨未實現損益",
+   "group": "鏈上指標",
+   "source": "bgeometrics",
+   "links": [
+    [
+     "Glassnode",
+     "https://studio.glassnode.com/metrics?a=BTC&m=indicators.NetUnrealizedProfitLoss"
+    ],
+    [
+     "Bitcoin Magazine Pro",
+     "https://www.bitcoinmagazinepro.com/charts/relative-unrealized-profit--loss/"
+    ]
+   ],
+   "principle": "衡量整個市場的未實現盈虧狀態，即全網持有者帳面獲利扣掉帳面虧損後佔市值的比例。",
+   "howto": "NUPL 轉負代表多數持幣者處於虧損，進入投降區，是週期底部的強烈信號；高於 0.75 進入貪婪／泡沫區。",
+   "history": [
+    "2018 年 12 月底部：深度負值",
+    "2020 年 3 月底部：接近 0 或短暫負值",
+    "2022 年 11 月底部：接近 0，投降程度不如 2018"
+   ],
+   "decimals": 4,
+   "scale": [
+    -0.4,
+    0.9
+   ],
+   "cbs": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "below",
+      "zero": [
+       "≥ 0.25",
+       "希望／樂觀，中性"
+      ],
+      "tiers": [
+       {
+        "t": 0.25,
+        "pts": 1,
+        "range": "0 – 0.25",
+        "state": "希望／恐懼，接近底部"
+       },
+       {
+        "t": 0,
+        "pts": 2,
+        "range": "-0.25 – 0",
+        "state": "投降區域，底部信號"
+       },
+       {
+        "t": -0.25,
+        "pts": 3,
+        "range": "< -0.25",
+        "state": "深度投降，強烈底部"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "> 10%",
+       "不在 4 年低位區"
+      ],
+      "tiers": [
+       {
+        "t": 10,
+        "pts": 1,
+        "range": "最低 10%",
+        "state": "4 年相對低位"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "最低 5%",
+        "state": "4 年明顯低位"
+       },
+       {
+        "t": 2,
+        "pts": 3,
+        "range": "最低 2%",
+        "state": "4 年極端低位"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "above",
+      "zero": [
+       "≤ 0.6",
+       "樂觀，牛市中段"
+      ],
+      "tiers": [
+       {
+        "t": 0.6,
+        "pts": 1,
+        "range": "0.6 – 0.7",
+        "state": "信念轉為貪婪"
+       },
+       {
+        "t": 0.7,
+        "pts": 2,
+        "range": "0.7 – 0.75",
+        "state": "接近狂熱區"
+       },
+       {
+        "t": 0.75,
+        "pts": 3,
+        "range": "> 0.75",
+        "state": "貪婪／泡沫，考慮減倉"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "puell",
+   "name": "Puell Multiple",
+   "group": "鏈上指標",
+   "source": "bgeometrics",
+   "links": [
+    [
+     "LookIntoBitcoin",
+     "https://www.lookintobitcoin.com/charts/puell-multiple/"
+    ],
+    [
+     "Glassnode",
+     "https://studio.glassnode.com/metrics?a=BTC&m=indicators.PuellMultiple"
+    ]
+   ],
+   "principle": "礦工每日收益相對於 365 日移動平均的比率。",
+   "howto": "礦工收益極低時被迫賣幣維持運營，形成拋售壓力，但同時標誌市場接近底部；高於 4 代表礦工超額收益，常見於頂部。",
+   "history": [
+    "2018 年 12 月底部：0.28 – 0.31（歷史最低區域）",
+    "2020 年 3 月底部：0.3 – 0.5",
+    "2022 年 6 月底部：0.35",
+    "2022 年 11 月底部：0.35 – 0.37"
+   ],
+   "decimals": 4,
+   "scale": [
+    0.2,
+    4.5
+   ],
+   "cbs": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "below",
+      "zero": [
+       "≥ 1.0",
+       "正常礦工收益，中性"
+      ],
+      "tiers": [
+       {
+        "t": 1.0,
+        "pts": 1,
+        "range": "0.5 – 1.0",
+        "state": "礦工壓力開始，觀察"
+       },
+       {
+        "t": 0.5,
+        "pts": 2,
+        "range": "0.3 – 0.5",
+        "state": "礦工嚴重虧損，底部區域"
+       },
+       {
+        "t": 0.3,
+        "pts": 3,
+        "range": "< 0.3",
+        "state": "礦工極度投降，強烈底部"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "> 10%",
+       "不在 4 年低位區"
+      ],
+      "tiers": [
+       {
+        "t": 10,
+        "pts": 1,
+        "range": "最低 10%",
+        "state": "4 年相對低位"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "最低 5%",
+        "state": "4 年明顯低位"
+       },
+       {
+        "t": 2,
+        "pts": 3,
+        "range": "最低 2%",
+        "state": "4 年極端低位"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "above",
+      "zero": [
+       "≤ 2.5",
+       "正常礦工收益"
+      ],
+      "tiers": [
+       {
+        "t": 2.5,
+        "pts": 1,
+        "range": "2.5 – 3.2",
+        "state": "礦工收益偏高"
+       },
+       {
+        "t": 3.2,
+        "pts": 2,
+        "range": "3.2 – 4.0",
+        "state": "礦工獲利豐厚，拋售增加"
+       },
+       {
+        "t": 4.0,
+        "pts": 3,
+        "range": "> 4.0",
+        "state": "礦工超額收益，市場頂部"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "hashribbons",
+   "name": "Hash Ribbons",
+   "group": "鏈上指標",
+   "source": "blockchain",
+   "type": "state",
+   "links": [
+    [
+     "Bitcoin Magazine Pro",
+     "https://www.bitcoinmagazinepro.com/charts/hash-ribbons/"
+    ],
+    [
+     "Glassnode",
+     "https://studio.glassnode.com/"
+    ]
+   ],
+   "principle": "比較比特幣算力的 30 日與 60 日移動平均線。",
+   "howto": "30 日線跌破 60 日線代表礦工投降；30 日線重新向上穿越 60 日線代表礦工恢復，歷史上是強烈的買入信號。系統將穿越後 20 天內視為「剛穿越」。",
+   "history": [
+    "自 2011 年以來約 20 次礦工投降事件，多數與局部或主要底部吻合",
+    "包含 2015 年 1 月、2018 年 12 月、2022 年 12 月"
+   ],
+   "states": {
+    "normal": "算力正常",
+    "capitulation": "礦工投降中",
+    "recovery": "礦工恢復・買入信號"
+   },
+   "cbs": {
+    "states": {
+     "normal": {
+      "pts": 0,
+      "range": "30日MA > 60日MA",
+      "state": "礦工健康，無信號"
+     },
+     "capitulation": {
+      "pts": 1,
+      "range": "30日MA < 60日MA",
+      "state": "礦工投降，底部形成中"
+     },
+     "recovery": {
+      "pts": 3,
+      "range": "30日MA 剛向上穿越 60日MA",
+      "state": "礦工恢復，買入信號"
+     }
+    }
+   },
+   "tier": "core"
+  },
+  {
+   "id": "ssr",
+   "name": "SSR / USDT.D",
+   "group": "鏈上指標",
+   "source": "defillama",
+   "decimals": 2,
+   "links": [
+    [
+     "CryptoQuant",
+     "https://cryptoquant.com/asset/stablecoin/chart/market-indicator/stablecoin-supply-ratio-ssr"
+    ],
+    [
+     "TradingView USDT.D",
+     "https://www.tradingview.com/symbols/USDT.D/"
+    ]
+   ],
+   "principle": "SSR = BTC 市值 ÷ 穩定幣總市值。補充指標 USDT.D 是 USDT 佔整體加密市值的比例。",
+   "howto": "SSR 越低代表場邊有越多穩定幣等待買入，潛在購買力強；USDT.D 升高代表資金躲進穩定幣，歷史上與 BTC 底部高度吻合。SSR 以近 4 年週資料計算百分位。兩項取較高分，最高 2 分。",
+   "history": [
+    "2018、2020 年底部：USDT.D 相對高位",
+    "2022 年 11 月底部：USDT.D 高位"
+   ],
+   "scale": [
+    0,
+    100
+   ],
+   "scaleField": "pct",
+   "scaleLabel": "SSR 百分位",
+   "cbs": {
+    "max": 2,
+    "parts": [
+     {
+      "field": "pct",
+      "label": "SSR 歷史百分位",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "前 80%",
+       "中性或買入力量弱"
+      ],
+      "tiers": [
+       {
+        "t": 20,
+        "pts": 1,
+        "range": "後 20%",
+        "state": "買入力量強，底部信號"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "後 5%",
+        "state": "觸及歷史最低區間，強烈底部"
+       }
+      ]
+     },
+     {
+      "field": "usdtd",
+      "label": "USDT.D 補充",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "≤ 8.5%",
+       "無信號"
+      ],
+      "tiers": [
+       {
+        "t": 8.5,
+        "pts": 1,
+        "range": "> 8.5%",
+        "state": "歷史上與底部高度吻合"
+       },
+       {
+        "t": 9.0,
+        "pts": 2,
+        "range": "> 9.0%",
+        "state": "強烈底部信號"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 2,
+    "parts": [
+     {
+      "field": "pct",
+      "label": "SSR 歷史百分位",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "後 80%",
+       "購買力尚可"
+      ],
+      "tiers": [
+       {
+        "t": 80,
+        "pts": 1,
+        "range": "前 20%",
+        "state": "買入力量弱，謹慎"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "前 5%",
+        "state": "穩定幣極度不足，頂部風險"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "rsi_w",
+   "name": "週線 RSI",
+   "group": "技術指標",
+   "source": "kraken",
+   "links": [
+    [
+     "TradingView",
+     "https://www.tradingview.com/symbols/BTCUSD/"
+    ]
+   ],
+   "principle": "以 14 週為週期衡量價格動能的相對強弱指數。",
+   "howto": "BTC 週線 RSI 跌破 30 是罕見事件，每次出現都對應重要底部；高於 85 則是極度超買。",
+   "history": [
+    "2014 年底：約 25.7 → 底部 $152",
+    "2018 年 12 月：25.7 → 底部 $3,200",
+    "2020 年 3 月：29.4 → 底部 $3,858",
+    "2022 年 11 月：28.9 → 底部 $15,476"
+   ],
+   "decimals": 2,
+   "scale": [
+    15,
+    95
+   ],
+   "cbs": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "below",
+      "zero": [
+       "≥ 30",
+       "中性偏弱或更強"
+      ],
+      "tiers": [
+       {
+        "t": 30,
+        "pts": 2,
+        "range": "25 – 30",
+        "state": "嚴重超賣，底部信號"
+       },
+       {
+        "t": 25,
+        "pts": 3,
+        "range": "< 25",
+        "state": "極端超賣，歷史罕見底部"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "> 10%",
+       "不在 4 年低位區"
+      ],
+      "tiers": [
+       {
+        "t": 10,
+        "pts": 1,
+        "range": "最低 10%",
+        "state": "4 年相對低位"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "最低 5%",
+        "state": "4 年明顯低位"
+       },
+       {
+        "t": 2,
+        "pts": 3,
+        "range": "最低 2%",
+        "state": "4 年極端低位"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "above",
+      "zero": [
+       "≤ 75",
+       "牛市正常區間"
+      ],
+      "tiers": [
+       {
+        "t": 75,
+        "pts": 1,
+        "range": "75 – 80",
+        "state": "超買，頂部區域"
+       },
+       {
+        "t": 80,
+        "pts": 2,
+        "range": "80 – 85",
+        "state": "嚴重超買"
+       },
+       {
+        "t": 85,
+        "pts": 3,
+        "range": "> 85",
+        "state": "極度超買，歷史頂部"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "wma200",
+   "name": "200 週均線比率",
+   "group": "技術指標",
+   "source": "kraken",
+   "links": [
+    [
+     "Bitcoin Magazine Pro",
+     "https://www.bitcoinmagazinepro.com/charts/200-week-moving-average-heatmap/"
+    ],
+    [
+     "TradingView",
+     "https://www.tradingview.com/symbols/BTCUSD/"
+    ]
+   ],
+   "principle": "現價 ÷ 200 週移動平均線。BTC 在每個主要週期中都曾在 200 週均線附近觸底。",
+   "howto": "價格跌破 200 週均線代表進入歷史性低估區域；高於 3 倍屬泡沫頂部。",
+   "history": [
+    "2020 年 3 月：接近 200WMA（比率約 1.0）",
+    "2022 年：跌破 200WMA"
+   ],
+   "decimals": 3,
+   "scale": [
+    0.6,
+    4.5
+   ],
+   "cbs": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "below",
+      "zero": [
+       "≥ 1.0",
+       "中性或更高"
+      ],
+      "tiers": [
+       {
+        "t": 1.0,
+        "pts": 1,
+        "range": "0.8 – 1.0",
+        "state": "接近底部"
+       },
+       {
+        "t": 0.8,
+        "pts": 3,
+        "range": "< 0.8",
+        "state": "深度跌破，歷史底部信號"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "> 10%",
+       "不在 4 年低位區"
+      ],
+      "tiers": [
+       {
+        "t": 10,
+        "pts": 1,
+        "range": "最低 10%",
+        "state": "4 年相對低位"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "最低 5%",
+        "state": "4 年明顯低位"
+       },
+       {
+        "t": 2,
+        "pts": 3,
+        "range": "最低 2%",
+        "state": "4 年極端低位"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "above",
+      "zero": [
+       "≤ 2.5",
+       "牛市正常"
+      ],
+      "tiers": [
+       {
+        "t": 2.5,
+        "pts": 1,
+        "range": "2.5 – 3",
+        "state": "牛市後段"
+       },
+       {
+        "t": 3,
+        "pts": 2,
+        "range": "3 – 4",
+        "state": "泡沫頂部"
+       },
+       {
+        "t": 4,
+        "pts": 3,
+        "range": "> 4",
+        "state": "極度泡沫"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "pi_bottom",
+   "name": "Pi Cycle Bottom",
+   "group": "技術指標",
+   "source": "kraken",
+   "links": [
+    [
+     "LookIntoBitcoin",
+     "https://www.lookintobitcoin.com/charts/pi-cycle-bottom-indicator/"
+    ]
+   ],
+   "principle": "比較 150 日指數均線與 471 日均線的 0.745 倍。數值為 150EMA ÷（471DMA × 0.745）。",
+   "howto": "數值跌破 1 代表兩線交叉，歷史上精準標記 BTC 週期底部；差距 5% 以內代表底部形成中。",
+   "history": [
+    "2015 年 1 月觸發",
+    "2019 年 1 月觸發",
+    "2020 年 3 月觸發"
+   ],
+   "decimals": 3,
+   "scale": [
+    0.8,
+    2.2
+   ],
+   "cbs": {
+    "dir": "below",
+    "zero": [
+     "≥ 1.05",
+     "無信號"
+    ],
+    "tiers": [
+     {
+      "t": 1.05,
+      "pts": 1,
+      "range": "1.00 – 1.05",
+      "state": "接近交叉（差距 < 5%），底部形成中"
+     },
+     {
+      "t": 1.0,
+      "pts": 3,
+      "range": "< 1.00",
+      "state": "已交叉，底部信號觸發"
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "pi_top",
+   "name": "Pi Cycle Top",
+   "group": "技術指標",
+   "source": "kraken",
+   "links": [
+    [
+     "LookIntoBitcoin",
+     "https://www.lookintobitcoin.com/charts/pi-cycle-top-indicator/"
+    ]
+   ],
+   "principle": "比較 111 日均線與 350 日均線的 2 倍。數值為 111DMA ÷（350DMA × 2）。",
+   "howto": "數值升到 1 以上代表 111 日均線向上穿越，歷史上在週期頂部前後 3 天內觸發。",
+   "history": [
+    "2013 年 4 月、12 月觸發",
+    "2017 年 12 月觸發",
+    "2021 年 4 月觸發"
+   ],
+   "decimals": 3,
+   "scale": [
+    0.3,
+    1.1
+   ],
+   "cts": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "above",
+      "zero": [
+       "≤ 0.9",
+       "無信號"
+      ],
+      "tiers": [
+       {
+        "t": 0.9,
+        "pts": 1,
+        "range": "0.90 – 0.97",
+        "state": "兩線靠近"
+       },
+       {
+        "t": 0.97,
+        "pts": 2,
+        "range": "0.97 – 1.00",
+        "state": "即將交叉"
+       },
+       {
+        "t": 1.0,
+        "pts": 3,
+        "range": "≥ 1.00",
+        "state": "已交叉，頂部信號觸發"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "fng",
+   "name": "恐懼貪婪指數",
+   "group": "情緒指標",
+   "source": "alternative",
+   "links": [
+    [
+     "Alternative.me",
+     "https://alternative.me/crypto/fear-and-greed-index/"
+    ],
+    [
+     "CoinMarketCap",
+     "https://coinmarketcap.com/charts/fear-and-greed-index/"
+    ]
+   ],
+   "principle": "綜合波動性、市場動能、社群情緒、BTC 主導率與趨勢，以 0–100 反映市場整體情緒。",
+   "howto": "極端恐懼（< 15）往往對應市場底部；貪婪持續 2 週以上是頂部信號之一。",
+   "history": [
+    "2018 年 12 月底部：約 8 – 12",
+    "2020 年 3 月底部：約 8 – 10",
+    "2022 年 6 月底部（Luna）：約 6 – 8",
+    "2022 年 11 月底部（FTX）：約 10 – 15"
+   ],
+   "decimals": 0,
+   "scale": [
+    0,
+    100
+   ],
+   "cbs": {
+    "max": 3,
+    "parts": [
+     {
+      "dir": "below",
+      "zero": [
+       "≥ 25",
+       "恐懼、中性或貪婪"
+      ],
+      "tiers": [
+       {
+        "t": 25,
+        "pts": 1,
+        "range": "15 – 25",
+        "state": "極端恐懼，接近底部"
+       },
+       {
+        "t": 15,
+        "pts": 2,
+        "range": "10 – 15",
+        "state": "深度恐懼，底部信號"
+       },
+       {
+        "t": 10,
+        "pts": 3,
+        "range": "< 10",
+        "state": "歷史性恐慌，強烈底部"
+       }
+      ],
+      "label": "手冊門檻"
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "> 10%",
+       "不在 4 年低位區"
+      ],
+      "tiers": [
+       {
+        "t": 10,
+        "pts": 1,
+        "range": "最低 10%",
+        "state": "4 年相對低位"
+       },
+       {
+        "t": 5,
+        "pts": 2,
+        "range": "最低 5%",
+        "state": "4 年明顯低位"
+       },
+       {
+        "t": 2,
+        "pts": 3,
+        "range": "最低 2%",
+        "state": "4 年極端低位"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "max": 3,
+    "combine": "max",
+    "parts": [
+     {
+      "label": "當日數值",
+      "dir": "above",
+      "zero": [
+       "≤ 75",
+       "中性或一般貪婪"
+      ],
+      "tiers": [
+       {
+        "t": 75,
+        "pts": 1,
+        "range": "75 – 80",
+        "state": "極端貪婪，頂部警告"
+       },
+       {
+        "t": 80,
+        "pts": 2,
+        "range": "> 80",
+        "state": "狂熱情緒"
+       }
+      ]
+     },
+     {
+      "field": "min14",
+      "label": "近 14 天最低值",
+      "dir": "above",
+      "zero": [
+       "≤ 80",
+       "未持續過熱"
+      ],
+      "tiers": [
+       {
+        "t": 80,
+        "pts": 3,
+        "range": "> 80 持續 2 週",
+        "state": "長期狂熱，頂部信號"
+       }
+      ]
+     },
+     {
+      "field": "p",
+      "label": "近 4 年相對位置",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 90%",
+       "不在 4 年高位區"
+      ],
+      "tiers": [
+       {
+        "t": 90,
+        "pts": 1,
+        "range": "最高 10%",
+        "state": "4 年相對高位"
+       },
+       {
+        "t": 95,
+        "pts": 2,
+        "range": "最高 5%",
+        "state": "4 年明顯高位"
+       },
+       {
+        "t": 98,
+        "pts": 3,
+        "range": "最高 2%",
+        "state": "4 年極端高位"
+       }
+      ]
+     }
+    ]
+   },
+   "tier": "core",
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "funding",
+   "name": "資金費率 + OI",
+   "group": "衍生品",
+   "source": "bgeometrics",
+   "unit": "%",
+   "links": [
+    [
+     "CoinGlass",
+     "https://www.coinglass.com/FundingRate"
+    ],
+    [
+     "Coinalyze",
+     "https://coinalyze.net/bitcoin/funding-rate/"
+    ]
+   ],
+   "principle": "永續合約資金費率（8 小時）反映多空擁擠程度；未平倉合約（OI）反映槓桿總量。",
+   "howto": "資金費率持續為負代表空頭主導；OI 從高點大幅萎縮後開始回升，代表去槓桿完成，底部可能已至。費率高於 +0.05% 代表多頭過熱。兩項取較高分，最高 2 分。",
+   "history": [
+    "2018 年 12 月：OI 大幅萎縮",
+    "2020 年 3 月：OI 急速萎縮後回升",
+    "2022 年 11 月：OI 大幅萎縮"
+   ],
+   "decimals": 4,
+   "scale": [
+    -0.08,
+    0.12
+   ],
+   "cbs": {
+    "max": 2,
+    "parts": [
+     {
+      "label": "資金費率",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "≥ -0.01%",
+       "中性或偏多"
+      ],
+      "tiers": [
+       {
+        "t": -0.01,
+        "pts": 1,
+        "range": "-0.05% – -0.01%",
+        "state": "空頭主導，底部信號"
+       }
+      ]
+     },
+     {
+      "field": "max3",
+      "label": "近 3 天最高費率",
+      "dir": "below",
+      "unit": "%",
+      "zero": [
+       "—",
+       "未持續極端"
+      ],
+      "tiers": [
+       {
+        "t": -0.05,
+        "pts": 2,
+        "range": "< -0.05% 持續 3 天",
+        "state": "極端空頭，強烈底部"
+       }
+      ]
+     },
+     {
+      "field": "oiDD",
+      "label": "OI 從一年高點萎縮（且回升中）",
+      "dir": "above",
+      "unit": "%",
+      "zero": [
+       "< 40%",
+       "無信號"
+      ],
+      "tiers": [
+       {
+        "t": 40,
+        "pts": 1,
+        "range": "> 40% 後回升",
+        "state": "去槓桿完成，底部信號"
+       },
+       {
+        "t": 50,
+        "pts": 2,
+        "range": "> 50% 後回升",
+        "state": "強烈底部信號"
+       }
+      ]
+     }
+    ]
+   },
+   "cts": {
+    "dir": "above",
+    "zero": [
+     "≤ +0.05%",
+     "正常偏多"
+    ],
+    "tiers": [
+     {
+      "t": 0.05,
+      "pts": 1,
+      "range": "+0.05% – +0.1%",
+      "state": "多頭過熱，頂部警告"
+     },
+     {
+      "t": 0.1,
+      "pts": 2,
+      "range": "> +0.1%",
+      "state": "槓桿極度擁擠"
+     }
+    ]
+   },
+   "tier": "core"
+  },
+  {
+   "id": "etf_flow",
+   "name": "現貨 ETF 淨流量",
+   "group": "資金流向",
+   "tier": "aux",
+   "source": "bgeo2",
+   "decimals": 0,
+   "links": [
+    [
+     "Farside",
+     "https://farside.co.uk/btc/"
+    ],
+    [
+     "SoSoValue",
+     "https://sosovalue.com/assets/etf/us-btc-spot"
+    ]
+   ],
+   "principle": "美國 BTC 現貨 ETF 每日的申購與贖回淨額，反映機構與傳統市場投資人的現貨需求。系統取近 7 日淨流量，和近半年所有 7 日區間比較，算出百分位。",
+   "howto": "近 7 日淨流量落在半年內最低的 10%，代表機構恐慌性贖回，常出現在階段低點附近；落在最高的 10% 代表追價資金湧入，需留意短線過熱。",
+   "history": [
+    "2024 年 3 月：單週淨流入創高，BTC 隨後在 7.3 萬美元附近見到局部高點",
+    "2025 年 2–3 月：連續大額淨流出，BTC 隨後在 7–8 萬美元區間築底"
+   ],
+   "scale": [
+    0,
+    100
+   ],
+   "scaleField": "pct7",
+   "scaleLabel": "7 日淨流百分位",
+   "cbs": {
+    "field": "pct7",
+    "dir": "below",
+    "unit": "%",
+    "zero": [
+     "≥ 10 百分位",
+     "流量正常"
+    ],
+    "tiers": [
+     {
+      "t": 10,
+      "pts": 1,
+      "range": "後 10%",
+      "state": "大幅淨流出，機構恐慌"
+     },
+     {
+      "t": 3,
+      "pts": 2,
+      "range": "後 3%",
+      "state": "極端流出，常見於階段底部"
+     }
+    ]
+   },
+   "cts": {
+    "field": "pct7",
+    "dir": "above",
+    "unit": "%",
+    "zero": [
+     "≤ 90 百分位",
+     "流量正常"
+    ],
+    "tiers": [
+     {
+      "t": 90,
+      "pts": 1,
+      "range": "前 10%",
+      "state": "大幅淨流入，追價情緒升溫"
+     },
+     {
+      "t": 97,
+      "pts": 2,
+      "range": "前 3%",
+      "state": "極端流入，留意過熱"
+     }
+    ]
+   }
+  },
+  {
+   "id": "liq",
+   "name": "多空清算",
+   "group": "衍生品",
+   "tier": "aux",
+   "source": "bgeo2",
+   "decimals": 0,
+   "links": [
+    [
+     "CoinGlass",
+     "https://www.coinglass.com/LiquidationData"
+    ]
+   ],
+   "principle": "合約市場每日被強制平倉的多單與空單金額。系統把近 3 日的多單、空單清算額分別和近半年比較，算出百分位。",
+   "howto": "多單清算創半年極值代表槓桿多頭被大規模洗出，賣壓通常在清洗後衰竭，常見於急跌底部；空單清算創極值代表逼空，常見於急漲後段。",
+   "history": [
+    "2020 年 3 月 12 日：多單大規模清算，形成週期級低點",
+    "2022 年 6 月 Luna、11 月 FTX：多單清算潮後陸續見底",
+    "2025 年 10 月 10 日：全網單日清算規模創歷史紀錄"
+   ],
+   "scale": [
+    0,
+    100
+   ],
+   "scaleField": "longPct",
+   "scaleLabel": "多單清算百分位",
+   "cbs": {
+    "field": "longPct",
+    "dir": "above",
+    "unit": "%",
+    "zero": [
+     "≤ 95 百分位",
+     "清算規模正常"
+    ],
+    "tiers": [
+     {
+      "t": 95,
+      "pts": 1,
+      "range": "前 5%",
+      "state": "多頭大規模清算，槓桿出清"
+     },
+     {
+      "t": 99,
+      "pts": 2,
+      "range": "前 1%",
+      "state": "極端多殺多，常見於急跌底部"
+     }
+    ]
+   },
+   "cts": {
+    "field": "shortPct",
+    "dir": "above",
+    "unit": "%",
+    "zero": [
+     "≤ 95 百分位",
+     "清算規模正常"
+    ],
+    "tiers": [
+     {
+      "t": 95,
+      "pts": 1,
+      "range": "前 5%",
+      "state": "空頭被大量清算（逼空）"
+     },
+     {
+      "t": 99,
+      "pts": 2,
+      "range": "前 1%",
+      "state": "極端逼空，留意急漲後反轉"
+     }
+    ]
+   }
+  },
+  {
+   "id": "sth_mvrv",
+   "name": "短期持有者成本線",
+   "group": "籌碼結構",
+   "tier": "aux",
+   "source": "bgeo2",
+   "decimals": 3,
+   "links": [
+    [
+     "Glassnode",
+     "https://studio.glassnode.com/metrics?a=BTC&m=indicators.SthMvrv"
+    ],
+    [
+     "BGeometrics",
+     "https://charts.bgeometrics.com/"
+    ]
+   ],
+   "principle": "現價 ÷ 短期持有者（持幣未滿 155 天）的平均成本，也就是 STH-MVRV。短期籌碼對價格最敏感，是牛熊分界的重要參考。",
+   "howto": "比率跌破 0.9 代表短期籌碼普遍虧損，跌破 0.8 通常伴隨投降賣出；高於 1.3 代表短期籌碼獲利豐厚，獲利了結壓力上升。",
+   "history": [
+    "牛市中的回調常在 STH 成本線附近止跌",
+    "2018、2022 年熊市底部：比率約 0.7–0.8"
+   ],
+   "scale": [
+    0.6,
+    1.8
+   ],
+   "cbs": {
+    "dir": "below",
+    "zero": [
+     "≥ 0.9",
+     "短期籌碼未明顯虧損"
+    ],
+    "tiers": [
+     {
+      "t": 0.9,
+      "pts": 1,
+      "range": "0.8 – 0.9",
+      "state": "短期籌碼普遍虧損"
+     },
+     {
+      "t": 0.8,
+      "pts": 2,
+      "range": "< 0.8",
+      "state": "短期持有者投降"
+     }
+    ]
+   },
+   "cts": {
+    "dir": "above",
+    "zero": [
+     "≤ 1.3",
+     "正常"
+    ],
+    "tiers": [
+     {
+      "t": 1.3,
+      "pts": 1,
+      "range": "1.3 – 1.5",
+      "state": "短期籌碼獲利豐厚"
+     },
+     {
+      "t": 1.5,
+      "pts": 2,
+      "range": "> 1.5",
+      "state": "短線過熱，獲利了結壓力大"
+     }
+    ]
+   },
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "profit_supply",
+   "name": "獲利籌碼比例",
+   "group": "籌碼結構",
+   "tier": "aux",
+   "source": "bgeo2",
+   "decimals": 1,
+   "unit": "%",
+   "links": [
+    [
+     "Glassnode",
+     "https://studio.glassnode.com/metrics?a=BTC&m=supply.ProfitRelative"
+    ]
+   ],
+   "principle": "目前處於獲利狀態的 BTC 佔總流通量的比例，反映籌碼在現價上下的分布。",
+   "howto": "比例跌到 50% 左右代表一半籌碼被套，歷史大底多出現在這個區間；高於 95% 代表幾乎所有籌碼都在獲利，賣壓隨時可能湧現。",
+   "history": [
+    "2015、2018、2022 年熊市底部：約 45–55%",
+    "2017、2021 年牛市頂部：長時間高於 95%"
+   ],
+   "scale": [
+    30,
+    100
+   ],
+   "cbs": {
+    "dir": "below",
+    "unit": "%",
+    "zero": [
+     "≥ 55%",
+     "多數籌碼獲利"
+    ],
+    "tiers": [
+     {
+      "t": 55,
+      "pts": 1,
+      "range": "48% – 55%",
+      "state": "接近半數籌碼被套"
+     },
+     {
+      "t": 48,
+      "pts": 2,
+      "range": "< 48%",
+      "state": "過半籌碼被套，歷史底部區"
+     }
+    ]
+   },
+   "cts": {
+    "dir": "above",
+    "unit": "%",
+    "zero": [
+     "≤ 95%",
+     "正常"
+    ],
+    "tiers": [
+     {
+      "t": 95,
+      "pts": 1,
+      "range": "95% – 98%",
+      "state": "幾乎全員獲利"
+     },
+     {
+      "t": 98,
+      "pts": 2,
+      "range": "> 98%",
+      "state": "極度擁擠的獲利盤"
+     }
+    ]
+   },
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "whale",
+   "name": "巨鯨持倉變化",
+   "group": "籌碼結構",
+   "tier": "aux",
+   "source": "bgeo2",
+   "decimals": 2,
+   "unit": "%",
+   "links": [
+    [
+     "BGeometrics",
+     "https://charts.bgeometrics.com/"
+    ]
+   ],
+   "principle": "持有 1,000–10,000 BTC 的地址，其總持幣量近 30 天的變化率，用來觀察大戶籌碼是在聚集還是分散。",
+   "howto": "大戶在下跌中持續增持代表籌碼往強手集中，有利築底；上漲中持續減持代表派發。這組地址也包含交易所與託管機構的冷錢包，請搭配其他指標判讀。",
+   "history": [
+    "2022 年 11 月 FTX 崩盤後：大戶地址持續增持",
+    "2021 年 4 月高點前後：大戶地址持倉轉為下降"
+   ],
+   "scale": [
+    -5,
+    5
+   ],
+   "cbs": {
+    "dir": "above",
+    "unit": "%",
+    "zero": [
+     "≤ +1%",
+     "無明顯吸籌"
+    ],
+    "tiers": [
+     {
+      "t": 1,
+      "pts": 1,
+      "range": "+1% – +2.5%",
+      "state": "巨鯨吸籌"
+     },
+     {
+      "t": 2.5,
+      "pts": 2,
+      "range": "> +2.5%",
+      "state": "大規模吸籌，籌碼集中"
+     }
+    ]
+   },
+   "cts": {
+    "dir": "below",
+    "unit": "%",
+    "zero": [
+     "≥ -1%",
+     "無明顯派發"
+    ],
+    "tiers": [
+     {
+      "t": -1,
+      "pts": 1,
+      "range": "-2.5% – -1%",
+      "state": "巨鯨派發"
+     },
+     {
+      "t": -2.5,
+      "pts": 2,
+      "range": "< -2.5%",
+      "state": "大規模派發，籌碼分散"
+     }
+    ]
+   }
+  },
+  {
+   "id": "mayer",
+   "name": "Mayer Multiple",
+   "group": "技術指標",
+   "tier": "aux",
+   "source": "kraken",
+   "decimals": 3,
+   "links": [
+    [
+     "Bitcoin Magazine Pro",
+     "https://www.bitcoinmagazinepro.com/charts/mayer-multiple/"
+    ]
+   ],
+   "principle": "現價 ÷ 200 日均線，衡量價格偏離中期趨勢的程度。",
+   "howto": "低於 0.8 代表價格明顯低於長期趨勢，低於 0.6 屬歷史少見的超跌；高於 2.4 歷史上多出現在泡沫頂部。",
+   "history": [
+    "2015、2018 年底與 2020 年 3 月：跌破 0.6",
+    "2013、2017 年頂部：高於 2.4"
+   ],
+   "scale": [
+    0.4,
+    2.8
+   ],
+   "cbs": {
+    "dir": "below",
+    "zero": [
+     "≥ 0.8",
+     "趨勢正常"
+    ],
+    "tiers": [
+     {
+      "t": 0.8,
+      "pts": 1,
+      "range": "0.6 – 0.8",
+      "state": "明顯低於長期趨勢"
+     },
+     {
+      "t": 0.6,
+      "pts": 2,
+      "range": "< 0.6",
+      "state": "歷史級超跌"
+     }
+    ]
+   },
+   "cts": {
+    "dir": "above",
+    "zero": [
+     "≤ 2.0",
+     "趨勢正常"
+    ],
+    "tiers": [
+     {
+      "t": 2.0,
+      "pts": 1,
+      "range": "2.0 – 2.4",
+      "state": "明顯高於長期趨勢"
+     },
+     {
+      "t": 2.4,
+      "pts": 2,
+      "range": "> 2.4",
+      "state": "泡沫區"
+     }
+    ]
+   },
+   "rel": true,
+   "index": true
+  },
+  {
+   "id": "lsr",
+   "name": "多空帳戶比",
+   "group": "衍生品",
+   "tier": "aux",
+   "source": "okx",
+   "decimals": 2,
+   "links": [
+    [
+     "OKX 交易大數據",
+     "https://www.okx.com/trade-market/data"
+    ]
+   ],
+   "principle": "OKX 永續合約中持多單帳戶數 ÷ 持空單帳戶數，反映散戶的多空傾向。",
+   "howto": "屬逆向指標：多數帳戶做空時往往接近低點，多數帳戶做多且比例極端時容易被反向清洗。門檻為初始設定，建議累積數據後再校正。",
+   "history": [
+    "急跌後比率跌破 1 時，常伴隨空頭回補反彈"
+   ],
+   "scale": [
+    0.5,
+    4
+   ],
+   "cbs": {
+    "dir": "below",
+    "zero": [
+     "≥ 1.0",
+     "多頭帳戶較多"
+    ],
+    "tiers": [
+     {
+      "t": 1.0,
+      "pts": 1,
+      "range": "0.8 – 1.0",
+      "state": "多數帳戶做空，逆向偏多"
+     },
+     {
+      "t": 0.8,
+      "pts": 2,
+      "range": "< 0.8",
+      "state": "空方極度擁擠"
+     }
+    ]
+   },
+   "cts": {
+    "dir": "above",
+    "zero": [
+     "≤ 2.5",
+     "正常"
+    ],
+    "tiers": [
+     {
+      "t": 2.5,
+      "pts": 1,
+      "range": "2.5 – 3.0",
+      "state": "多方擁擠"
+     },
+     {
+      "t": 3.0,
+      "pts": 2,
+      "range": "> 3.0",
+      "state": "多方極度擁擠"
+     }
+    ]
+   }
+  },
+  {
+   "id": "btcdom",
+   "name": "BTC 市佔率",
+   "group": "市場資訊",
+   "tier": "info",
+   "source": "defillama",
+   "decimals": 1,
+   "unit": "%",
+   "links": [
+    [
+     "TradingView BTC.D",
+     "https://www.tradingview.com/symbols/BTC.D/"
+    ]
+   ],
+   "principle": "BTC 市值佔整體加密貨幣市值的比例。",
+   "howto": "熊市與牛市初期資金偏好 BTC，市佔率上升；牛市後段資金外溢到山寨幣，市佔率快速下降常被視為過熱跡象。僅供參考，不計分。",
+   "history": [
+    "2017 年 12 月、2021 年 5 月：市佔率急跌時接近牛市頂部"
+   ],
+   "scale": [
+    35,
+    75
+   ]
+  },
+  {
+   "id": "stable30",
+   "name": "穩定幣 30 日變化",
+   "group": "市場資訊",
+   "tier": "info",
+   "source": "defillama",
+   "decimals": 2,
+   "unit": "%",
+   "links": [
+    [
+     "DefiLlama",
+     "https://defillama.com/stablecoins"
+    ]
+   ],
+   "principle": "穩定幣總市值近 30 天的變化率，代表場外資金進出加密市場的速度。",
+   "howto": "持續正成長代表新資金進場，有利行情延續；轉為負成長代表資金撤出，常見於熊市中段。僅供參考，不計分。",
+   "history": [
+    "2022 年 5 月至 2023 年 10 月：穩定幣總市值連續萎縮",
+    "2024 年起恢復成長，伴隨牛市"
+   ],
+   "scale": [
+    -5,
+    5
+   ]
+  }
+ ],
+ "confirm": {
+  "bands": [
+   {
+    "min": 0,
+    "name": "弱",
+    "note": "輔助指標多數未同步，建議放慢節奏，例如延長分批天數"
+   },
+   {
+    "min": 25,
+    "name": "中",
+    "note": "部分輔助指標同步，可按計畫執行"
+   },
+   {
+    "min": 50,
+    "name": "強",
+    "note": "多數輔助指標同步，信號可信度高"
+   }
+  ]
+ },
+ "index": {
+  "window": "近 4 年",
+  "zones": [
+   {
+    "min": 0,
+    "name": "深度低估"
+   },
+   {
+    "min": 15,
+    "name": "偏低"
+   },
+   {
+    "min": 35,
+    "name": "中性"
+   },
+   {
+    "min": 65,
+    "name": "偏熱"
+   },
+   {
+    "min": 85,
+    "name": "過熱"
+   }
+  ]
+ },
+ "allocation": {
+  "cbs": [
+   0,
+   0,
+   0,
+   20,
+   50,
+   80,
+   100
+  ],
+  "cts": [
+   0,
+   0,
+   0,
+   15,
+   35,
+   55
+  ]
+ }
+}

@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-Hant">
+<title>BTC 週期雷達</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=JetBrains+Mono:wght@400;600&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* 版面：頂部固定導覽 → 雙評分面板＋週期溫度 → 指標清單（每列同時顯示抄底/止盈得分），單欄流式，寬螢幕兩欄 */
+:root{
+  --bg:#eef0ee; --surface:#ffffff; --sunk:#e3e6e3; --ink:#14181a; --muted:#5b6566; --line:#d5dad6;
+  --accent:#d98e04; --buy:#0b8a76; --sell:#cc4630; --warn:#b98500;
+  --buy-soft:rgba(11,138,118,.16); --sell-soft:rgba(204,70,48,.16);
+  --f-display:"Bricolage Grotesque","Noto Sans TC",system-ui,sans-serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c0f10; --surface:#141819; --sunk:#1b2022; --ink:#e6eae8; --muted:#8b9593; --line:#252b2d;
+  --accent:#f5a623; --buy:#33c7aa; --sell:#ff6b4f; --warn:#e5b43c;
+  --buy-soft:rgba(51,199,170,.18); --sell-soft:rgba(255,107,79,.18); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c0f10; --surface:#141819; --sunk:#1b2022; --ink:#e6eae8; --muted:#8b9593; --line:#252b2d;
+  --accent:#f5a623; --buy:#33c7aa; --sell:#ff6b4f; --warn:#e5b43c;
+  --buy-soft:rgba(51,199,170,.18); --sell-soft:rgba(255,107,79,.18); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.mono,.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+/* 導覽 */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;min-height:56px;flex-wrap:wrap;padding-block:6px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:18px;letter-spacing:.01em;white-space:nowrap}
+.brand svg{flex:none}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;margin-left:auto;scrollbar-width:none}
+nav.tabs a{color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:7px;font-size:14px;white-space:nowrap}
+nav.tabs a:hover{color:var(--ink);background:var(--sunk)}
+nav.tabs a[aria-current="page"]{color:var(--ink);background:var(--sunk);font-weight:500}
+@media (max-width:620px){nav.tabs{margin-left:0;width:100%}}
+
+main{padding-block:24px 64px;display:grid;gap:28px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h2{font-size:20px;font-weight:700}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.sub{color:var(--muted);font-size:13px}
+.notice{border:1px dashed var(--warn);color:var(--ink);background:color-mix(in srgb,var(--warn) 10%,transparent);border-radius:var(--r);padding:10px 14px;font-size:13.5px}
+
+/* 頂部摘要 */
+.pricebar{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px}
+.pricebar .p{font-family:var(--f-mono);font-size:30px;font-weight:600;letter-spacing:-.02em}
+.pricebar .p small{font-size:14px;color:var(--muted);font-weight:400;margin-left:6px}
+
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.score{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 16px;display:grid;gap:12px;position:relative;overflow:hidden}
+.score::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--c)}
+.score.buy{--c:var(--buy);--soft:var(--buy-soft)}
+.score.sell{--c:var(--sell);--soft:var(--sell-soft)}
+.score-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.big{font-family:var(--f-display);font-weight:700;font-size:56px;line-height:.9;color:var(--c)}
+.big small{font-family:var(--f-mono);font-size:16px;font-weight:400;color:var(--muted);margin-left:4px}
+.lvl{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--soft);color:var(--c);font-weight:700;font-size:14px}
+.action{font-size:16px;font-weight:500}
+.ladder{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px}
+.ladder div{height:8px;border-radius:2px;background:var(--sunk)}
+.ladder div.on{background:var(--c);opacity:var(--o,1)}
+.ladder-lab{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:3px;font-size:11px;color:var(--muted)}
+.ladder-lab span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ladder-lab span.cur{color:var(--c);font-weight:700}
+
+.temp{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;display:grid;gap:8px}
+.temp-bar{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,var(--buy),var(--sunk) 50%,var(--sell))}
+.temp-dot{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translate(-50%,-50%)}
+.temp-lab{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+
+/* 指標列 */
+.ind-group{display:grid;gap:8px}
+.ind-group h3{font-size:13px;font-family:var(--f-body);font-weight:500;color:var(--muted);letter-spacing:.06em;padding-left:2px}
+.inds{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+@media (max-width:980px){.inds{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ind{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:grid;gap:10px;min-width:0}
+.ind.hot-buy{border-color:color-mix(in srgb,var(--buy) 55%,var(--line))}
+.ind.hot-sell{border-color:color-mix(in srgb,var(--sell) 55%,var(--line))}
+.ind-row1{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ind-name{background:none;border:0;padding:0;cursor:pointer;text-align:left;font-weight:700;font-size:15px;display:flex;align-items:center;gap:6px}
+.ind-name svg{color:var(--muted);transition:transform .2s}
+.chips{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.chip{font-family:var(--f-mono);font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.chip b{font-weight:600}
+.chip.buy.on{border-color:transparent;background:var(--buy);color:var(--surface)}
+.chip.sell.on{border-color:transparent;background:var(--sell);color:var(--surface)}
+.chip.miss{border-style:dashed}
+.ind-val{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ind-val .v{font-family:var(--f-mono);font-size:24px;font-weight:600;letter-spacing:-.01em}
+.ind-val .d{font-size:12.5px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.strip{position:relative;height:22px}
+.strip .track{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:var(--sunk);overflow:hidden}
+.strip .zb{position:absolute;top:0;bottom:0;left:0;background:var(--buy);opacity:.28}
+.strip .zs{position:absolute;top:0;bottom:0;right:0;background:var(--sell);opacity:.28}
+.strip .tick{position:absolute;top:6px;width:1px;height:10px;background:var(--muted);opacity:.5}
+.strip .dot{position:absolute;top:11px;width:12px;height:12px;border-radius:50%;background:var(--ink);border:2px solid var(--surface);transform:translate(-50%,-50%);box-shadow:0 0 0 1px var(--ink)}
+.strip .dot.out{background:var(--accent)}
+.strip-lab{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:10.5px;color:var(--muted);margin-top:-2px}
+.state{display:inline-flex;align-items:center;gap:8px;font-weight:700}
+.state i{width:10px;height:10px;border-radius:50%;background:var(--muted)}
+.state.capitulation i{background:var(--warn)} .state.recovery i{background:var(--buy)}
+.stale{color:var(--warn);font-size:12px}
+
+/* 通用卡片與表格 */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:14px;min-width:0}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.chart-box{position:relative;height:300px}
+@media (max-width:620px){.chart-box{height:240px}}
+select{font:inherit;font-size:14px;padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--sunk);color:var(--ink)}
+.tbl-wrap{overflow-x:auto;margin:0 -18px;padding:0 18px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font-weight:500;color:var(--muted);text-align:left;font-size:12.5px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;vertical-align:top}
+td.wrap{white-space:normal;min-width:180px}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;border:1px solid var(--line);color:var(--muted)}
+.pill.b{border-color:transparent;background:var(--buy-soft);color:var(--buy);font-weight:700}
+.pill.s{border-color:transparent;background:var(--sell-soft);color:var(--sell);font-weight:700}
+.legacy-tag{font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 4px;margin-left:6px;vertical-align:1px}
+.src{display:grid;gap:10px}
+.src-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.ok{color:var(--buy);font-weight:700}.bad{color:var(--sell);font-weight:700}
+.err{font-family:var(--f-mono);font-size:12px;color:var(--sell);overflow-wrap:anywhere;white-space:normal}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (max-width:760px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.prose{max-width:68ch;font-size:14.5px}
+.prose code{font-family:var(--f-mono);font-size:13px;background:var(--sunk);padding:1px 5px;border-radius:4px}
+a{color:var(--accent)}
+.loading{color:var(--muted);padding:40px 0;text-align:center}
+
+/* 卡片可點 */
+.ind{cursor:pointer;transition:border-color .15s,transform .15s}
+.ind:hover{border-color:color-mix(in srgb,var(--ink) 30%,var(--line))}
+.ind-name svg{transition:transform .15s}
+.ind:hover .ind-name svg{transform:translateX(2px)}
+.hint{margin:-14px 0 -10px}
+.meta{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.meta b{color:var(--ink)}
+.batch{font-size:13.5px;background:var(--soft);border-radius:8px;padding:10px 12px;line-height:1.6}
+.extreme{font-size:13.5px;font-weight:700;color:var(--c);border:1px solid var(--c);border-radius:8px;padding:8px 12px}
+tr.click{cursor:pointer}
+tr.click:hover td{background:var(--sunk)}
+td.small{font-size:12.5px;line-height:1.7}
+
+/* 說明視窗 */
+.modal-back{position:fixed;inset:0;z-index:20;background:rgba(5,8,10,.55);display:flex;align-items:center;justify-content:center;
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.modal{background:var(--surface);border:1px solid var(--line);border-radius:14px;width:min(640px,100%);max-height:100%;overflow-y:auto;padding:22px 22px 26px;display:grid;gap:10px;overscroll-behavior:contain}
+@media (max-width:620px){.modal-back{align-items:flex-end;padding-bottom:0}.modal{border-radius:16px 16px 0 0;max-height:88vh;padding-bottom:max(26px,env(safe-area-inset-bottom,0px))}}
+.modal h2{font-size:22px}
+.modal h4{font-size:13px;font-family:var(--f-body);color:var(--muted);letter-spacing:.06em;margin:10px 0 0;font-weight:500}
+.modal p{margin:0;font-size:14.5px}
+.m-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.badge{font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.m-close{margin-left:auto;background:var(--sunk);border:1px solid var(--line);border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:15px;line-height:1}
+.tiers{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.tier{display:grid;grid-template-columns:3.2em minmax(0,1fr) auto;gap:4px 10px;align-items:baseline;padding:8px 12px;border-radius:8px;font-size:13.5px;border:1px solid transparent;
+  background:color-mix(in srgb,var(--c) calc(6% + var(--a) * 18%),transparent)}
+.tier.buy{--c:var(--buy)} .tier.sell{--c:var(--sell)}
+.tier b{color:var(--c)}
+.tier .st{color:var(--muted);text-align:right}
+.tier.cur{border-color:var(--c);box-shadow:inset 0 0 0 1px var(--c)}
+.tier em{grid-column:1/-1;font-style:normal;font-size:11.5px;font-weight:700;color:var(--c);margin-top:-2px}
+@media (max-width:520px){.tier{grid-template-columns:3.2em minmax(0,1fr)}.tier .st{grid-column:2;text-align:left}}
+.part-lab{font-size:13px;font-weight:700;display:flex;justify-content:space-between;gap:10px;margin-top:4px}
+.part-lab .mono{font-weight:400;color:var(--muted);font-size:12px}
+.judge{background:var(--sunk);border-radius:10px;padding:14px;display:grid;gap:8px;margin-top:6px}
+.judge h4{margin:0}
+.judge-v{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.judge-v .mono{font-size:22px;font-weight:600;color:var(--accent)}
+.judge-s{display:flex;gap:6px}
+.hist{margin:0;padding-left:20px;font-size:14px;color:var(--muted)}
+.m-links{font-size:13.5px;color:var(--muted);margin-top:6px}
+.tier-block{display:grid;gap:18px}
+.tier-head{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px}
+.ind.info{background:transparent;border-style:dashed}
+.confirm{display:grid;gap:6px;border-top:1px dashed var(--line);padding-top:10px;font-size:13.5px}
+.confirm-top{display:flex;justify-content:space-between;gap:10px}
+.confirm-top b{color:var(--c)}
+.confirm-bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.confirm-bar i{display:block;height:100%;background:var(--c);opacity:.7}
+/* 今日操作建議 */
+.decision{--c:var(--muted);--soft:var(--sunk);background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
+.decision.buy{--c:var(--buy);--soft:var(--buy-soft)} .decision.sell{--c:var(--sell);--soft:var(--sell-soft)} .decision.wait{--c:var(--warn);--soft:color-mix(in srgb,var(--warn) 14%,transparent)} .decision.hold{--c:var(--ink)}
+.decision h2{font-size:24px;color:var(--c)}
+.decision.hold h2{color:var(--ink)}
+.dec-action{margin:0;font-size:15.5px;font-weight:500}
+.dec-notes{margin:0;padding-left:18px;font-size:14px;color:var(--muted);display:grid;gap:2px}
+.decision>.sub{margin:0;font-size:12px}
+.allocs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.alloc{display:grid;gap:4px;font-size:12.5px;color:var(--muted)}
+.alloc-top{display:flex;justify-content:space-between;gap:8px}
+.alloc-top b{color:var(--ink)}
+.alloc-bar{height:6px;border-radius:3px;background:var(--sunk);overflow:hidden}
+.alloc-bar i{display:block;height:100%}
+.alloc-bar.buy i{background:var(--buy)} .alloc-bar.sell i{background:var(--sell)}
+/* 週期位置指數 */
+.cindex{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:grid;gap:10px}
+.ci-main{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.ci-num{font-family:var(--f-display);font-weight:700;font-size:48px;line-height:1;display:inline-block;margin-right:10px}
+.ci-num small{font-family:var(--f-mono);font-size:14px;font-weight:400;color:var(--muted);margin-left:4px}
+.ci-zone{font-size:16px}
+.ci-deltas{display:flex;gap:14px;font-size:13px;color:var(--muted)}
+.ci-deltas b{color:var(--ink)}
+.ci-bar{position:relative;display:flex;height:22px;border-radius:6px;overflow:hidden;font-size:10.5px;background:linear-gradient(90deg,var(--buy),var(--sunk) 50%,var(--sell))}
+.ci-bar span{display:flex;align-items:center;justify-content:center;color:var(--ink);border-right:1px solid color-mix(in srgb,var(--surface) 60%,transparent);white-space:nowrap;overflow:hidden;min-width:0}
+.ci-bar span:last-of-type{border-right:0}
+.ci-bar i{position:absolute;top:-2px;bottom:-2px;width:4px;margin-left:-2px;background:var(--ink);border-radius:2px;box-shadow:0 0 0 2px var(--surface)}
+.spark{width:100%;height:56px;display:block}
+.sp-grid{stroke:var(--line);stroke-width:1;stroke-dasharray:3 3}
+.sp-line{fill:none;stroke:var(--ink);stroke-width:1.6;vector-effect:non-scaling-stroke}
+.sp-dot{fill:var(--accent)}
+.cindex>.sub{margin:0;font-size:12.5px}
+.delta{font-size:12px;color:var(--muted);margin-top:4px}
+.pct{font-family:var(--f-mono);font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:0 5px}
+.chart-box.tall{height:360px}
+/* 每日紀錄 */
+.seg{display:inline-flex;background:var(--sunk);border-radius:8px;padding:2px}
+.seg button{border:0;background:none;padding:5px 12px;border-radius:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:500;box-shadow:0 0 0 1px var(--line)}
+table.log td{vertical-align:middle}
+table.log tr.open td{background:var(--sunk)}
+.dec-tag{font-size:13px;font-weight:500}
+.dec-tag.buy{color:var(--buy)} .dec-tag.sell{color:var(--sell)} .dec-tag.wait{color:var(--warn)}
+.ld-row td{background:var(--sunk);white-space:normal;padding:12px 14px 16px}
+.ld-dec{display:grid;gap:4px;margin-bottom:12px;font-size:14px;border-left:3px solid var(--muted);padding-left:10px}
+.ld-dec.buy{border-color:var(--buy)} .ld-dec.sell{border-color:var(--sell)} .ld-dec.wait{border-color:var(--warn)}
+.ld-dec ul{margin:0;padding-left:18px;color:var(--muted);font-size:13px}
+.ld-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:6px 16px}
+.ld-item{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--line)}
+.ld-name{color:var(--muted)}
+.ld-chips{grid-column:1/-1;display:flex;gap:4px}
+.ld-chips .chip{font-size:11px;padding:0 6px}
+.pager{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.pager button{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;font-size:13px;cursor:pointer}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager span{padding:0 6px}
+@media (max-width:640px){.pager button[data-pg="first"],.pager button[data-pg="last"]{display:none}.ld-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:640px){
+  table.log thead{display:none}
+  table.log,table.log tbody{display:block}
+  table.log tr.click{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:"date date price" "cbs cts idx" "dec dec dec";gap:6px 14px;padding:10px 4px;border-bottom:1px solid var(--line)}
+  table.log td{display:block;border:0;padding:0;white-space:normal;background:none}
+  table.log tr.open{background:var(--sunk)}
+  .c-date{grid-area:date;font-weight:600} .c-price{grid-area:price;text-align:right} .c-cbs{grid-area:cbs} .c-cts{grid-area:cts} .c-idx{grid-area:idx;text-align:right} .c-dec{grid-area:dec;min-width:0}
+  .c-cbs::before,.c-cts::before,.c-idx::before{content:attr(data-l) " ";font-size:11px;color:var(--muted);font-family:var(--f-body)}
+  .c-cbs .sub,.c-cts .sub{display:inline;margin-left:4px;font-size:11px}
+  table.log tr.ld-row{display:block}
+  table.log tr.ld-row td{display:block;padding:10px 8px 14px}
+}
+/* 手機：評分並排、指標雙欄小卡，減少直向捲動 */
+@media (max-width:640px){
+  .decision{padding:12px 14px;gap:8px}
+  .decision h2{font-size:19px}
+  .dec-action{font-size:14px}
+  .dec-notes{font-size:12.5px}
+  .allocs{gap:8px}
+  .alloc{font-size:11px}
+  .cindex{padding:12px 14px;gap:8px}
+  .ci-num{font-size:36px}
+  .ci-bar{font-size:9px;height:18px}
+  .cindex>.sub{display:none}
+  .chart-box.tall{height:280px}
+  main{padding-block:16px 48px;gap:18px}
+  .pricebar .p{font-size:24px}
+  .pricebar{gap:2px 12px}
+  .scores{gap:8px}
+  .score{padding:12px 12px 12px 14px;gap:8px}
+  .score-top{flex-direction:column;gap:6px}
+  .eyebrow{font-size:10.5px;letter-spacing:.04em}
+  .big{font-size:40px}
+  .big small{font-size:13px}
+  .lvl{font-size:12px;padding:2px 8px}
+  .action{font-size:13px;line-height:1.45}
+  .ladder div{height:6px}
+  .ladder-lab{display:none}
+  .meta{font-size:11.5px;flex-direction:column;gap:2px}
+  .batch{font-size:12px;padding:8px 10px}
+  .batch .sub{display:none}
+  .extreme{font-size:12px;padding:6px 8px}
+  .confirm{font-size:12px;gap:4px}
+  .confirm .sub{display:none}
+  .confirm-top{flex-direction:column;gap:0}
+  .temp{padding:10px 14px}
+  .hint{margin:-8px 0 -6px;font-size:12px}
+  .tier-block{gap:12px}
+  .tier-head{padding-top:14px}
+  .tier-head h2{font-size:17px}
+  .tier-head .sub{font-size:12px}
+  .ind-group{gap:6px}
+  .inds{gap:8px}
+  .ind{padding:10px 11px;gap:6px}
+  .ind-row1{display:contents}
+  .ind .chips{order:5}
+  .ind-name{font-size:13.5px;line-height:1.3}
+  .ind-name svg{display:none}
+  .chips{justify-content:flex-start;gap:4px}
+  .chip{font-size:11px;padding:1px 6px}
+  .ind-val .v{font-size:18px}
+  .ind-val .d,.strip-lab,.ind>.sub{display:none}
+  .strip{height:14px}
+  .strip .track{top:5px;height:4px}
+  .strip .tick{top:3px;height:8px}
+  .strip .dot{top:7px;width:10px;height:10px}
+  .state{font-size:13px}
+  .stale{font-size:11px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top"><div class="wrap">
+  <div class="brand">
+    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11.5" fill="none" stroke="var(--accent)" stroke-width="2"/><circle cx="13" cy="13" r="6" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity=".5"/><path d="M13 13 L21 6" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/><circle cx="13" cy="13" r="2" fill="var(--accent)"/></svg>
+    <span id="siteName">BTC 週期雷達</span>
+  </div>
+  <nav class="tabs" aria-label="主要頁面">
+    <a href="#overview">儀表板</a>
+    <a href="#history">歷史紀錄</a>
+    <a href="#sources">數據狀態</a>
+    <a href="#rules">評分規則</a>
+  </nav>
+</div></header>
+
+<main class="wrap" id="app"><div class="loading">正在讀取最新快照…</div></main>
+
+<div class="modal-back" id="modal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" id="modalBody"></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script type="module" src="assets/app.js"></script>

@@ -1,0 +1,62 @@
+name: 每日快照與部署
+
+on:
+  schedule:
+    - cron: '0 1 * * *'   # 台灣 09:00 抓取數據（核心指標優先，不寫快照）
+    - cron: '0 2 * * *'   # 台灣 10:00 補齊剩餘指標，寫入當日快照
+    - cron: '0 4 * * *'   # 台灣 12:00 補抓失敗項目並更新快照
+  workflow_dispatch:       # 可在 Actions 頁面手動「Run workflow」
+    inputs:
+      force:
+        description: '全部重新抓取（會用掉 BGeometrics 額度）'
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths-ignore: ['data/**', 'README.md']
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: snapshot
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 抓取指標並建立快照
+        run: node scripts/fetch.mjs ${{ inputs.force && '--force' || '' }} ${{ github.event.schedule == '0 1 * * *' && '--fetch-only' || '' }}
+      - name: 提交數據
+        run: |
+          git config user.name "btc-radar-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet || git commit -m "數據更新 $(TZ=Asia/Taipei date '+%F %H:%M')"
+          git push
+
+  deploy:
+    needs: snapshot
+    if: always() && (needs.snapshot.result == 'success' || needs.snapshot.result == 'skipped')
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
