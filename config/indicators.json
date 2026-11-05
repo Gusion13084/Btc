@@ -1,7 +1,6 @@
 {
  "version": 2,
  "siteName": "BTC 週期雷達",
- "repo": "Gusion13084/Btc",
  "levels": {
   "cbs": [
    {
