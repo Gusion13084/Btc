@@ -4,6 +4,7 @@
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { scoreAll, indexZone, decide } from '../assets/scoring.js';
 import { buildLiqMap, buildLiqMapMulti } from './liqmap.mjs';
+import { fetchMarket } from './market.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const read = async (p, fb) => { try { return JSON.parse(await readFile(new URL(p, ROOT), 'utf8')); } catch { return fb; } };
@@ -70,7 +71,7 @@ const pctRank = (arr, x) => ((arr.filter(v => v < x).length + 0.5 * arr.filter(v
 // ---------- 來源狀態與序列快取 ----------
 const meta = await read('data/series/_meta.json', {});
 const status = {};
-const NAMES = { eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', okx: 'OKX 合約數據' };
+const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', okx: 'OKX 合約數據' };
 const setStatus = (k, ok, error = null) => { status[k] = { name: NAMES[k], ok, error, checkedAt: nowISO }; };
 const S = {};
 const now = {};
@@ -200,6 +201,14 @@ try {
   lsr = +(Array.isArray(d) ? d[1] : d.ratio);
   setStatus('okx', true);
 } catch (e) { setStatus('okx', false, e.message); }
+
+// 短線盤勢（期權、基差、Coinbase 溢價、即時資金費率）
+let MK = { ind: {}, errs: {}, arb: null };
+try {
+  MK = await fetchMarket({ dvolCache: await read('data/series/dvol.json', []) });
+  if (MK.dvolSeries?.length) await write('data/series/dvol.json', MK.dvolSeries, false);
+} catch (e) { console.warn('短線數據失敗：', e.message); MK.errs.deribit = e.message; }
+for (const k of ['deribit', 'coinbase', 'okxfund']) setStatus(k, !MK.errs[k], MK.errs[k] || null);
 
 try {
   let lm = null;
@@ -423,10 +432,11 @@ if (ind.liq) {
 }
 if (ind.whale) detail.whale = `持倉 ${Math.round(F.whale.v[L]).toLocaleString('en-US')} BTC（30 日 ${ind.whale.value >= 0 ? '+' : ''}${Math.round(F.whale.v[L] - F.whale.v[L - 30]).toLocaleString('en-US')}）`;
 if (now.btcDom != null) ind.btcdom = { value: r4(now.btcDom, 2), fields: {} };
+for (const [k, v] of Object.entries(MK.ind)) { ind[k] = { value: v.value, fields: v.fields || {} }; detail[k] = v.detail; }
 if (lsr != null) { ind.lsr = { value: r4(lsr, 3), fields: {} }; detail.lsr = `多頭帳戶約 ${(lsr / (1 + lsr) * 100).toFixed(0)}%`; }
 
 // 指標對應的來源與資料新鮮度
-const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth' };
+const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth', dvol: 'deribit', skew: 'deribit', pcr: 'deribit', basis: 'deribit', fundapr: 'okxfund', cbprem: 'coinbase' };
 const lagOf = { mvrv: 'mvrv', nupl: 'nupl', puell: 'puell', hashribbons: 'hash', funding: 'funding', sth_mvrv: 'sthrp', profit_supply: 'profit', whale: 'whale', etf_flow: 'etf', liq: 'liq' };
 const ageOf = { mvrv: F.mvrv, nupl: F.nupl, puell: F.puell, fng: F.fng, hashribbons: F.hash, funding: F.funding, sth_mvrv: F.sthrp, profit_supply: F.profit, whale: F.whale, stable30: F.stable, ssr: F.stable };
 const lastReal = { etf_flow: S.etf.at(-1)?.[0], liq: S.liq.at(-1)?.[0] };
@@ -446,6 +456,7 @@ latest.index = cycleIndex(L);
 latest.indexZone = indexZone(config, latest.index)?.name ?? null;
 latest.bgCalls = bgCalls;
 latest.lags = LAG;
+latest.arb = MK.arb;
 latest.ethPrice = now.ethPrice ?? latest.ethPrice ?? null;
 
 if (fetchOnly) {

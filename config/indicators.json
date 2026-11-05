@@ -2113,6 +2113,285 @@
     "2022 年 11 月抄底時：近 4 年 92% 百分位（ETH 偏貴），濾網改為全買 BTC",
     "2025 年：一度跌到 0.0219，為 2020 年 6 月以來最低"
    ]
+  },
+  {
+   "id": "dvol",
+   "name": "DVOL 隱含波動率",
+   "group": "期權",
+   "tier": "short",
+   "source": "deribit",
+   "decimals": 1,
+   "rel": false,
+   "scale": [
+    20,
+    120
+   ],
+   "links": [
+    [
+     "Deribit DVOL",
+     "https://www.deribit.com/statistics/BTC/volatility-index"
+    ]
+   ],
+   "principle": "Deribit 的 BTC 30 天隱含波動率指數，代表期權市場預期未來一個月的波動幅度（年化 %）。",
+   "howto": "波動率在恐慌下跌時急升，在盤整與緩漲時下降。極低代表市場自滿、容易出現大行情；急升到近 4 年高位常伴隨恐慌底部。看水準也看方向：價格下跌時 DVOL 不升，代表賣壓有序。",
+   "history": [
+    "2022 年 6 月 Luna 與 11 月 FTX 崩盤：DVOL 升到 100 以上",
+    "2023–2024 年盤整期：多次降到 40 以下"
+   ],
+   "bands": [
+    {
+     "to": 40,
+     "label": "低波動，市場自滿",
+     "tone": "warn"
+    },
+    {
+     "to": 60,
+     "label": "正常",
+     "tone": "neutral"
+    },
+    {
+     "to": 80,
+     "label": "恐慌升溫",
+     "tone": "buy"
+    },
+    {
+     "label": "極度恐慌",
+     "tone": "buy"
+    }
+   ]
+  },
+  {
+   "id": "skew",
+   "name": "期權偏斜（約 30 天 ±10%）",
+   "group": "期權",
+   "tier": "short",
+   "source": "deribit",
+   "decimals": 1,
+   "unit": " 點",
+   "scale": [
+    -10,
+    20
+   ],
+   "links": [
+    [
+     "Deribit",
+     "https://www.deribit.com/options/BTC"
+    ]
+   ],
+   "principle": "約 30 天到期、價外 10% 的賣權隱含波動率減去價外 10% 的買權隱含波動率（單位：波動率點）。",
+   "howto": "正值代表市場願意多付錢買下跌保護，避險需求高；負值代表買權較貴，市場在追漲。偏斜極高常出現在恐慌末端，極低則常見於短線過熱。",
+   "history": [
+    "急跌期間偏斜常升到 +10 點以上",
+    "牛市加速段偏斜常轉為負值"
+   ],
+   "bands": [
+    {
+     "to": -3,
+     "label": "買權溢價，市場追漲",
+     "tone": "sell"
+    },
+    {
+     "to": 3,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "to": 8,
+     "label": "避險需求偏高",
+     "tone": "buy"
+    },
+    {
+     "label": "恐慌避險",
+     "tone": "buy"
+    }
+   ]
+  },
+  {
+   "id": "pcr",
+   "name": "Put/Call 未平倉比",
+   "group": "期權",
+   "tier": "short",
+   "source": "deribit",
+   "decimals": 2,
+   "scale": [
+    0.3,
+    1.3
+   ],
+   "links": [
+    [
+     "Deribit",
+     "https://www.deribit.com/statistics/BTC/options-open-interest"
+    ]
+   ],
+   "principle": "Deribit BTC 期權中賣權未平倉量 ÷ 買權未平倉量（全部到期日）。",
+   "howto": "比值低代表市場以看漲部位為主；升高代表避險或看空部位增加。屬逆向參考，極端值時意義較大。",
+   "history": [
+    "BTC 期權長期以買權為主，比值多在 0.4–0.8"
+   ],
+   "bands": [
+    {
+     "to": 0.5,
+     "label": "看漲部位擁擠",
+     "tone": "sell"
+    },
+    {
+     "to": 0.8,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "to": 1.0,
+     "label": "避險升溫",
+     "tone": "buy"
+    },
+    {
+     "label": "看空部位擁擠",
+     "tone": "buy"
+    }
+   ]
+  },
+  {
+   "id": "basis",
+   "name": "期現價差年化（基差）",
+   "group": "衍生品",
+   "tier": "short",
+   "source": "deribit",
+   "decimals": 2,
+   "unit": "%",
+   "scale": [
+    -5,
+    30
+   ],
+   "links": [
+    [
+     "Deribit 期貨",
+     "https://www.deribit.com/futures/BTC"
+    ]
+   ],
+   "principle": "Deribit 到期日最接近 90 天的 BTC 期貨，相對現貨指數的溢價換算成年化報酬。",
+   "howto": "代表市場願意付多少成本使用槓桿做多，也是期現套利（買現貨＋賣期貨）可鎖定的年化收益。轉負（逆價差）代表極度悲觀，超過 20% 代表多頭槓桿擁擠。",
+   "history": [
+    "2021 年牛市高峰：年化 30–40%",
+    "2022 年熊市：多次接近 0 或轉負"
+   ],
+   "bands": [
+    {
+     "to": 0,
+     "label": "逆價差，極度悲觀",
+     "tone": "buy"
+    },
+    {
+     "to": 5,
+     "label": "偏低",
+     "tone": "neutral"
+    },
+    {
+     "to": 12,
+     "label": "正常",
+     "tone": "neutral"
+    },
+    {
+     "to": 20,
+     "label": "偏熱",
+     "tone": "warn"
+    },
+    {
+     "label": "過熱，多頭擁擠",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "fundapr",
+   "name": "資金費率年化（即時）",
+   "group": "衍生品",
+   "tier": "short",
+   "source": "okxfund",
+   "decimals": 2,
+   "unit": "%",
+   "scale": [
+    -10,
+    40
+   ],
+   "links": [
+    [
+     "OKX 資金費率",
+     "https://www.okx.com/trade-market/funding/swap"
+    ]
+   ],
+   "principle": "OKX BTC-USDT 永續合約近 7 天資金費率平均，換算成年化（每天 3 次）。",
+   "howto": "正值代表多單付費給空單，數值越高多頭越擁擠；轉負代表空頭主導。也是資金費率套利（做多現貨＋做空永續）的年化收益。核心指標的資金費率來自 BGeometrics、延遲約一週，這裡是即時數據。",
+   "history": [
+    "牛市高峰：年化常超過 30%",
+    "恐慌底部：轉負"
+   ],
+   "bands": [
+    {
+     "to": 0,
+     "label": "空頭付費，空頭擁擠",
+     "tone": "buy"
+    },
+    {
+     "to": 5,
+     "label": "偏低",
+     "tone": "neutral"
+    },
+    {
+     "to": 15,
+     "label": "正常",
+     "tone": "neutral"
+    },
+    {
+     "to": 30,
+     "label": "偏熱",
+     "tone": "warn"
+    },
+    {
+     "label": "過熱，多頭擁擠",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "cbprem",
+   "name": "Coinbase 溢價",
+   "group": "現貨買盤",
+   "tier": "short",
+   "source": "coinbase",
+   "decimals": 3,
+   "unit": "%",
+   "scale": [
+    -0.3,
+    0.3
+   ],
+   "links": [
+    [
+     "Coinbase",
+     "https://www.coinbase.com/price/bitcoin"
+    ]
+   ],
+   "principle": "Coinbase BTC-USD 價格相對 OKX BTC-USDT 的溢價，近 7 天每小時平均。",
+   "howto": "Coinbase 以美國機構與 ETF 相關買盤為主。持續溢價代表美國現貨買盤強，常領先 ETF 淨流入；持續折價代表美國資金在賣。USDT 匯率偏離也會影響，看方向比看絕對值重要。",
+   "history": [
+    "2024 年初 ETF 上市後：溢價多次超過 +0.1%",
+    "2025 年初修正期：長時間折價"
+   ],
+   "bands": [
+    {
+     "to": -0.1,
+     "label": "美國現貨賣壓",
+     "tone": "sell"
+    },
+    {
+     "to": 0.05,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "label": "美國現貨買盤強",
+     "tone": "buy"
+    }
+   ]
   }
  ],
  "confirm": {
