@@ -1429,7 +1429,33 @@
    },
    "tier": "core",
    "rel": true,
-   "index": true
+   "index": true,
+   "bands": [
+    {
+     "to": 25,
+     "label": "極度恐懼",
+     "tone": "buy"
+    },
+    {
+     "to": 45,
+     "label": "恐懼",
+     "tone": "neutral"
+    },
+    {
+     "to": 55,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "to": 75,
+     "label": "貪婪",
+     "tone": "neutral"
+    },
+    {
+     "label": "極度貪婪",
+     "tone": "sell"
+    }
+   ]
   },
   {
    "id": "funding",
@@ -1620,7 +1646,34 @@
       "state": "極端流入，留意過熱"
      }
     ]
-   }
+   },
+   "bandField": "pct7",
+   "bands": [
+    {
+     "to": 10,
+     "label": "大幅淨流出",
+     "tone": "buy"
+    },
+    {
+     "to": 40,
+     "label": "偏流出",
+     "tone": "neutral"
+    },
+    {
+     "to": 60,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "to": 90,
+     "label": "偏流入",
+     "tone": "neutral"
+    },
+    {
+     "label": "大幅淨流入",
+     "tone": "sell"
+    }
+   ]
   },
   {
    "id": "liq",
@@ -2112,6 +2165,23 @@
    "history": [
     "2022 年 11 月抄底時：近 4 年 92% 百分位（ETH 偏貴），濾網改為全買 BTC",
     "2025 年：一度跌到 0.0219，為 2020 年 6 月以來最低"
+   ],
+   "bandField": "p",
+   "bands": [
+    {
+     "to": 30,
+     "label": "ETH 相對便宜",
+     "tone": "buy"
+    },
+    {
+     "to": 70,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "label": "ETH 相對偏貴",
+     "tone": "warn"
+    }
    ]
   },
   {

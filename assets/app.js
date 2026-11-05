@@ -51,6 +51,15 @@ async function load() {
   S.dec = decide(S.config, S.sc, S.rows, S.latest.index);
 }
 
+// 判讀區間（bands）：依數值落在哪一段給出文字判讀
+function bandOf(def, ind) {
+  if (!def.bands || !ind) return null;
+  const v = def.bandField ? ind.fields?.[def.bandField] : ind.value;
+  if (v == null || !Number.isFinite(+v)) return null;
+  return def.bands.find(b => b.to == null || +v < b.to) || null;
+}
+const toneCls = t => ({ buy: 'buy', sell: 'sell', warn: 'warn' })[t] || 'neu';
+
 // ---------- 指標說明視窗 ----------
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modalBody');
@@ -94,10 +103,11 @@ function openModal(id) {
   const ind = S.latest.indicators[def.id];
   const rb = def.cbs ? S.sc.cbs.items[def.id] : null, rt = def.cts ? S.sc.cts.items[def.id] : null;
   const sides = def.cbs && def.cts ? '抄底 & 止盈' : def.cbs ? '抄底' : def.cts ? '止盈' : '';
-  const badge = def.tier === 'info' ? '市場資訊・不計分' : def.tier === 'aux' ? `輔助確認・${sides}` : `核心・${sides}`;
+  const badge = def.tier === 'info' ? '市場資訊・不計分' : def.tier === 'short' ? '短線盤勢・不計分' : def.tier === 'aux' ? `輔助確認・${sides}` : `核心・${sides}`;
+  const band = bandOf(def, ind);
   const src = S.latest.sources?.[def.source]?.name || def.source;
   let summary;
-  if (def.tier === 'info') summary = '此項僅供參考，不計入任何分數。';
+  if (def.tier === 'info' || def.tier === 'short') summary = band ? `目前判讀：${band.label}。此項用於盤勢判讀，不計入分數。` : '此項僅供參考，不計入任何分數。';
   else if (!rb?.pts && !rt?.pts) summary = '目前不在抄底或止盈的計分區間，屬中性，繼續觀察。';
   else if (rb?.pts) summary = rb.pts === rb.max ? '已觸發此指標的最強抄底信號。' : '已進入抄底計分區間，尚未達到此指標最強信號。';
   else summary = rt.pts === rt.max ? '已觸發此指標的最強止盈信號。' : '已進入止盈計分區間，尚未達到此指標最強信號。';
@@ -113,6 +123,7 @@ function openModal(id) {
     <p>${esc(def.howto)}</p>
     ${def.cbs ? `<h4>抄底評分區間</h4>${tierRows('cbs', def, def.cbs, rb)}` : ''}
     ${def.cts ? `<h4>止盈評分區間</h4>${tierRows('cts', def, def.cts, rt)}` : ''}
+    ${def.bands ? `<h4>判讀區間</h4><ul class="tiers">${def.bands.map((b, i, a) => `<li class="tier ${toneCls(b.tone) === 'sell' ? 'sell' : 'buy'} band-${toneCls(b.tone)} ${band === b ? 'cur' : ''}" style="--a:${b.tone === 'neutral' ? 0 : 0.6}"><b class="mono">${i === 0 ? `&lt; ${b.to}` : b.to == null ? `≥ ${a[i - 1].to}` : `${a[i - 1].to}–${b.to}`}${esc(def.unit || '')}</b><span class="rng"></span><span class="st">${esc(b.label)}</span>${band === b ? '<em>目前</em>' : ''}</li>`).join('')}</ul>` : ''}
     <section class="judge">
       <h4>當前數值判斷</h4>
       <div class="judge-v"><span class="mono">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct">近 4 年百分位 ${ind.fields.p}%</span>` : ''}${ind?.detail ? `<span class="sub">${esc(ind.detail)}</span>` : ''}</div>
@@ -192,6 +203,14 @@ function strip(def, ind) {
   }
   const [mn, mx] = def.scale;
   const f = def.scaleField;
+  if (def.bands && !def.cbs && !def.cts) {
+    const posB = x => Math.max(0, Math.min(100, ((x - mn) / (mx - mn)) * 100));
+    let from = mn;
+    const segs = def.bands.map(b => { const to = b.to ?? mx; const seg = `<div class="bseg ${toneCls(b.tone)}" style="left:${posB(from)}%;width:${Math.max(0, posB(to) - posB(from))}%"></div>`; from = to; return seg; }).join('');
+    const vb = def.bandField ? ind?.fields?.[def.bandField] : ind?.value;
+    const hasB = vb != null && Number.isFinite(+vb);
+    return `<div class="strip" role="img" aria-label="${esc(def.name)} 位置"><div class="track">${segs}</div>${hasB ? `<div class="dot" style="left:${posB(+vb)}%"></div>` : ''}</div><div class="strip-lab"><span>${mn}${esc(def.unit || '')}</span><span>${mx}${esc(def.unit || '')}</span></div>`;
+  }
   const pos = x => Math.max(0, Math.min(100, ((x - mn) / (mx - mn)) * 100));
   let z = '', ticks = '';
   for (const side of ['cbs', 'cts']) for (const p of parts(def[side])) {
@@ -220,7 +239,7 @@ function indCard(def) {
   return `<article class="ind ${hot} ${def.tier || 'core'}" data-ind="${def.id}">
     <div class="ind-row1">
       <button class="ind-name" data-ind="${def.id}" aria-haspopup="dialog">${esc(def.name)}${CHEV}</button>
-      <div class="chips">${def.tier === 'info' ? '<span class="chip">參考</span>' : chip(b, 'buy', '抄底') + chip(t, 'sell', '止盈')}</div>
+      <div class="chips">${(def.tier === 'info' || def.tier === 'short') ? (bandOf(def, ind) ? `<span class="chip band ${toneCls(bandOf(def, ind).tone)}">${esc(bandOf(def, ind).label)}</span>` : '<span class="chip">參考</span>') : chip(b, 'buy', '抄底') + chip(t, 'sell', '止盈')}</div>
     </div>
     ${def.type === 'state' ? '' : `<div class="ind-val"><span class="v">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct" title="近 4 年百分位">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}${ind?.age >= 2 && ind?.asOf ? `<span class="pct lag" title="來源數據延遲，這是 ${esc(ind.asOf)} 的數值">至 ${shortDate(ind.asOf)}</span>` : ''}<span class="d">${esc(ind?.detail || '')}</span></div>`}
     ${strip(def, ind)}
@@ -367,6 +386,62 @@ function liqCard() {
   </section>`;
 }
 
+// ---------- 今日變化：與上一筆定稿快照比較 ----------
+function changes() {
+  const prev = S.history.filter(h => h.date < S.latest.date && !h.legacy).at(-1);
+  if (!prev) return { prev: null, list: [] };
+  const L = [], defs = S.config.indicators;
+  const push = (tone, text, w = 1) => L.push({ tone, text, w });
+  const d = S.dec, pd = prev.decision;
+  if (pd && d && pd.title !== d.title) push(d.tone, `操作建議改變：${pd.title} → ${d.title}`, 10);
+  for (const [side, nm] of [['cbs', '抄底 CBS'], ['cts', '止盈 CTS']]) {
+    const a = prev[side], b = S.sc[side].score;
+    if (a != null && a !== b) push(side === 'cbs' ? (b > a ? 'buy' : 'neu') : (b > a ? 'sell' : 'neu'), `${nm} ${a} → ${b} 分${prev[side + 'Level'] !== S.sc[side].level.name ? `（${prev[side + 'Level']} → ${S.sc[side].level.name}）` : ''}`, 8);
+  }
+  if (prev.idx != null && S.latest.index != null && Math.abs(S.latest.index - prev.idx) >= 3) push(S.latest.index > prev.idx ? 'sell' : 'buy', `週期位置指數 ${Math.round(prev.idx)} → ${Math.round(S.latest.index)}`, 6);
+  if (prev.btcPrice) { const c = (S.latest.btcPrice / prev.btcPrice - 1) * 100; if (Math.abs(c) >= 3) push(c > 0 ? 'sell' : 'buy', `BTC ${c > 0 ? '上漲' : '下跌'} ${Math.abs(c).toFixed(1)}%（${usd(prev.btcPrice)} → ${usd(S.latest.btcPrice)}）`, 7); }
+  for (const def of defs) {
+    const it = prev.items?.[def.id];
+    if (it) for (const [k, side, nm] of [[0, 'cbs', '抄底'], [1, 'cts', '止盈']]) {
+      const cur = S.sc[side].items[def.id]?.pts;
+      if (it[k] != null && cur != null && it[k] !== cur) push(side === 'cbs' ? 'buy' : 'sell', `${def.name}：${nm}分 ${it[k]} → ${cur}`, 5);
+    }
+    if (def.bands && prev.values?.[def.id] != null) {
+      const ind = S.latest.indicators[def.id];
+      const pv = def.bandField ? null : { value: prev.values[def.id], fields: {} };
+      const pb = pv ? bandOf(def, pv) : null, cb = bandOf(def, ind);
+      if (pb && cb && pb.label !== cb.label) push(cb.tone, `${def.name}：${pb.label} → ${cb.label}（${fmtVal(def, ind)}）`, 4);
+    }
+    const pp = prev.pct?.[def.id], cp = S.latest.indicators[def.id]?.fields?.p;
+    if (pp != null && cp != null) {
+      if (cp <= 10 && pp > 10) push('buy', `${def.name} 進入近 4 年最低 10%（${Math.round(cp)}%）`, 5);
+      if (cp >= 90 && pp < 90) push('sell', `${def.name} 進入近 4 年最高 10%（${Math.round(cp)}%）`, 5);
+    }
+  }
+  L.sort((a, b) => b.w - a.w);
+  return { prev, list: L };
+}
+
+function changesCard() {
+  const { prev, list } = changes();
+  return `<section class="panel chg" aria-label="今日變化">
+    <div class="panel-head"><h3>今日變化</h3><span class="sub">${prev ? `與 ${esc(prev.date)} 快照比較` : '首日快照，明天開始比較'}</span></div>
+    ${!prev ? '' : list.length ? `<ul class="chg-list">${list.slice(0, 8).map(x => `<li class="${toneCls(x.tone)}">${esc(x.text)}</li>`).join('')}</ul>${list.length > 8 ? `<p class="sub">另有 ${list.length - 8} 項小變化，見指標頁。</p>` : ''}` : '<p class="chg-none">與上一個交易日相比沒有重大變化。</p>'}
+  </section>`;
+}
+
+// ---------- 盤勢快照：最常看的短線數字 ----------
+const TILE_IDS = ['fng', 'fundapr', 'basis', 'dvol', 'skew', 'cbprem', 'etf_flow', 'ethbtc'];
+function tilesCard() {
+  const defs = TILE_IDS.map(id => S.config.indicators.find(d => d.id === id)).filter(Boolean);
+  const m = S.lm;
+  const lq = m?.topShort?.[0] && m?.topLong?.[0] ? `<button class="tile lqt" onclick="location.hash='#short'"><span class="t-name">最近清算區</span><span class="t-val mono">↑ ${usd(m.topShort[0].price)}</span><span class="t-sub mono">↓ ${usd(m.topLong[0].price)}</span><span class="chip band neu">${m.topShort[0].dist > -m.topLong[0].dist ? '下方較近' : '上方較近'}</span></button>` : '';
+  return `<section class="panel" aria-label="盤勢快照">
+    <div class="panel-head"><h3>盤勢快照</h3><a class="more" href="#short">看短線盤勢 →</a></div>
+    <div class="tiles">${defs.map(def => { const ind = S.latest.indicators[def.id], b = bandOf(def, ind); return `<button class="tile" data-ind="${def.id}"><span class="t-name">${esc(def.name.replace(/（.*）/, ''))}</span><span class="t-val mono">${fmtVal(def, ind)}</span>${b ? `<span class="chip band ${toneCls(b.tone)}">${esc(b.label)}</span>` : '<span class="chip">—</span>'}</button>`; }).join('')}${lq}</div>
+  </section>`;
+}
+
 function viewOverview() {
   const sc = S.sc;
   const prev = S.history.filter(h => h.date < S.latest.date).at(-1);
@@ -375,18 +450,59 @@ function viewOverview() {
     <section class="pricebar">
       <div class="p">${usd(S.latest.btcPrice)}<small>BTC</small></div>
       ${chg != null ? `<span class="mono" style="color:${chg >= 0 ? 'var(--buy)' : 'var(--sell)'}">${chg >= 0 ? '+' : ''}${chg.toFixed(2)}%</span>` : ''}
-      <span class="sub">${S.latest.pending ? `今日數據抓取中，10:00 補齊後寫入快照・更新於 ${twTime(S.latest.updatedAt)}` : `快照 ${esc(S.latest.date)}・定稿於 ${twTime(S.latest.snapshotAt || S.latest.updatedAt)}`}</span>
+      <span class="sub">快照 ${esc(S.latest.date)}・定稿於 ${twTime(S.latest.snapshotAt || S.latest.updatedAt)}</span>
     </section>
     ${introHint()}
-    ${decisionCard()}
-    ${indexCard()}
-    <div class="scores">${scorePanel('cbs', sc.cbs, '抄底綜合評分 CBS')}${scorePanel('cts', sc.cts, '止盈綜合評分 CTS')}</div>
+    <div class="ov-grid">
+      <div class="ov-col">${decisionCard()}${changesCard()}</div>
+      <div class="ov-col">${indexCard()}<div class="scores">${scorePanel('cbs', sc.cbs, '抄底 CBS')}${scorePanel('cts', sc.cts, '止盈 CTS')}</div></div>
+    </div>
+    ${tilesCard()}
+    <nav class="ov-more" aria-label="更多">
+      <a href="#indicators"><b>全部指標</b><span>核心、輔助確認與市場資訊 ${S.config.indicators.length} 項</span></a>
+      <a href="#short"><b>短線盤勢</b><span>清算地圖、衍生品、期權、套利池建議</span></a>
+      <a href="#history"><b>紀錄與回測</b><span>每日快照、操作紀錄、4 年回測</span></a>
+    </nav>`;
+}
+
+// ---------- 指標頁：分類篩選 ----------
+const TIERS = [['core', '核心', '依抄底策略手冊計分，決定 CBS / CTS 等級'], ['aux', '輔助確認', '不改變等級，用來確認信號強弱'], ['short', '短線盤勢', '衍生品、期權與現貨買盤，不計分'], ['info', '市場資訊', '僅供參考，不計分']];
+function viewIndicators() {
+  let f = 'all'; try { f = localStorage.getItem('radar.tier') || 'all'; } catch {}
+  const counts = Object.fromEntries(TIERS.map(([t]) => [t, S.config.indicators.filter(d => (d.tier || 'core') === t).length]));
+  app.innerHTML = `
+    <div class="panel-head"><h2>指標</h2><span class="sub">點任一指標可看原理、評分區間與目前判斷</span></div>
+    <div class="seg filt" role="tablist">${[['all', '全部', S.config.indicators.length], ...TIERS.map(([t, n]) => [t, n, counts[t]])].map(([t, n, k]) => `<button role="tab" data-t="${t}" aria-selected="${f === t}">${n}<span class="cnt">${k}</span></button>`).join('')}</div>
+    <div id="indList"></div>`;
+  const draw = t => {
+    document.getElementById('indList').innerHTML = TIERS.filter(([x]) => t === 'all' || x === t).map(([x, n, sub]) => tierBlock(x, n, sub)).join('');
+    app.querySelectorAll('.filt button').forEach(b => b.setAttribute('aria-selected', b.dataset.t === t));
+  };
+  app.querySelectorAll('.filt button').forEach(b => b.addEventListener('click', () => { try { localStorage.setItem('radar.tier', b.dataset.t); } catch {} draw(b.dataset.t); }));
+  draw(f);
+}
+
+// ---------- 短線盤勢頁 ----------
+function arbCard() {
+  const a = S.latest.arb; if (!a) return '';
+  const bar = (lab, v, best) => v == null ? '' : `<div class="arb-row ${best ? 'best' : ''}"><span>${lab}</span><b class="mono">${v.toFixed(1)}%</b><i style="width:${Math.max(2, Math.min(100, v / 30 * 100))}%"></i></div>`;
+  return `<section class="panel arb" aria-label="套利池建議">
+    <div class="panel-head"><h3>套利池建議</h3><span class="sub">年化收益比較</span></div>
+    <p class="arb-adv">${esc(a.advice)}</p>
+    ${bar('資金費率套利（OKX 近 7 天）', a.funding, a.best === 'funding')}
+    ${bar(`期現套利（Deribit ${a.basisDays ?? ''} 天期）`, a.basis, a.best === 'basis')}
+    <p class="sub">資金費率套利：做多現貨＋做空永續，收取資金費率；期現套利：買現貨＋賣到期期貨，持有到期賺取價差。未扣交易成本與保證金占用。</p>
+  </section>`;
+}
+function viewShort() {
+  const by = ids => ids.map(id => S.config.indicators.find(d => d.id === id)).filter(Boolean).map(indCard).join('');
+  app.innerHTML = `
+    <div class="panel-head"><h2>短線盤勢</h2><span class="sub">1–2 週的市場情緒與槓桿狀態，不計入週期評分</span></div>
     ${liqCard()}
-    <p class="sub hint">點任一指標可查看原理、評分區間與目前判斷。</p>
-    ${tierBlock('core', '核心指標', '依抄底策略手冊計分，決定 CBS / CTS 等級')}
-    ${tierBlock('aux', '輔助確認指標', '資金流向、清算與籌碼結構，不改變等級，用來確認信號強弱')}
-    ${tierBlock('info', '市場資訊', '僅供參考，不計分')}
-  `;
+    ${arbCard()}
+    <section class="ind-group"><h3>衍生品與槓桿</h3><div class="inds">${by(['fundapr', 'basis', 'liq', 'lsr', 'funding'])}</div></section>
+    <section class="ind-group"><h3>期權</h3><div class="inds">${by(['dvol', 'skew', 'pcr'])}</div></section>
+    <section class="ind-group"><h3>現貨買盤與資金</h3><div class="inds">${by(['cbprem', 'etf_flow', 'stable30', 'fng'])}</div></section>`;
 }
 
 // ---------- 歷史 ----------
@@ -592,12 +708,13 @@ function drawHistory(sel) {
 }
 
 // ---------- 數據狀態 ----------
-function viewSources() {
+function viewSources() { S.jump = 'data-status'; viewRules(); }
+function sourcesHtml() {
   const src = S.latest.sources || {};
   const ids = Object.keys(src);
   const bad = ids.filter(k => !src[k].ok);
-  app.innerHTML = `
-    <div class="panel-head"><h2>數據狀態</h2><span class="sub">台灣時間 09:00 抓取數據，10:00 補齊並寫入當日快照，12:00 補抓失敗項目</span></div>
+  return `
+    <div class="panel-head" id="data-status"><h2>數據狀態</h2><span class="sub">每天台灣時間 10:07 自動更新，10:30、14:00 為備援</span></div>
     <div class="notice" style="border-color:${bad.length ? 'var(--sell)' : 'var(--buy)'};background:${bad.length ? 'var(--sell-soft)' : 'var(--buy-soft)'}">
       ${bad.length ? `<b class="bad">${bad.length} 個來源異常</b>：${bad.map(k => esc(src[k].name)).join('、')}` : '<b class="ok">所有數據來源正常</b>'}　最近一次執行 ${twTime(S.latest.updatedAt)}
     </div>
@@ -615,6 +732,7 @@ function viewSources() {
       </section>`; }).join('')}</div>`;
 }
 
+
 // ---------- 評分規則 ----------
 function viewRules() {
   const C = S.config;
@@ -631,7 +749,7 @@ function viewRules() {
   const cbsMax = core.reduce((a, d) => a + ruleMax(d.cbs), 0), ctsMax = core.reduce((a, d) => a + ruleMax(d.cts), 0);
   const cfgLink = C.repo ? `<a href="https://github.com/${esc(C.repo)}/edit/main/config/indicators.json" target="_blank" rel="noopener">在 GitHub 編輯設定檔</a>` : '設定檔 <code>config/indicators.json</code>';
   app.innerHTML = `
-    <div class="panel-head"><h2>評分規則</h2><span class="sub mono">CBS 滿分 ${cbsMax}・CTS 滿分 ${ctsMax}</span></div>
+    <div class="panel-head"><h2>規則與數據</h2><span class="sub mono">CBS 滿分 ${cbsMax}・CTS 滿分 ${ctsMax}</span></div>
     <div class="grid2">
       <section class="panel"><h3 style="font-size:16px;color:var(--buy)">抄底等級 CBS</h3><div class="tbl-wrap">${lv('cbs', 'b')}</div></section>
       <section class="panel"><h3 style="font-size:16px;color:var(--sell)">止盈等級 CTS</h3><div class="tbl-wrap">${lv('cts', 's')}</div></section>
@@ -673,7 +791,9 @@ function viewRules() {
       <h3 style="font-size:16px">如何調整</h3>
       <p>所有門檻、等級、分批計畫與指標說明都寫在${cfgLink}。改完存檔後網站會自動重新部署，儀表板立刻用新規則計分；歷史快照保留當天的分數。</p>
       <p>每個門檻的 <code>t</code> 是數值界線、<code>pts</code> 是得分；<code>"dir": "below"</code> 代表低於界線得分，<code>"above"</code> 代表高於界線得分。</p>
-    </section>`;
+    </section>
+    ${sourcesHtml()}`;
+  if (S.jump) { document.getElementById(S.jump)?.scrollIntoView(); S.jump = null; }
 }
 
 // ---------- 計算工具 ----------
@@ -789,19 +909,30 @@ function viewGuide() {
       <li><b>計算工具</b>：輸入你的 BTC、ETH 數量與套利池金額，會算出目前比例，以及要達到目標需買賣多少美元與幣數。輸入的數字只存在你的瀏覽器。</li>
     </ul>
 
-    <h3>其他區塊</h3>
+    <h3>網站分頁</h3>
+    <ul>
+      <li><b>總覽</b>：今日操作建議與建議倉位、「今日變化」（與上一個快照相比，哪些分數、區間或價格有明顯變動）、週期位置指數、CBS／CTS，以及最常看的盤勢快照數字。</li>
+      <li><b>指標</b>：全部 ${C.indicators.length} 項，可用上方分類切換：核心、輔助確認、短線盤勢、市場資訊。點任一張卡可看原理、判讀區間與目前判斷。「4 年 xx%」是近 4 年百分位，「至 10/28」表示來源數據的日期。</li>
+      <li><b>短線</b>：清算地圖、套利池建議，以及衍生品、期權、現貨買盤三組短線指標。</li>
+      <li><b>紀錄</b>：每日快照、4 年回測與每一筆操作信號。</li>
+      <li><b>計算</b>：輸入持倉，換算達到目標比例要買賣多少。</li>
+      <li><b>規則</b>：每一項指標的完整門檻，以及各數據來源的更新狀態。</li>
+    </ul>
+
+    <h3>指標分類</h3>
     <ul>
       <li><b>輔助確認</b>（${aux.length} 項：ETF 流量、清算、籌碼結構等）：不改變等級，只看其他指標是否同步。確認度弱時，建議把分批天數拉長。</li>
-      <li><b>清算地圖</b>：依 OKX 未平倉量估算多空倉位的爆倉價分布。價格常被吸引到大型清算區，用來判斷短線可能被掃的方向；只代表 OKX 一家，不計分。</li>
+      <li><b>短線盤勢</b>（${C.indicators.filter(d => d.tier === 'short').map(d => esc(d.name)).join('、')}）：反映 1–2 週的槓桿、避險需求與現貨買盤，不計分。用來判斷執行時機，例如資金費率過高時不追價、期權偏斜大幅升高代表市場在買保護。</li>
+      <li><b>清算地圖</b>：依多家交易所未平倉量估算多空倉位的爆倉價分布。價格常被吸引到大型清算區，用來判斷短線可能被掃的方向，不計分。</li>
+      <li><b>套利池建議</b>：比較資金費率套利與期現套利的年化收益，提示套利資金目前放哪一種較好。</li>
       <li><b>市場資訊</b>（${info.map(d => esc(d.name)).join('、')}）：僅供參考，不計分。</li>
-      <li><b>指標卡</b>：點任一張可看原理、評分區間與目前判斷。「4 年 xx%」是近 4 年百分位，「至 10/28」表示來源數據的日期。</li>
     </ul>
 
     <h3>數據與更新</h3>
     <ul>
-      <li>每天台灣時間 09:00 抓數據，10:00 寫入當日快照，12:00 補抓失敗項目；GitHub 排程可能延遲 5–30 分鐘。</li>
-      <li>BGeometrics 免費方案的鏈上指標約延遲 7 天，ETF 約 5 天。系統會量測延遲，回測時每一天只用當時真正拿得到的數據，所以回測結果與實際使用一致。</li>
-      <li>「歷史紀錄」頁有每日快照、4 年回測與每一筆操作信號；改了設定，下次排程後回測會自動更新。</li>
+      <li>每天台灣時間約 10:00 自動抓數據並寫入當日快照，14:00 有備援排程補抓失敗項目。</li>
+      <li>BGeometrics 免費方案的鏈上指標約延遲 7 天，ETF 約 5 天。系統會量測延遲，回測時每一天只用當時真正拿得到的數據，所以回測結果與實際使用一致。短線指標（Deribit、Coinbase、OKX）都是當天即時數據。</li>
+      <li>改了設定，下次排程後回測會自動更新。</li>
     </ul>
 
     <h3>回測表現與限制（2022/11–2026/11）</h3>
@@ -812,21 +943,22 @@ function viewGuide() {
     </ul>
 
     <h3>調整設定</h3>
-    <p>所有門檻、等級、目標比例與說明都在 ${C.repo ? `<a href="https://github.com/${esc(C.repo)}/blob/main/config/indicators.json" target="_blank" rel="noopener">config/indicators.json</a>` : '<code>config/indicators.json</code>'}。「評分規則」頁列出目前每一項的完整門檻。</p>
+    <p>所有門檻、等級、目標比例與說明都在 ${C.repo ? `<a href="https://github.com/${esc(C.repo)}/blob/main/config/indicators.json" target="_blank" rel="noopener">config/indicators.json</a>` : '<code>config/indicators.json</code>'}。「規則」頁列出目前每一項的完整門檻。</p>
 
     <p class="sub">本網站依公開數據與既定規則自動判斷，僅供研究參考，不構成投資建議。請依自身風險承受能力決策。</p>
   </article>`;
 }
 
 // ---------- 路由 ----------
-const views = { overview: viewOverview, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc, guide: viewGuide };
+const views = { overview: viewOverview, indicators: viewIndicators, short: viewShort, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc, guide: viewGuide };
 function route() {
   killCharts();
   if (!modal.hidden) closeModal();
   const v = views[location.hash.slice(1)] ? location.hash.slice(1) : 'overview';
-  document.querySelectorAll('nav.tabs a, a.help').forEach(a => { if (a.getAttribute('href') === '#' + v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
-  views[v]();
+  const navKey = v === 'sources' ? 'rules' : v;
+  document.querySelectorAll('nav.tabs a, a.help').forEach(a => { if (a.getAttribute('href') === '#' + navKey) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0, 0);
+  views[v]();
 }
 window.addEventListener('hashchange', route);
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (location.hash === '#history') route(); });
