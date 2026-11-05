@@ -33,12 +33,6 @@ export async function fetchArb({ okxRates = null, czKey = null, log = console.lo
       add({ kind: 'funding', venue: 'Gate', apr: apr8h(r.slice(0, 21)), apr30: r.length >= 90 ? apr8h(r.slice(0, 90)) : null });
     })().catch(e => { errs.gate = e.message; }),
     (async () => {
-      const j = await get('https://www.bitmex.com/api/v1/funding?symbol=XBTUSD&count=100&reverse=true');
-      const r = (j || []).map(x => +x.fundingRate).filter(Number.isFinite);
-      if (r.length < 21) throw new Error('資料不足');
-      add({ kind: 'funding', venue: 'BitMEX', apr: apr8h(r.slice(0, 21)), apr30: r.length >= 90 ? apr8h(r.slice(0, 90)) : null, note: '幣本位' });
-    })().catch(e => { errs.bitmex = e.message; }),
-    (async () => {
       // Hyperliquid 每小時結算一次
       const j = await get('https://api.hyperliquid.xyz/info', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'fundingHistory', coin: 'BTC', startTime: now - 7 * D }) });
       const r = (j || []).map(x => +x.fundingRate).filter(Number.isFinite);
@@ -126,7 +120,7 @@ export async function fetchArb({ okxRates = null, czKey = null, log = console.lo
     const pick = (proj, sym) => (j.data || []).filter(p => p.project === proj && p.chain === 'Ethereum' && p.symbol === sym).sort((a, b) => b.tvlUsd - a.tvlUsd)[0];
     for (const [proj, sym, name] of [['aave-v3', 'USDC', 'Aave USDC'], ['aave-v3', 'USDT', 'Aave USDT']]) {
       const p = pick(proj, sym);
-      if (p && Number.isFinite(+p.apy)) add({ kind: 'lend', venue: name, apr: +p.apy, apr30: Number.isFinite(+p.apyMean30d) ? +p.apyMean30d : null, note: 'Ethereum 鏈上借貸' });
+      if (p && Number.isFinite(+p.apy)) add({ kind: 'lend', venue: name, apr: +p.apy, apr30: Number.isFinite(+p.apyMean30d) ? +p.apyMean30d : null, note: '鏈上' });
     }
   } catch (e) { errs.defillama = e.message; }
 
