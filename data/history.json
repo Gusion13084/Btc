@@ -499,5 +499,160 @@
     "type": "sell"
    }
   }
+ },
+ {
+  "date": "2026-11-05",
+  "btcPrice": 80632,
+  "cbs": 1,
+  "cts": 0,
+  "cbsConfirm": 0,
+  "ctsConfirm": 0,
+  "idx": 39.7,
+  "cbsLevel": "無信號",
+  "ctsLevel": "無信號",
+  "action": "繼續期限套利，不動作",
+  "values": {
+   "mvrv": 0.7817,
+   "nupl": 0.3085,
+   "puell": 0.9922,
+   "hashribbons": "normal",
+   "ssr": 5.50176,
+   "rsi_w": 54.949,
+   "wma200": 1.19085,
+   "pi_bottom": 1.20819,
+   "pi_top": 0.49983,
+   "fng": 50,
+   "funding": 0.00798,
+   "etf_flow": -9451.27231,
+   "liq": 125076090.38853,
+   "sth_mvrv": 1.0623,
+   "profit_supply": 67.18544,
+   "whale": -0.09258,
+   "mayer": 1.1013,
+   "lsr": 1.51,
+   "btcdom": 59.53,
+   "stable30": -4.25971,
+   "ethbtc": 0.03012
+  },
+  "pct": {
+   "mvrv": 37.1,
+   "nupl": 33.8,
+   "puell": 44.6,
+   "ssr": 43.1,
+   "rsi_w": 44.6,
+   "wma200": 33.7,
+   "pi_bottom": 28.9,
+   "pi_top": 31.5,
+   "fng": 46.1,
+   "sth_mvrv": 52.7,
+   "profit_supply": 30.9,
+   "mayer": 49.8,
+   "ethbtc": 24.3
+  },
+  "items": {
+   "mvrv": [
+    0,
+    0
+   ],
+   "nupl": [
+    0,
+    0
+   ],
+   "puell": [
+    1,
+    0
+   ],
+   "hashribbons": [
+    0,
+    null
+   ],
+   "ssr": [
+    0,
+    0
+   ],
+   "rsi_w": [
+    0,
+    0
+   ],
+   "wma200": [
+    0,
+    0
+   ],
+   "pi_bottom": [
+    0,
+    null
+   ],
+   "pi_top": [
+    null,
+    0
+   ],
+   "fng": [
+    0,
+    0
+   ],
+   "funding": [
+    0,
+    0
+   ],
+   "etf_flow": [
+    0,
+    0
+   ],
+   "liq": [
+    0,
+    0
+   ],
+   "sth_mvrv": [
+    0,
+    0
+   ],
+   "profit_supply": [
+    0,
+    0
+   ],
+   "whale": [
+    0,
+    0
+   ],
+   "mayer": [
+    0,
+    0
+   ],
+   "lsr": [
+    0,
+    0
+   ],
+   "btcdom": [
+    null,
+    null
+   ],
+   "stable30": [
+    null,
+    null
+   ],
+   "ethbtc": [
+    null,
+    null
+   ]
+  },
+  "indexZone": "中性",
+  "decision": {
+   "tone": "hold",
+   "title": "持有，不加不減",
+   "action": "抄底與止盈都未達觀察門檻，套利資金照常運作、現貨續抱。",
+   "notes": [
+    "週期指數 30 天下降 14 點，市場明顯轉弱。"
+   ],
+   "target": {
+    "floor": null,
+    "cap": null
+   },
+   "last": {
+    "date": "2025-12-12",
+    "label": "趨勢保護第二段",
+    "target": 35,
+    "type": "sell"
+   }
+  }
  }
 ]
