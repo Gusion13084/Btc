@@ -1,0 +1,9 @@
+.git
+.github
+.assetsignore
+wrangler.jsonc
+scripts
+cloudflare
+node_modules
+data/series
+*.md

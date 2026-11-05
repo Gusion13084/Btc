@@ -1,0 +1,6 @@
+// Cloudflare Workers 靜態網站設定（只發布網頁與數據檔）
+{
+  "name": "btc-radar",
+  "compatibility_date": "2026-11-01",
+  "assets": { "directory": "." }
+}
