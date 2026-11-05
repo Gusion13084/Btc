@@ -485,13 +485,26 @@ function viewIndicators() {
 // ---------- 短線盤勢頁 ----------
 function arbCard() {
   const a = S.latest.arb; if (!a) return '';
-  const bar = (lab, v, best) => v == null ? '' : `<div class="arb-row ${best ? 'best' : ''}"><span>${lab}</span><b class="mono">${v.toFixed(1)}%</b><i style="width:${Math.max(2, Math.min(100, v / 30 * 100))}%"></i></div>`;
+  const V = a.venues || [];
+  const max = Math.max(10, ...V.map(v => v.apr));
+  const isBest = v => a.best && v.kind === a.best.kind && v.venue === a.best.venue && (v.days ?? null) === (a.best.days ?? null);
+  const row = v => `<div class="arb-row ${isBest(v) ? 'best' : ''} ${v.apr < 0 ? 'neg' : ''}"><span>${esc(v.venue)}${v.kind === 'basis' ? `・${v.days} 天` : ''}${v.note ? `<em>${esc(v.note)}</em>` : ''}</span><b class="mono">${v.apr.toFixed(1)}%${v.apr30 != null ? `<small>30 天 ${v.apr30.toFixed(1)}%</small>` : ''}</b><i style="width:${Math.max(2, Math.min(100, Math.abs(v.apr) / max * 100))}%"></i></div>`;
+  const grp = (kind, title, sub) => { const g = V.filter(v => v.kind === kind); return g.length ? `<div class="arb-grp"><h4>${title}<span>${sub}</span></h4>${g.map(row).join('')}</div>` : ''; };
+  const legacy = !V.length ? `${a.funding != null ? row({ kind: 'funding', venue: 'OKX', apr: a.funding }) : ''}${a.basis != null ? row({ kind: 'basis', venue: 'Deribit', days: a.basisDays, apr: a.basis }) : ''}` : '';
+  const curve = (a.curve || []).length > 2 ? `<details class="arb-curve"><summary>全部到期日期貨價差（${a.curve.length} 檔）</summary><div class="tbl-wrap"><table><thead><tr><th>合約</th><th>天數</th><th>年化</th></tr></thead><tbody>${a.curve.map(c => `<tr><td>${esc(c.contract || c.venue)}</td><td class="mono">${c.days}</td><td class="mono">${c.apr.toFixed(1)}%</td></tr>`).join('')}</tbody></table></div></details>` : '';
   return `<section class="panel arb" aria-label="套利池建議">
-    <div class="panel-head"><h3>套利池建議</h3><span class="sub">年化收益比較</span></div>
+    <div class="panel-head"><h3>套利池建議</h3><span class="sub">各平台年化收益${a.fundingMedian != null ? `・資金費率中位數 ${a.fundingMedian.toFixed(1)}%` : ''}</span></div>
     <p class="arb-adv">${esc(a.advice)}</p>
-    ${bar('資金費率套利（OKX 近 7 天）', a.funding, a.best === 'funding')}
-    ${bar(`期現套利（Deribit ${a.basisDays ?? ''} 天期）`, a.basis, a.best === 'basis')}
-    <p class="sub">資金費率套利：做多現貨＋做空永續，收取資金費率；期現套利：買現貨＋賣到期期貨，持有到期賺取價差。未扣交易成本與保證金占用。</p>
+    ${legacy}
+    <div class="arb-cols">
+      ${grp('funding', '資金費率套利', '做多現貨＋做空永續・近 7 天平均')}
+      <div>
+        ${grp('basis', '期現套利', '買現貨＋賣到期期貨・最接近 90 天')}
+        ${grp('lend', '穩定幣借貸', '收益下限參考')}
+      </div>
+    </div>
+    ${curve}
+    <p class="sub">資金費率會隨時變動，期現價差在買入時鎖定到期收益。未扣交易成本、保證金占用與平台風險；Binance、Bybit 經 Coinalyze 取得。</p>
   </section>`;
 }
 function viewShort() {

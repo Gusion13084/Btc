@@ -205,7 +205,7 @@ try {
 // 短線盤勢（期權、基差、Coinbase 溢價、即時資金費率）
 let MK = { ind: {}, errs: {}, arb: null };
 try {
-  MK = await fetchMarket({ dvolCache: await read('data/series/dvol.json', []) });
+  MK = await fetchMarket({ dvolCache: await read('data/series/dvol.json', []), czKey: process.env.COINALYZE_API_KEY || null });
   if (MK.dvolSeries?.length) await write('data/series/dvol.json', MK.dvolSeries, false);
 } catch (e) { console.warn('短線數據失敗：', e.message); MK.errs.deribit = e.message; }
 for (const k of ['deribit', 'coinbase', 'okxfund']) setStatus(k, !MK.errs[k], MK.errs[k] || null);

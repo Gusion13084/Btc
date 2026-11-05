@@ -1,3 +1,4 @@
+import { fetchArb } from './arb.mjs';
 // 短線盤勢數據：Deribit 期權與期貨、Coinbase 溢價、OKX 即時資金費率
 // 全部是免費公開 API；任一來源失敗不影響其他項目
 const UA = { 'User-Agent': 'btc-cycle-radar/2.0 (+github actions)', Accept: 'application/json' };
@@ -14,8 +15,9 @@ function expiryOf(name) {
 }
 const pctRank = (arr, x) => ((arr.filter(v => v < x).length + 0.5 * arr.filter(v => v === x).length) / arr.length) * 100;
 
-export async function fetchMarket({ dvolCache = [], log = console.log } = {}) {
+export async function fetchMarket({ dvolCache = [], czKey = null, log = console.log } = {}) {
   const ind = {}, errs = {}, now = Date.now();
+  let okxRates = null;
   let dvolSeries = dvolCache;
 
   // 1) DVOL：Deribit 30 天隱含波動率指數，抓近 4 年日線算百分位
@@ -81,6 +83,7 @@ export async function fetchMarket({ dvolCache = [], log = console.log } = {}) {
     const j = await get('https://www.okx.com/api/v5/public/funding-rate-history?instId=BTC-USDT-SWAP&limit=100');
     const r = (j.data || []).map(x => +(x.realizedRate ?? x.fundingRate)).filter(Number.isFinite);
     if (r.length < 21) throw new Error('資料不足');
+    okxRates = r;
     const apr = a => a.reduce((s, x) => s + x, 0) / a.length * 3 * 365 * 100;
     const cur = await get('https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP').catch(() => null);
     const next = +(cur?.data?.[0]?.fundingRate);
@@ -109,19 +112,27 @@ export async function fetchMarket({ dvolCache = [], log = console.log } = {}) {
       detail: `近 24 小時 ${p24 >= 0 ? '+' : ''}${p24.toFixed(3)}%・最近一小時 ${prem.at(-1) >= 0 ? '+' : ''}${prem.at(-1).toFixed(3)}%・7 天內 ${Math.round(neg / Math.min(168, prem.length) * 100)}% 時間為折價${usdtAdj ? '・已用 USDT/USD 匯率校正' : '・未校正 USDT 匯率'}` };
   } catch (e) { errs.coinbase = e.message; }
 
-  // 套利池建議：比較資金費率套利與期現套利的年化收益
+  // 套利池建議：比較多家交易所資金費率、期現價差與穩定幣借貸
   let arb = null;
-  if (ind.fundapr || ind.basis) {
-    const f = ind.fundapr?.value ?? null, b = ind.basis?.value ?? null;
-    const best = f != null && (b == null || f >= b) ? 'funding' : 'basis';
-    const top = best === 'funding' ? f : b;
+  try {
+    const A = await fetchArb({ okxRates, czKey, log });
+    const fund = A.venues.filter(v => v.kind === 'funding'), bas = A.venues.filter(v => v.kind === 'basis'), lend = A.venues.filter(v => v.kind === 'lend');
+    const med = a => { const s = a.map(v => v.apr).sort((x, y) => x - y); return s.length ? (s.length % 2 ? s[s.length >> 1] : (s[s.length / 2 - 1] + s[s.length / 2]) / 2) : null; };
+    const fBest = fund[0], bBest = bas[0], lBest = lend[0];
+    const fMed = med(fund);
+    const top = [fBest, bBest].filter(Boolean).sort((a, b) => b.apr - a.apr)[0];
+    const name = v => v.kind === 'funding' ? `${v.venue} 資金費率套利` : v.kind === 'basis' ? `${v.venue} 期現套利（${v.days} 天期）` : v.venue;
     let advice;
-    if (f != null && f < 0) advice = '資金費率為負：資金費率套利（做多現貨＋做空永續）會付費，暫停或改做期現套利。';
-    else if (top < 5) advice = `兩種套利年化都低於 5%（最高 ${top.toFixed(1)}%），收益偏低，可考慮部分改放穩定幣借貸或定存。`;
-    else advice = `${best === 'funding' ? '資金費率套利' : `期現套利（${ind.basis.fields.days} 天期）`}年化約 ${top.toFixed(1)}%，收益較高，套利池優先配置這一種。`;
-    if (top > 20) advice += ' 年化超過 20% 代表多頭槓桿擁擠，常見於過熱階段。';
-    arb = { funding: f, basis: b, basisDays: ind.basis?.fields.days ?? null, best, advice };
-  }
+    if (!top) advice = '套利數據暫時無法取得。';
+    else if (fMed != null && fMed < 0) advice = `多數交易所資金費率為負（中位數 ${fMed.toFixed(1)}%），資金費率套利會付費，暫停或改做期現套利${bBest ? `（${name(bBest)} 年化 ${bBest.apr.toFixed(1)}%）` : ''}。`;
+    else if (top.apr < 5 && lBest && lBest.apr >= top.apr) advice = `套利年化最高只有 ${top.apr.toFixed(1)}%（${name(top)}），不如 ${lBest.venue} 借貸的 ${lBest.apr.toFixed(1)}%，可考慮部分改放穩定幣借貸（有智能合約風險）。`;
+    else if (top.apr < 5) advice = `套利年化最高 ${top.apr.toFixed(1)}%（${name(top)}），收益偏低。`;
+    else advice = `${name(top)}年化約 ${top.apr.toFixed(1)}% 最高，套利池優先配置這一種。`;
+    if (fund.length > 1 && fBest.apr - fund.at(-1).apr > 5) advice += ` 各交易所資金費率差距大（${fBest.venue} ${fBest.apr.toFixed(1)}% 對 ${fund.at(-1).venue} ${fund.at(-1).apr.toFixed(1)}%），選費率高的交易所做空永續。`;
+    if (top && top.apr > 20) advice += ' 年化超過 20% 代表多頭槓桿擁擠，常見於過熱階段。';
+    arb = { funding: ind.fundapr?.value ?? null, fundingMedian: fMed != null ? +fMed.toFixed(2) : null, basis: ind.basis?.value ?? null, basisDays: ind.basis?.fields.days ?? null,
+      best: top ? { kind: top.kind, venue: top.venue, days: top.days ?? null, apr: top.apr } : null, advice, venues: A.venues, curve: A.curve, errors: A.errs };
+  } catch (e) { errs.arb = e.message; }
   log(`短線數據：${Object.keys(ind).join('、')}${Object.keys(errs).length ? `；失敗 ${JSON.stringify(errs)}` : ''}`);
   return { ind, errs, arb, dvolSeries };
 }
