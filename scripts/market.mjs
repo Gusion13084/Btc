@@ -90,19 +90,23 @@ export async function fetchMarket({ dvolCache = [], log = console.log } = {}) {
 
   // 5) Coinbase 溢價：Coinbase BTC-USD 對 OKX BTC-USDT，近 7 天每小時平均
   try {
-    const [cb, ok] = await Promise.all([
+    const [cb, ok, ut] = await Promise.all([
       get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=3600'),
       get('https://www.okx.com/api/v5/market/candles?instId=BTC-USDT&bar=1H&limit=300'),
+      get('https://api.exchange.coinbase.com/products/USDT-USD/candles?granularity=3600').catch(() => []),
     ]);
+    // OKX 以 USDT 計價：用 Coinbase 的 USDT/USD 匯率換成美元，排除 USDT 偏離 1 美元造成的系統性折溢價
+    const usdt = new Map((ut || []).map(c => [c[0], +c[4]]));
     const okMap = new Map((ok.data || []).map(c => [Math.floor(+c[0] / 1000), +c[4]]));
-    const pairs = (cb || []).map(c => [c[0], +c[4], okMap.get(c[0])]).filter(p => p[2]).sort((a, b) => a[0] - b[0]);
+    const pairs = (cb || []).map(c => [c[0], +c[4], okMap.get(c[0]) && okMap.get(c[0]) * (usdt.get(c[0]) || 1)]).filter(p => p[2]).sort((a, b) => a[0] - b[0]);
+    const usdtAdj = usdt.size > 48;
     if (pairs.length < 48) throw new Error('對齊資料不足 ' + pairs.length);
     const prem = pairs.map(p => (p[1] / p[2] - 1) * 100);
     const avg = a => a.reduce((s, x) => s + x, 0) / a.length;
     const p7 = avg(prem.slice(-168)), p24 = avg(prem.slice(-24));
     const neg = prem.slice(-168).filter(x => x < 0).length;
     ind.cbprem = { value: +p7.toFixed(3), fields: { p24: +p24.toFixed(3), last: +prem.at(-1).toFixed(3) },
-      detail: `近 24 小時 ${p24 >= 0 ? '+' : ''}${p24.toFixed(3)}%・最近一小時 ${prem.at(-1) >= 0 ? '+' : ''}${prem.at(-1).toFixed(3)}%・7 天內 ${Math.round(neg / Math.min(168, prem.length) * 100)}% 時間為折價` };
+      detail: `近 24 小時 ${p24 >= 0 ? '+' : ''}${p24.toFixed(3)}%・最近一小時 ${prem.at(-1) >= 0 ? '+' : ''}${prem.at(-1).toFixed(3)}%・7 天內 ${Math.round(neg / Math.min(168, prem.length) * 100)}% 時間為折價${usdtAdj ? '・已用 USDT/USD 匯率校正' : '・未校正 USDT 匯率'}` };
   } catch (e) { errs.coinbase = e.message; }
 
   // 套利池建議：比較資金費率套利與期現套利的年化收益
