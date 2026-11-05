@@ -14,7 +14,7 @@ const write = async (p, d, pretty = true) => {
 
 const START = '2017-01-01';   // 價格類歷史起點（均線需要約 471 天暖機）
 const WINDOW = 1460;          // 相對位置（百分位）視窗：近 4 年
-const BG_BUDGET = 8;          // BGeometrics 免費方案每小時 10 次，每輪最多用 8 次
+const BG_BUDGET = 10;         // BGeometrics 免費方案每小時 10 次、每天 15 次；每天第一次執行用滿 10 次，之後當天已抓過的會略過
 const args = process.argv.slice(2);
 const force = args.includes('--force'), fetchOnly = args.includes('--fetch-only');
 const nowISO = new Date().toISOString();

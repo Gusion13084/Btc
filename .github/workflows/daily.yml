@@ -2,9 +2,9 @@ name: 每日快照與部署
 
 on:
   schedule:
-    - cron: '0 1 * * *'   # 台灣 09:00 抓取數據（核心指標優先，不寫快照）
-    - cron: '0 2 * * *'   # 台灣 10:00 補齊剩餘指標，寫入當日快照
-    - cron: '0 4 * * *'   # 台灣 12:00 補抓失敗項目並更新快照
+    # 主要由 Claude 排程任務每天台灣 10:07 觸發；GitHub 排程常延遲數小時，保留當作備援
+    - cron: '30 2 * * *'  # 台灣 10:30 備援
+    - cron: '0 6 * * *'   # 台灣 14:00 備援（補抓失敗項目）
   workflow_dispatch:       # 可在 Actions 頁面手動「Run workflow」
     inputs:
       force:
@@ -36,7 +36,7 @@ jobs:
       - name: 抓取指標並建立快照
         env:
           COINALYZE_API_KEY: ${{ secrets.COINALYZE_API_KEY }}
-        run: node scripts/fetch.mjs ${{ inputs.force && '--force' || '' }} ${{ github.event.schedule == '0 1 * * *' && '--fetch-only' || '' }}
+        run: node scripts/fetch.mjs ${{ inputs.force && '--force' || '' }}
       - name: 提交數據
         run: |
           git config user.name "btc-radar-bot"
