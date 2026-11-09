@@ -1357,5 +1357,192 @@
     "type": "sell"
    }
   }
+ },
+ {
+  "date": "2026-11-09",
+  "btcPrice": 75176,
+  "cbs": 1,
+  "cts": 0,
+  "cbsConfirm": 7,
+  "ctsConfirm": 7,
+  "idx": 30.9,
+  "cbsLevel": "無信號",
+  "ctsLevel": "無信號",
+  "action": "繼續期限套利，不動作",
+  "values": {
+   "mvrv": 0.7402,
+   "nupl": 0.2973,
+   "puell": 0.895,
+   "hashribbons": "normal",
+   "ssr": 5.15898,
+   "rsi_w": 48.45188,
+   "wma200": 1.10627,
+   "pi_bottom": 1.21155,
+   "pi_top": 0.50286,
+   "fng": 29,
+   "funding": 0.01,
+   "etf_flow": -19776.54855,
+   "liq": 3559675.5728,
+   "sth_mvrv": 0.99275,
+   "profit_supply": 59.31056,
+   "whale": 0.08889,
+   "mayer": 1.02762,
+   "lsr": 2.84,
+   "btcdom": 60.23,
+   "stable30": -4.24925,
+   "ethbtc": 0.02851,
+   "dvol": 40.3,
+   "skew": 7.1,
+   "pcr": 0.703,
+   "basis": 5.54,
+   "fundapr": 7.45,
+   "cbprem": -0.012,
+   "oi": 25.21
+  },
+  "pct": {
+   "mvrv": 35.4,
+   "nupl": 30.5,
+   "puell": 36.2,
+   "ssr": 37.9,
+   "rsi_w": 30.2,
+   "wma200": 25.9,
+   "pi_bottom": 29,
+   "pi_top": 31.7,
+   "fng": 24.1,
+   "sth_mvrv": 37.3,
+   "profit_supply": 14.1,
+   "mayer": 38.2,
+   "ethbtc": 15.3,
+   "dvol": 24.1
+  },
+  "items": {
+   "mvrv": [
+    0,
+    0
+   ],
+   "nupl": [
+    0,
+    0
+   ],
+   "puell": [
+    1,
+    0
+   ],
+   "hashribbons": [
+    0,
+    null
+   ],
+   "ssr": [
+    0,
+    0
+   ],
+   "rsi_w": [
+    0,
+    0
+   ],
+   "wma200": [
+    0,
+    0
+   ],
+   "pi_bottom": [
+    0,
+    null
+   ],
+   "pi_top": [
+    null,
+    0
+   ],
+   "fng": [
+    0,
+    0
+   ],
+   "funding": [
+    0,
+    0
+   ],
+   "etf_flow": [
+    1,
+    0
+   ],
+   "liq": [
+    0,
+    0
+   ],
+   "sth_mvrv": [
+    0,
+    0
+   ],
+   "profit_supply": [
+    0,
+    0
+   ],
+   "whale": [
+    0,
+    0
+   ],
+   "mayer": [
+    0,
+    0
+   ],
+   "lsr": [
+    0,
+    1
+   ],
+   "btcdom": [
+    null,
+    null
+   ],
+   "stable30": [
+    null,
+    null
+   ],
+   "ethbtc": [
+    null,
+    null
+   ],
+   "dvol": [
+    null,
+    null
+   ],
+   "skew": [
+    null,
+    null
+   ],
+   "pcr": [
+    null,
+    null
+   ],
+   "basis": [
+    null,
+    null
+   ],
+   "fundapr": [
+    null,
+    null
+   ],
+   "cbprem": [
+    null,
+    null
+   ]
+  },
+  "indexZone": "偏低",
+  "decision": {
+   "tone": "hold",
+   "title": "持有，不加不減",
+   "action": "抄底與止盈都未達觀察門檻，套利資金照常運作、現貨續抱。",
+   "notes": [
+    "週期指數 30 天下降 16 點，市場明顯轉弱。"
+   ],
+   "target": {
+    "floor": null,
+    "cap": null
+   },
+   "last": {
+    "date": "2025-12-12",
+    "label": "趨勢保護第二段",
+    "target": 35,
+    "type": "sell"
+   }
+  }
  }
 ]
