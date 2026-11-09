@@ -323,7 +323,7 @@ for (let i = 0; i < N; i++) {
     if (oi.length >= 30 && F.oi.v[i] != null) {
       const cur = F.oi.v[i], peak = Math.max(...oi), low14 = Math.min(...oi.slice(-14)), wk1 = F.oi.v[i - 7];
       const dd = (1 - cur / peak) * 100, rebound = cur > low14 * 1.03 && wk1 != null && cur > wk1;
-      f.oiDD = rebound ? r4(dd, 1) : 0; FX[i].oi = { cur, dd, rebound };
+      f.oiDD = rebound ? r4(dd, 1) : 0; f.oi = r4(cur / 1e9, 2); f.oiDrop = r4(dd, 1); FX[i].oi = { cur, dd, rebound };
     }
     set('funding', F.funding.v[i], f);
   }
@@ -472,7 +472,7 @@ const entry = {
   date: today, btcPrice: latest.btcPrice, cbs: s.cbs.score, cts: s.cts.score,
   cbsConfirm: s.cbs.confirm.pct, ctsConfirm: s.cts.confirm.pct, idx: latest.index,
   cbsLevel: s.cbs.level.name, ctsLevel: s.cts.level.name, action: s.cbs.level.action,
-  values: Object.fromEntries(defs.map(d => [d.id, latest.indicators[d.id]?.value ?? null])),
+  values: { ...Object.fromEntries(defs.map(d => [d.id, latest.indicators[d.id]?.value ?? null])), oi: latest.indicators.funding?.fields?.oi ?? null },
   pct: Object.fromEntries(defs.filter(d => latest.indicators[d.id]?.fields?.p != null).map(d => [d.id, latest.indicators[d.id].fields.p])),
   items: Object.fromEntries(defs.map(d => [d.id, [s.cbs.items[d.id]?.pts ?? null, s.cts.items[d.id]?.pts ?? null]])),
   indexZone: latest.indexZone,

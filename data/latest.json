@@ -139,7 +139,9 @@
    "value": 0.01,
    "fields": {
     "max3": 0.01,
-    "oiDD": 26.7
+    "oiDD": 26.7,
+    "oi": 34.22,
+    "oiDrop": 26.7
    },
    "detail": "OI $34.2B・較一年高點 -27%・回升中",
    "ok": true,

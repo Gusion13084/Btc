@@ -6,7 +6,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 36.74
+  }
  },
  {
   "date": "2026-09-28",
@@ -15,7 +18,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 36.02
+  }
  },
  {
   "date": "2026-09-29",
@@ -24,7 +30,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 34.94
+  }
  },
  {
   "date": "2026-09-30",
@@ -33,7 +42,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 34.66
+  }
  },
  {
   "date": "2026-10-01",
@@ -42,7 +54,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 34.38
+  }
  },
  {
   "date": "2026-10-02",
@@ -51,7 +66,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.89
+  }
  },
  {
   "date": "2026-10-03",
@@ -60,7 +78,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.95
+  }
  },
  {
   "date": "2026-10-04",
@@ -69,7 +90,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.98
+  }
  },
  {
   "date": "2026-10-05",
@@ -78,7 +102,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.54
+  }
  },
  {
   "date": "2026-10-06",
@@ -87,7 +114,10 @@
   "cts": 4,
   "cbsLevel": "觀察期",
   "ctsLevel": "預警信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.3
+  }
  },
  {
   "date": "2026-10-07",
@@ -96,7 +126,10 @@
   "cts": 4,
   "cbsLevel": "觀察期",
   "ctsLevel": "預警信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.35
+  }
  },
  {
   "date": "2026-10-08",
@@ -105,7 +138,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.02
+  }
  },
  {
   "date": "2026-10-09",
@@ -114,7 +150,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.51
+  }
  },
  {
   "date": "2026-10-10",
@@ -123,7 +162,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 23.46
+  }
  },
  {
   "date": "2026-10-11",
@@ -132,7 +174,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 23.47
+  }
  },
  {
   "date": "2026-10-12",
@@ -141,7 +186,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 22.78
+  }
  },
  {
   "date": "2026-10-13",
@@ -150,7 +198,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 22.37
+  }
  },
  {
   "date": "2026-10-14",
@@ -159,7 +210,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 31.54
+  }
  },
  {
   "date": "2026-10-15",
@@ -168,7 +222,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 31.64
+  }
  },
  {
   "date": "2026-10-16",
@@ -177,7 +234,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.07
+  }
  },
  {
   "date": "2026-10-17",
@@ -186,7 +246,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.33
+  }
  },
  {
   "date": "2026-10-18",
@@ -195,7 +258,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.96
+  }
  },
  {
   "date": "2026-10-19",
@@ -204,7 +270,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.48
+  }
  },
  {
   "date": "2026-10-20",
@@ -213,7 +282,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.71
+  }
  },
  {
   "date": "2026-10-21",
@@ -222,7 +294,10 @@
   "cts": 3,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.66
+  }
  },
  {
   "date": "2026-10-22",
@@ -231,7 +306,10 @@
   "cts": 2,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.64
+  }
  },
  {
   "date": "2026-10-24",
@@ -240,7 +318,10 @@
   "cts": 2,
   "cbsLevel": "預警信號",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.1
+  }
  },
  {
   "date": "2026-10-25",
@@ -249,7 +330,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 34.96
+  }
  },
  {
   "date": "2026-10-26",
@@ -258,7 +342,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.75
+  }
  },
  {
   "date": "2026-10-27",
@@ -267,7 +354,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.19
+  }
  },
  {
   "date": "2026-10-28",
@@ -276,7 +366,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.45
+  }
  },
  {
   "date": "2026-10-29",
@@ -285,7 +378,10 @@
   "cts": 1,
   "cbsLevel": "預警信號",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 32.94
+  }
  },
  {
   "date": "2026-10-30",
@@ -294,7 +390,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.53
+  }
  },
  {
   "date": "2026-10-31",
@@ -303,7 +402,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.62
+  }
  },
  {
   "date": "2026-11-01",
@@ -312,7 +414,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.62
+  }
  },
  {
   "date": "2026-11-02",
@@ -321,7 +426,10 @@
   "cts": 1,
   "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "legacy": true
+  "legacy": true,
+  "values": {
+   "oi": 33.18
+  }
  },
  {
   "date": "2026-11-03",
@@ -342,7 +450,8 @@
    "pi_bottom": null,
    "pi_top": 0.4955,
    "fng": 26,
-   "funding": 0.0091
+   "funding": 0.0091,
+   "oi": 33.43
   }
  },
  {
@@ -377,7 +486,8 @@
    "lsr": 1.89,
    "btcdom": 59.93,
    "stable30": -3.98732,
-   "ethbtc": 0.02968
+   "ethbtc": 0.02968,
+   "oi": 33.42
   },
   "pct": {
    "mvrv": 40,
@@ -538,7 +648,8 @@
    "pcr": 0.652,
    "basis": 5.57,
    "fundapr": 10.23,
-   "cbprem": -0.019
+   "cbprem": -0.019,
+   "oi": 33.3
   },
   "pct": {
    "mvrv": 37.1,
@@ -724,7 +835,8 @@
    "pcr": 0.722,
    "basis": 5.59,
    "fundapr": 9.73,
-   "cbprem": -0.018
+   "cbprem": -0.018,
+   "oi": 33.52
   },
   "pct": {
    "mvrv": 36.1,
@@ -910,7 +1022,8 @@
    "pcr": 0.695,
    "basis": 5.5,
    "fundapr": 8.69,
-   "cbprem": -0.015
+   "cbprem": -0.015,
+   "oi": 33.38
   },
   "pct": {
    "mvrv": 36.3,
@@ -1096,7 +1209,8 @@
    "pcr": 0.691,
    "basis": 5.43,
    "fundapr": 8.29,
-   "cbprem": -0.012
+   "cbprem": -0.012,
+   "oi": 34.22
   },
   "pct": {
    "mvrv": 37.3,

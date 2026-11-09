@@ -241,7 +241,7 @@ function indCard(def) {
       <button class="ind-name" data-ind="${def.id}" aria-haspopup="dialog">${esc(def.name)}${CHEV}</button>
       <div class="chips">${(def.tier === 'info' || def.tier === 'short') ? (bandOf(def, ind) ? `<span class="chip band ${toneCls(bandOf(def, ind).tone)}">${esc(bandOf(def, ind).label)}</span>` : '<span class="chip">參考</span>') : chip(b, 'buy', '抄底') + chip(t, 'sell', '止盈')}</div>
     </div>
-    ${def.type === 'state' ? '' : `<div class="ind-val"><span class="v">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct" title="近 4 年百分位">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}${ind?.age >= 2 && ind?.asOf ? `<span class="pct lag" title="來源數據延遲，這是 ${esc(ind.asOf)} 的數值">至 ${shortDate(ind.asOf)}</span>` : ''}<span class="d">${esc(ind?.detail || '')}</span></div>`}
+    ${def.type === 'state' ? '' : `<div class="ind-val"><span class="v">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct" title="近 4 年百分位">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}${ind?.fields?.oi != null ? `<span class="pct" title="未平倉合約（OI）">OI $${ind.fields.oi.toFixed(1)}B${ind.fields.oiDrop != null ? `（較一年高點 -${Math.round(ind.fields.oiDrop)}%）` : ''}</span>` : ''}${ind?.age >= 2 && ind?.asOf ? `<span class="pct lag" title="來源數據延遲，這是 ${esc(ind.asOf)} 的數值">至 ${shortDate(ind.asOf)}</span>` : ''}<span class="d">${esc(ind?.detail || '')}</span></div>`}
     ${strip(def, ind)}
     ${def.type === 'state' && ind?.detail ? `<div class="sub mono">${esc(ind.detail)}</div>` : ''}
     ${!ind ? '<div class="sub">新指標，第一次每日排程後取得數值</div>' : ''}
@@ -587,7 +587,7 @@ function logDetail(r) {
   const head = dec
     ? `<div class="ld-dec ${esc(dec.tone)}"><b>${esc(dec.title)}</b><span>${esc(dec.action)}</span>${dec.notes?.length ? `<ul>${dec.notes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>` : ''}${dec.target ? `<span class="sub">目標倉位：${esc(targetText(dec.target))}</span>` : ''}</div>`
     : `<div class="ld-dec"><b>${esc(r.action || '—')}</b><span class="sub">舊網站匯入紀錄，沒有逐項判斷。</span></div>`;
-  if (!r.values) return head + (r.bt ? '<p class="sub">回測紀錄只保存分數；各指標數值從每日快照開始保存。</p>' : '');
+  if (!r.values || r.legacy) return head + (r.bt ? '<p class="sub">回測紀錄只保存分數；各指標數值從每日快照開始保存。</p>' : '');
   const defs = S.config.indicators.filter(d => r.values[d.id] != null);
   return head + `<div class="ld-grid">${defs.map(d => {
     const it = r.items?.[d.id] || [], p = r.pct?.[d.id];
@@ -713,10 +713,17 @@ function drawHistory(sel) {
     if (p.field || !p.tiers) continue;
     p.tiers.forEach(tr => th.push({ label: `${SIDE[side].name} ${tr.pts} 分`, data: H.map(() => tr.t), borderColor: side === 'cbs' ? t.buy : t.sell, borderWidth: 1, borderDash: [5, 4], pointRadius: 0, fill: false }));
   }
+  // 資金費率 + OI：右軸加畫未平倉量（十億美元）
+  const oiVals = sel === 'funding' ? H.map(h => h.values?.oi ?? null) : null;
+  const hasOi = oiVals && oiVals.some(v => v != null);
+  if (hasOi) document.getElementById('indNote').textContent += '　右軸：未平倉合約 OI（十億美元）。';
   S.charts.push(new Chart(document.getElementById('c2'), {
     type: 'line',
-    data: { labels, datasets: [{ label: def.name, data: vals, borderColor: t.accent, backgroundColor: t.accent, pointRadius: 3, borderWidth: 2, spanGaps: true }, ...th] },
-    options: { ...base, plugins: { ...base.plugins, legend: { display: false } }, scales: { x: ax({ grid: { display: false } }), y: ax({}) } },
+    data: { labels, datasets: [{ label: def.name.replace(' + OI', ''), data: vals, borderColor: t.accent, backgroundColor: t.accent, pointRadius: 3, borderWidth: 2, spanGaps: true, yAxisID: 'y' },
+      ...(hasOi ? [{ label: 'OI（十億美元）', data: oiVals, borderColor: t.muted, backgroundColor: t.muted, pointRadius: 2, borderWidth: 1.5, borderDash: [4, 3], spanGaps: true, yAxisID: 'y1' }] : []),
+      ...th.map(d => ({ ...d, yAxisID: 'y' }))] },
+    options: { ...base, plugins: { ...base.plugins, legend: hasOi ? { ...base.plugins.legend, labels: { ...base.plugins.legend.labels, filter: i => !/分$/.test(i.text) } } : { display: false } },
+      scales: { x: ax({ grid: { display: false } }), y: ax({}), ...(hasOi ? { y1: ax({ position: 'right', grid: { display: false }, ticks: { color: t.muted, font: { family: t.font, size: 10.5 }, callback: v => '$' + v + 'B' } }) } : {}) } },
   }));
 }
 
