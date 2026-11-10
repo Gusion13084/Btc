@@ -1,52 +1,52 @@
 {
  "mvrv": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  "nupl": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  "puell": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
+  "ok": true,
+  "last": "2026-11-03"
+ },
+ "funding": {
+  "fetched": "2026-11-10",
   "ok": true,
   "last": "2026-11-02"
  },
- "funding": {
-  "fetched": "2026-11-09",
-  "ok": true,
-  "last": "2026-11-01"
- },
  "oi": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-06"
+  "last": "2026-11-07"
  },
  "etf": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
   "last": "2026-11-05"
  },
  "liq": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-07"
+  "last": "2026-11-08"
  },
  "sthrp": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-02"
+  "last": "2026-11-03"
  },
  "whale": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-07"
+  "last": "2026-11-08"
  },
  "profit": {
-  "fetched": "2026-11-09",
+  "fetched": "2026-11-10",
   "ok": true,
-  "last": "2026-11-07"
+  "last": "2026-11-08"
  }
 }
