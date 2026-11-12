@@ -2,7 +2,7 @@ name: 長週期回測
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   backtest:
     runs-on: ubuntu-latest
@@ -12,7 +12,14 @@ jobs:
         with:
           node-version: 22
       - run: node scripts/long-backtest.mjs
-      - uses: actions/upload-artifact@v4
-        with:
-          name: long-backtest
-          path: data/long-backtest.json
+      # 結果推到獨立分支，不觸發網站部署
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp data/long-backtest.json /tmp/lb.json
+          git checkout --orphan long-backtest-results
+          git rm -rq --cached . && git clean -fdq
+          cp /tmp/lb.json long-backtest.json
+          git add long-backtest.json
+          git commit -qm "長週期回測結果"
+          git push -f origin long-backtest-results
