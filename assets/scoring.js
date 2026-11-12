@@ -87,6 +87,18 @@ export function indexZone(config, v) {
 //       買入批次執行後 CBS 跌回 8 分以下 → 暫停；指數連續 30 天 ≥ 50 視為抄底週期結束（重置）；
 //       減倉批次在指數連續 30 天 < 40 後重置。
 const minLast = (rows, i, k, n) => { let m = Infinity; for (let j = Math.max(0, i - n + 1); j <= i; j++) m = Math.min(m, rows[j][k] ?? 0); return m; };
+// 視窗內有幾天符合條件
+const countLast = (rows, i, n, f) => { let c = 0; for (let j = Math.max(0, i - n + 1); j <= i; j++) if (f(rows[j])) c++; return c; };
+// 各批次的進場條件：CBS 達該級分數的天數，或週期指數低於門檻的天數（給較淺的熊市一條路）
+export function batchReady(level, rows, i) {
+  const b = level.batch, cf = b.confirm || { n: 3, of: 3 };
+  const byScore = countLast(rows, i, cf.of, r => (r.cbs ?? 0) >= level.min) >= cf.n;
+  const ix = b.index;
+  // 機構投降：ETF 近 30 日淨流量落在上市以來最低的 etfBelow%
+  const instOk = r => ix.etfBelow == null || (r.etf30p != null && r.etf30p <= ix.etfBelow);
+  const byIndex = !!ix && countLast(rows, i, ix.of, r => r.idx != null && r.idx < ix.below && instOk(r)) >= ix.n;
+  return { ok: byScore || byIndex, byScore, byIndex };
+}
 const medLast = (rows, i, k, n) => { const a = []; for (let j = Math.max(0, i - n + 1); j <= i; j++) a.push(rows[j][k] ?? 0); a.sort((x, y) => x - y); return a[a.length >> 1]; };
 
 export function runPlan(config, rows, todayExtra = {}) {
@@ -148,18 +160,23 @@ export function runPlan(config, rows, todayExtra = {}) {
     // --- 買入批次 ---
     const nextB = st.buy.done + 1, batchB = LB.filter(l => l.batch)[nextB - 1];
     if (batchB) {
-      const lvOk = bLv.index >= LB.indexOf(batchB);
+      // 每一級都可以由「該級或更高等級」的條件觸發
+      const rd = LB.filter(l => l.batch).slice(nextB - 1).map(l => batchReady(l, rows, i));
+      const lvOk = rd.some(x => x.ok);
+      const viaIndex = lvOk && !rd.some(x => x.byScore);
       const drop = st.buy.firstPrice && ((nextB === 2 && r.price <= st.buy.firstPrice * 0.8) || (nextB === 3 && r.price <= st.buy.firstPrice * 0.7));
       const extremeOk = nextB === 4 && ext.length && st.buy.done >= 1;
       const gapOk = i - st.buy.last >= 7;
       if (!st.buy.paused && (lvOk || drop || extremeOk) && (st.buy.done === 0 || gapOk)) {
         st.buy.done = nextB; st.buy.last = i; if (nextB === 1) st.buy.firstPrice = r.price;
-        st.buy.entry = toTarget('buy', batchB.batch.target, r, batchB.batch.label);
+        st.buy.entry = toTarget('buy', batchB.batch.target, r, batchB.batch.label + (viaIndex && !drop ? (rd.find(x => x.byIndex) && LB.filter(l => l.batch)[nextB - 1 + rd.findIndex(x => x.byIndex)].batch.index?.etfBelow != null ? '（週期指數＋機構投降觸發）' : '（週期指數觸發）') : ''));
         P.sellCut = 0; st.sell = { done: 0, last: -1e9, cum: 0 };
       }
     }
-    if (st.buy.done && !st.buy.paused && (r.cbs ?? 0) <= 8) { st.buy.paused = true; st.buy.pausedAt = i; }
-    if (st.buy.paused && b3 >= 12) st.buy.paused = false;
+    // 假底部：買入後 CBS 跌回 8 分以下「且」週期指數回升到 25 以上，才暫停後續批次
+    const pz = config.buyPause || { cbs: 8, idx: 25 };
+    if (st.buy.done && !st.buy.paused && (r.cbs ?? 0) <= pz.cbs && (r.idx ?? 100) >= pz.idx) { st.buy.paused = true; st.buy.pausedAt = i; }
+    if (st.buy.paused && (b3 >= 12 || (r.idx != null && r.idx < 15))) st.buy.paused = false;
     // --- 減倉批次 ---
     const nextS = st.sell.done + 1, batchS = LS.filter(l => l.batch)[nextS - 1];
     if (batchS && sLv.index >= LS.indexOf(batchS) && (st.sell.done === 0 || i - st.sell.last >= 7)) {
@@ -181,8 +198,8 @@ export function runPlan(config, rows, todayExtra = {}) {
       const sb = LS.filter(l => l.batch)[st.sell.done - 1].batch, day = i - st.sell.last + 1;
       d = { tone: 'sell', title: `執行${sb.label}（第 ${day}/${sb.days} 天）`, action: moveText(st.sell.entry, sb.days, '，換回的穩定幣投入套利') };
     } else if (st.buy.paused && i - st.buy.pausedAt <= 60) {
-      d = { tone: 'wait', title: '暫停後續買入', action: `已執行到${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}，CBS 跌回 ${r.cbs} 分，可能是假底部。已買部位續抱，CBS 重回 12 分且持續 3 天再繼續。` };
-    } else if (tr.stage) {
+      d = { tone: 'wait', title: '暫停後續買入', action: `已執行到${LB.filter(l => l.batch)[st.buy.done - 1].batch.label}，CBS 跌回 ${r.cbs} 分，可能是假底部。已買部位續抱，CBS 重回 12 分且持續 3 天，或週期指數再跌破 15，再繼續。` };
+    } else if (tr.stage && !st.buy.done) {
       const fresh = tr.below - tr.stage.days <= 7;
       d = fresh
         ? { tone: 'sell', title: tr.stage.label, action: st.trendEntry ? moveText(st.trendEntry, 1, '，換回的穩定幣投入套利') : tr.stage.text + '。' }
@@ -196,10 +213,15 @@ export function runPlan(config, rows, todayExtra = {}) {
       d = { tone: 'hold', title: `已完成${LS.filter(l => l.batch)[st.sell.done - 1].batch.label}`, action: ns ? `現貨維持在 ${P.cap ?? ''}% 以下：${ns.batch.trigger}，即啟動${ns.batch.label}（現貨降到 ${ns.batch.target}%）。` : `減倉計畫已完成，保留核心倉位。` };
     } else if (bLv.index >= 3 || sLv.index >= 3) {
       d = { tone: 'wait', title: '等待批次間隔', action: '等級已達標，但距離上一批不足 7 天，明天起再評估。' };
-    } else if (bMed.index >= 3 || sMed.index >= 3) {
-      const side = bMed.index >= 3 ? ['cbs', '抄底', 'buy'] : ['cts', '止盈', 'sell'];
-      let n = 0; for (let j = i; j >= 0 && (rows[j][side[0]] ?? 0) >= 12; j--) n++;
-      d = { tone: 'wait', title: `${side[1]}等級確認中（第 ${Math.min(n, 3)}/3 天）`, action: `${side[0].toUpperCase()} 達 12 分以上需持續 3 天，確認後啟動第一批。` };
+    } else if (!st.buy.done && (() => { const b1 = LB.find(l => l.batch); const ix = b1.batch.index; return (bMed.index >= 3) || (ix && r.idx != null && r.idx < ix.below); })()) {
+      const b1 = LB.find(l => l.batch), cf = b1.batch.confirm || { n: 3, of: 3 }, ix = b1.batch.index;
+      const nS = countLast(rows, i, cf.of, x => (x.cbs ?? 0) >= b1.min), nI = ix ? countLast(rows, i, ix.of, x => x.idx != null && x.idx < ix.below) : 0;
+      const parts = [`CBS 達 ${b1.min} 分：近 ${cf.of} 天已有 ${nS}/${cf.n} 天`];
+      if (ix) parts.push(`週期指數低於 ${ix.below}：近 ${ix.of} 天已有 ${nI}/${ix.n} 天`);
+      d = { tone: 'wait', title: '抄底條件確認中', action: `${parts.join('；')}。任一條件達成即啟動第一批（現貨提高到 ${b1.batch.target}%）。` };
+    } else if (sMed.index >= 3) {
+      let n = 0; for (let j = i; j >= 0 && (rows[j].cts ?? 0) >= 12; j--) n++;
+      d = { tone: 'wait', title: `止盈等級確認中（第 ${Math.min(n, 3)}/3 天）`, action: `CTS 達 12 分以上需持續 3 天，確認後啟動第一批減倉。` };
     } else if (sMed.index === 2) {
       d = { tone: 'sell', title: '準備減倉', action: '停止新增現貨：列好減倉價位與批次，等 CTS 達 12 分並持續 3 天。' };
     } else if (bMed.index === 2) {

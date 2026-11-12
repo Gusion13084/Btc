@@ -381,6 +381,19 @@ function cycleIndex(i) {
   return ps.length >= 5 ? r4(ps.reduce((a, b) => a + b, 0) / ps.length, 1) : null;
 }
 
+// 機構資金：ETF 近 30 日淨流量在 ETF 上市以來的百分位（只用當天以前的資料）
+const E30 = new Array(N).fill(null), E30P = new Array(N).fill(null);
+if (etf0 >= 0) {
+  const etfLast = cal.indexOf(SS.etf.at(-1)?.[0]);
+  for (let i = etf0 + 29; i < N; i++) {
+    if (etfLast >= 0 && i > etfLast) { E30[i] = E30[i - 1]; E30P[i] = E30P[i - 1]; continue; }
+    let s = 0; for (let k = i - 29; k <= i; k++) s += nz(F.etf.v, k, etf0);
+    E30[i] = s;
+    const h = E30.slice(Math.max(etf0 + 29, i - WINDOW + 1), i + 1).filter(x => x != null);
+    if (h.length >= 120) E30P[i] = r4(pctRank(h, s), 1);
+  }
+}
+
 // ---------- 回測：每一天都只用當時已知的資料計分 ----------
 let bt0 = V.mvrv ? V.mvrv.findIndex(v => v != null) : -1;
 if (bt0 < 0) bt0 = Math.max(0, N - WINDOW);
@@ -388,9 +401,9 @@ const backtest = [];
 for (let i = bt0; i < N; i++) {
   const s = scoreAll(config, indicatorsAt(i));
   const ma = sma(i, config.trend?.ma || 350);
-  backtest.push([cal[i], Math.round(close[i]), s.cbs.score, s.cts.score, s.cbs.confirm.pct, s.cts.confirm.pct, cycleIndex(i), ma ? Math.round(ma) : null, P.ethbtc?.[i] ?? null]);
+  backtest.push([cal[i], Math.round(close[i]), s.cbs.score, s.cts.score, s.cbs.confirm.pct, s.cts.confirm.pct, cycleIndex(i), ma ? Math.round(ma) : null, P.ethbtc?.[i] ?? null, E30P[i], E30[i] != null ? Math.round(E30[i]) : null]);
 }
-await write('data/backtest.json', { fields: ['date', 'price', 'cbs', 'cts', 'cbsConfirm', 'ctsConfirm', 'idx', 'ma50w', 'ethPct'], rows: backtest }, false);
+await write('data/backtest.json', { fields: ['date', 'price', 'cbs', 'cts', 'cbsConfirm', 'ctsConfirm', 'idx', 'ma50w', 'ethPct', 'etf30p', 'etf30'], rows: backtest }, false);
 
 // ---------- 今天的完整資料與說明文字 ----------
 const L = N - 1;
@@ -422,7 +435,8 @@ if (ind.etf_flow) {
   const fmt = v => med > 1e5 ? `${v < 0 ? '-' : '+'}$${(Math.abs(v) / 1e6).toFixed(0)}M` : `${v < 0 ? '-' : '+'}${Math.round(Math.abs(v)).toLocaleString('en-US')} BTC`;
   let st = 0; for (let k = f.length - 1; k >= 0 && f[k] < 0; k--) st++;
   ind.etf_flow.display = fmt(ind.etf_flow.value);
-  detail.etf_flow = `近 7 日 ${fmt(ind.etf_flow.value)}・最近一日 ${fmt(f.at(-1))}${st > 1 ? `・連續流出 ${st} 天` : ''}・半年百分位 ${ind.etf_flow.fields.pct7}%`;
+  detail.etf_flow = `近 7 日 ${fmt(ind.etf_flow.value)}・最近一日 ${fmt(f.at(-1))}${st > 1 ? `・連續流出 ${st} 天` : ''}・半年百分位 ${ind.etf_flow.fields.pct7}%${E30[L] != null ? `・近 30 日 ${fmt(E30[L])}（上市以來 ${E30P[L] ?? '—'}% 百分位）` : ''}`;
+  if (E30P[L] != null) ind.etf_flow.fields.p30 = E30P[L];
 }
 if (ind.liq) {
   const m = v => v > 1e5 ? '$' + (v / 1e6).toFixed(0) + 'M' : Math.round(v).toLocaleString('en-US') + ' BTC';
@@ -478,7 +492,7 @@ const entry = {
   indexZone: latest.indexZone,
 };
 { // 當天的操作建議（與儀表板同一套邏輯）
-  const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7], ethPct: r[8] }));
+  const rows = backtest.map(r => ({ date: r[0], price: r[1], cbs: r[2], cts: r[3], idx: r[6], ma50w: r[7], ethPct: r[8], etf30p: r[9] }));
   rows[rows.length - 1] = { ...rows[rows.length - 1], date: today, cbs: s.cbs.score, cts: s.cts.score, idx: latest.index };
   const d = decide(config, s, rows, latest.index);
   entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, target: d.target, last: d.position?.last ? { date: d.position.last.date, label: d.position.last.label, target: d.position.last.target, type: d.position.last.type } : null };

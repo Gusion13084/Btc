@@ -47,7 +47,7 @@ async function load() {
   const base = S.bt.length ? S.bt : S.history.filter(h => !h.legacy).map(h => ({ date: h.date, price: h.btcPrice, cbs: h.cbs, cts: h.cts, idx: h.idx ?? null }));
   const lastBt = S.bt.at(-1);
   S.rows = base.filter(r => r.date < S.latest.date).concat([{ date: S.latest.date, price: S.latest.btcPrice, cbs: S.sc.cbs.score, cts: S.sc.cts.score, idx: S.latest.index ?? null,
-    cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null, ethPct: S.latest.indicators.ethbtc?.fields?.p ?? lastBt?.ethPct ?? null }]);
+    cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null, etf30p: lastBt?.etf30p ?? null, ethPct: S.latest.indicators.ethbtc?.fields?.p ?? lastBt?.ethPct ?? null }]);
   S.dec = decide(S.config, S.sc, S.rows, S.latest.index);
 }
 
@@ -777,7 +777,7 @@ function viewRules() {
     <section class="panel">
       <h3 style="font-size:16px">分批抄底計畫</h3>
       <div class="tbl-wrap">${batches('cbs')}</div>
-      <p class="sub">極端信號（任一出現即可觸發第四批）：${ext('cbs')}。CBS 達 12 分後若跌回 8 分以下，可能是假底部，暫停後續批次。</p>
+      <p class="sub">極端信號（任一出現即可觸發第四批）：${ext('cbs')}。買入後若 CBS 跌回 8 分以下且週期指數回升到 25 以上，可能是假底部，暫停後續批次。</p>
     </section>
     <section class="panel">
       <h3 style="font-size:16px">分批止盈計畫</h3>
@@ -798,7 +798,7 @@ function viewRules() {
     </section>` : ''}
     <section class="panel">
       <h3 style="font-size:16px">執行規則</h3>
-      <p class="sub prose">等級需持續 3 天才算數；已執行的批次會被記住，不會因分數上下跳動而重複或倒退；下一批距上一批至少 7 天（第二批在價格較第一批再跌 20% 時可提前，第三批在再跌 30% 時可提前）；買入後 CBS 跌回 8 分以下暫停後續批次，重回 12 分並持續 3 天再繼續；週期指數連續 30 天 ≥ 50 視為抄底週期結束。</p>
+      <p class="sub prose">第一、二批：近 7 天有 3 天達到分數即可，另外可由週期指數（第一批：近 10 天有 7 天低於 15）或「週期指數低於 15＋ETF 近 30 日淨流量落在上市以來最低 5%」（第二批，機構投降）觸發；第三、四批需連續 3 天達標。已執行的批次會被記住，不會因分數上下跳動而重複或倒退；下一批距上一批至少 7 天（第二批在價格較第一批再跌 20% 時可提前，第三批在再跌 30% 時可提前）；買入後 CBS 跌回 8 分以下且週期指數回升到 25 以上時暫停後續批次，CBS 重回 12 分持續 3 天或週期指數再跌破 15 時繼續；週期指數連續 30 天 ≥ 50 視為抄底週期結束。</p>
       <p class="sub prose">回測與操作紀錄已模擬各來源的實際延遲（例如鏈上指標約晚 7 天），每一天只用當時真正拿得到的數據，結果與實際上線時一致。</p>
     </section>
     <section class="panel">
@@ -908,9 +908,10 @@ function viewGuide() {
 
     <h3>執行規則</h3>
     <ul>
-      <li><b>持續 3 天才算數</b>：分數需連續 3 天達到等級門檻，避免一天的波動就觸發。</li>
+      <li><b>抄底分級標準</b>：越前面的批次條件越寬、金額越小。第一批：CBS 近 7 天有 3 天達 12 分，或週期指數近 10 天有 7 天低於 15（照顧較淺的熊市）。第二批：CBS 近 7 天有 3 天達 16 分，或週期指數低於 15 同時 ETF 近 30 日淨流量落在上市以來最低 5%（機構投降，通常接近階段底部）。第三、四批是深度熊市才會出現的條件，仍需連續 3 天達標。</li>
+      <li><b>為什麼看 ETF</b>：現貨 ETF、上市公司與國家儲備讓 BTC 的持有者結構改變，熊市跌幅可能比過去淺，鏈上估值不一定跌到歷史極端；而機構大量贖回往往出現在階段低點附近，所以把機構資金流向納入抄底條件。</li>
       <li><b>批次有記憶</b>：已執行的批次不會因分數上下跳動而重複或倒退；下一批距上一批至少 7 天。抄底第二批在價格較第一批再跌 20% 時、第三批在再跌 30% 時可提前。</li>
-      <li><b>假底部暫停</b>：買入後 CBS 跌回 8 分以下就暫停後續批次，已買部位續抱，CBS 重回 12 分並持續 3 天再繼續。</li>
+      <li><b>假底部暫停</b>：買入後 CBS 跌回 8 分以下且週期指數回升到 25 以上，就暫停後續批次，已買部位續抱；CBS 重回 12 分持續 3 天，或週期指數再跌破 15 時繼續。</li>
       <li><b>極端信號</b>：${(C.extremes?.cbs || []).map(x => esc(x.label)).join('、')} 任一出現，可提前啟動抄底第四批。</li>
       <li><b>週期結束</b>：週期指數連續 30 天 ≥ 50，本輪抄底目標解除；連續 30 天 &lt; 40，本輪減倉上限解除。之後的新信號從第一批重新開始。</li>
     </ul>
@@ -957,7 +958,7 @@ function viewGuide() {
 
     <h3>回測表現與限制（2022/11–2026/11）</h3>
     <ul>
-      <li>依系統信號操作：期末約為起始資金的 3.9 倍，最大回撤 28%；同期一直持有 BTC 為 4.5 倍，最大回撤 53%。這套系統的價值主要在把回撤減半。</li>
+      <li>依系統信號操作：期末約為起始資金的 4.0 倍，最大回撤 30%；同期一直持有 BTC 約 4.4 倍，最大回撤 53%。這套系統的價值主要在把回撤減半。</li>
       <li>同樣的信號下，固定比例配置 ETH 的期末只有約 3.3 倍；ETH/BTC 濾網在這段期間全部改買 BTC。</li>
       <li>數據只涵蓋一個週期。門檻與趨勢保護都是依這段歷史校準，未來的週期可能不同，請持續觀察。</li>
     </ul>
