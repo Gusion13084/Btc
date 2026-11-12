@@ -151,7 +151,12 @@ export function runPlan(config, rows, todayExtra = {}) {
     // 週期結束重置
     st.idxHi = (r.idx ?? 0) >= 50 ? st.idxHi + 1 : 0;
     st.idxLo = r.idx != null && r.idx < 40 ? st.idxLo + 1 : 0;
-    if (st.buy.done && st.idxHi >= 30) { st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.buyAdded = 0; P.floor = null; }
+    if (st.buy.done && st.idxHi >= 30) {
+      st.buy = { done: 0, last: -1e9, firstPrice: null, paused: false, hi: 0 }; P.buyAdded = 0; P.floor = null;
+      // 抄底週期結束（週期指數連續 30 天 ≥ 50）：現貨若因上漲超過上限，降回 resetCap
+      const rc = config.position?.resetCap;
+      if (rc && r.price) { mark(r.price); if (P.w > rc + 0.5) st.resetEntry = toTarget('sell', rc, r, '抄底週期結束・現貨降回 ' + rc + '%'); }
+    }
     if ((st.sell.done || P.sellCut) && st.idxLo >= 30) { st.sell = { done: 0, last: -1e9, cum: 0 }; P.sellCut = 0; P.cap = null; }
     const tr = trendState(config, rows.slice(Math.max(0, i - 500), i + 1));
     const ext = isLast ? (todayExtra.cbsExtremes || []) : [];
@@ -169,7 +174,7 @@ export function runPlan(config, rows, todayExtra = {}) {
       const gapOk = i - st.buy.last >= 7;
       if (!st.buy.paused && (lvOk || drop || extremeOk) && (st.buy.done === 0 || gapOk)) {
         st.buy.done = nextB; st.buy.last = i; if (nextB === 1) st.buy.firstPrice = r.price;
-        st.buy.entry = toTarget('buy', batchB.batch.target, r, batchB.batch.label + (viaIndex && !drop ? (rd.find(x => x.byIndex) && LB.filter(l => l.batch)[nextB - 1 + rd.findIndex(x => x.byIndex)].batch.index?.etfBelow != null ? '（週期指數＋機構投降觸發）' : '（週期指數觸發）') : ''));
+        st.buy.entry = toTarget('buy', batchB.batch.target, r, batchB.batch.label + (viaIndex && !drop ? (rd.find(x => x.byIndex) && LB.filter(l => l.batch)[nextB - 1 + rd.findIndex(x => x.byIndex)].batch.index?.etfBelow != null ? '（機構資金路線）' : '（週期指數觸發）') : ''));
         P.sellCut = 0; st.sell = { done: 0, last: -1e9, cum: 0 };
       }
     }
@@ -215,9 +220,9 @@ export function runPlan(config, rows, todayExtra = {}) {
       d = { tone: 'wait', title: '等待批次間隔', action: '等級已達標，但距離上一批不足 7 天，明天起再評估。' };
     } else if (!st.buy.done && (() => { const b1 = LB.find(l => l.batch); const ix = b1.batch.index; return (bMed.index >= 3) || (ix && r.idx != null && r.idx < ix.below); })()) {
       const b1 = LB.find(l => l.batch), cf = b1.batch.confirm || { n: 3, of: 3 }, ix = b1.batch.index;
-      const nS = countLast(rows, i, cf.of, x => (x.cbs ?? 0) >= b1.min), nI = ix ? countLast(rows, i, ix.of, x => x.idx != null && x.idx < ix.below) : 0;
+      const nS = countLast(rows, i, cf.of, x => (x.cbs ?? 0) >= b1.min), nI = ix ? countLast(rows, i, ix.of, x => x.idx != null && x.idx < ix.below && (ix.etfBelow == null || (x.etf30p != null && x.etf30p <= ix.etfBelow))) : 0;
       const parts = [`CBS 達 ${b1.min} 分：近 ${cf.of} 天已有 ${nS}/${cf.n} 天`];
-      if (ix) parts.push(`週期指數低於 ${ix.below}：近 ${ix.of} 天已有 ${nI}/${ix.n} 天`);
+      if (ix) parts.push(`週期指數低於 ${ix.below}${ix.etfBelow != null ? ` 且 ETF 30 日流量在最低 ${ix.etfBelow}%` : ''}：近 ${ix.of} 天已有 ${nI}/${ix.n} 天`);
       d = { tone: 'wait', title: '抄底條件確認中', action: `${parts.join('；')}。任一條件達成即啟動第一批（現貨提高到 ${b1.batch.target}%）。` };
     } else if (sMed.index >= 3) {
       let n = 0; for (let j = i; j >= 0 && (rows[j].cts ?? 0) >= 12; j--) n++;
