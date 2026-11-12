@@ -1921,12 +1921,12 @@
  },
  {
   "date": "2026-11-12",
-  "btcPrice": 73700,
+  "btcPrice": 73739,
   "cbs": 1,
   "cts": 0,
   "cbsConfirm": 7,
   "ctsConfirm": 7,
-  "idx": 29.5,
+  "idx": 29.6,
   "cbsLevel": "無信號",
   "ctsLevel": "無信號",
   "action": "繼續期限套利，不動作",
@@ -1935,29 +1935,29 @@
    "nupl": 0.2905,
    "puell": 0.9427,
    "hashribbons": "normal",
-   "ssr": 5.12712,
-   "rsi_w": 46.65123,
-   "wma200": 1.08467,
-   "pi_bottom": 1.21395,
+   "ssr": 5.12984,
+   "rsi_w": 46.69636,
+   "wma200": 1.08524,
+   "pi_bottom": 1.21396,
    "pi_top": 0.50533,
    "fng": 28,
    "funding": 0.01,
    "etf_flow": -19776.54855,
-   "liq": 54513102.84273,
-   "sth_mvrv": 0.97088,
-   "profit_supply": 58.12257,
+   "liq": 24889924.61787,
+   "sth_mvrv": 0.97139,
+   "profit_supply": 58.63476,
    "whale": 0.56012,
-   "mayer": 1.0083,
-   "lsr": 2.79,
+   "mayer": 1.00883,
+   "lsr": 2.82,
    "btcdom": 59.84,
    "stable30": -4.89494,
-   "ethbtc": 0.02785,
-   "dvol": 39,
+   "ethbtc": 0.02788,
+   "dvol": 38.8,
    "skew": 4.9,
-   "pcr": 0.747,
-   "basis": 5.64,
+   "pcr": 0.748,
+   "basis": 5.63,
    "fundapr": 6.4,
-   "cbprem": -0.011,
+   "cbprem": -0.01,
    "oi": 32.19
   },
   "pct": {
@@ -1965,16 +1965,16 @@
    "nupl": 28.9,
    "puell": 40,
    "ssr": 37,
-   "rsi_w": 25.4,
-   "wma200": 24,
+   "rsi_w": 25.6,
+   "wma200": 24.1,
    "pi_bottom": 29.1,
    "pi_top": 32,
    "fng": 21.4,
-   "sth_mvrv": 33.3,
-   "profit_supply": 12.3,
+   "sth_mvrv": 33.4,
+   "profit_supply": 13,
    "mayer": 36.7,
-   "ethbtc": 13.6,
-   "dvol": 18.6
+   "ethbtc": 13.7,
+   "dvol": 17.9
   },
   "items": {
    "mvrv": [
@@ -2089,20 +2089,20 @@
   "indexZone": "偏低",
   "decision": {
    "tone": "hold",
-   "title": "持有，不加不減",
-   "action": "抄底與止盈都未達觀察門檻，套利資金照常運作、現貨續抱。",
+   "title": "已完成第二批・確認加碼",
+   "action": "系統在 2026-06-11（約 $63,552）觸發此批次（現貨提高到 65%）。持有並等待：CBS 連續 3 天達到 20 分，或價格較第一批再跌 30% 以上，即啟動第三批・深度加碼（現貨提高到 85%）。",
    "notes": [
     "週期指數 30 天下降 18 點，市場明顯轉弱。"
    ],
    "target": {
-    "floor": null,
+    "floor": 65,
     "cap": null
    },
    "last": {
-    "date": "2025-12-12",
-    "label": "趨勢保護第二段",
-    "target": 35,
-    "type": "sell"
+    "date": "2026-06-11",
+    "label": "第二批・確認加碼（週期指數＋機構投降觸發）",
+    "target": 65,
+    "type": "buy"
    }
   }
  }
