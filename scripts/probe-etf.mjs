@@ -1,27 +1,10 @@
-// 測試各個 ETF 流量來源能不能從 GitHub 主機取得
+// 檢視 bitbo ETF 流量頁的結構
 const UA = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36', Accept: '*/*' };
-const urls = [
-  'https://farside.co.uk/bitcoin-etf-flow-all-data/',
-  'https://farside.co.uk/btc/',
-  'https://etfs.llama.fi/flows',
-  'https://etfs.llama.fi/snapshot',
-  'https://defillama.com/api/etfs',
-  'https://www.theblock.co/api/charts/chart/crypto-markets/bitcoin-etf/spot-bitcoin-etf-flows/daily',
-  'https://bitbo.io/treasuries/etf-flows/',
-  'https://www.ishares.com/us/products/333011/fund/1467271812596.ajax?fileType=csv&fileName=IBIT_holdings&dataType=fund',
-  'https://query1.finance.yahoo.com/v8/finance/chart/IBIT?range=10d&interval=1d',
-  'https://capi.coinglass.com/api/etf/flow',
-  'https://open-api.coinglass.com/public/v2/indicator/bitcoin_etf',
-  'https://api.sosovalue.xyz/data/etf/us-btc-spot/flows',
-  'https://bitcoin-data.com/v1/etf-flow-btc/last',
-];
-for (const u of urls) {
-  try {
-    const r = await fetch(u, { headers: UA, signal: AbortSignal.timeout(30000) });
-    const t = await r.text();
-    console.log(`\n### ${r.status} ${u} (${t.length} bytes, ${r.headers.get('content-type')})`);
-    const i = t.search(/IBIT|Total|flow/i);
-    console.log(t.slice(0, 250).replace(/\s+/g, ' '));
-    if (i > 250) console.log('…' + t.slice(i, i + 400).replace(/\s+/g, ' '));
-  } catch (e) { console.log(`\n### ERR ${u} ${e.message}`); }
-}
+const t = await (await fetch('https://bitbo.io/treasuries/etf-flows/', { headers: UA })).text();
+console.log('tables', (t.match(/<table/g) || []).length, 'scripts', (t.match(/<script/g) || []).length);
+const strip = s => s.replace(/<[^>]+>/g, '|').replace(/\s+/g, ' ').replace(/(\| ?)+/g, '|');
+let i = 0, k = 0;
+while ((i = t.indexOf('<table', i)) >= 0 && k < 4) { const j = t.indexOf('</table>', i); const s = strip(t.slice(i, j)); console.log(`\nTABLE ${k} len ${j - i}\nHEAD: ${s.slice(0, 900)}\nTAIL: ${s.slice(-500)}`); i = j; k++; }
+for (const m of t.matchAll(/(Nov|Oct) \d{1,2},? 2026/g)) { console.log('DATE@', m.index, t.slice(m.index - 80, m.index + 200).replace(/\s+/g, ' ')); if (++k > 8) break; }
+const m = t.match(/(data|flows|series)\s*[:=]\s*\[\s*[\[{]/);
+if (m) console.log('JSON-ish@', m.index, t.slice(m.index, m.index + 600));
