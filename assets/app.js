@@ -952,7 +952,7 @@ function viewGuide() {
     <h3>數據與更新</h3>
     <ul>
       <li>每天台灣時間約 10:00 自動抓數據並寫入當日快照，14:00 有備援排程補抓失敗項目。</li>
-      <li>BGeometrics 免費方案的鏈上指標約延遲 7 天，ETF 約 5 天。系統會量測延遲，回測時每一天只用當時真正拿得到的數據，所以回測結果與實際使用一致。短線指標（Deribit、Coinbase、OKX）都是當天即時數據。</li>
+      <li>BGeometrics 免費方案的鏈上指標約延遲 7 天。ETF 流量以 BGeometrics 為主，最近幾天用 bitbo（BitcoinTreasuries）的每日流量表補上，延遲約 1–3 天。系統會量測延遲，回測時每一天只用當時真正拿得到的數據，所以回測結果與實際使用一致。短線指標（Deribit、Coinbase、OKX）都是當天即時數據。</li>
       <li>改了設定，下次排程後回測會自動更新。</li>
     </ul>
 

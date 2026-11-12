@@ -71,7 +71,7 @@ const pctRank = (arr, x) => ((arr.filter(v => v < x).length + 0.5 * arr.filter(v
 // ---------- 來源狀態與序列快取 ----------
 const meta = await read('data/series/_meta.json', {});
 const status = {};
-const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', okx: 'OKX 合約數據' };
+const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', etf2: 'ETF 流量補充（bitbo）', okx: 'OKX 合約數據' };
 const setStatus = (k, ok, error = null) => { status[k] = { name: NAMES[k], ok, error, checkedAt: nowISO }; };
 const S = {};
 const now = {};
@@ -192,6 +192,38 @@ for (const [name, path, prefer, group] of BG) {
   }
 }
 for (const g of ['bgcore', 'bgaux']) setStatus(g, !bgErr[g].length, bgErr[g].join('；') || null);
+
+// ---------- ETF 補充來源：bitbo（BitcoinTreasuries）每日流量表，補上 BGeometrics 還沒給的最近幾天 ----------
+// 表格單位是百萬美元，用當天收盤價換成 BTC；BGeometrics 之後補上同一天時會覆蓋這裡的估計值。
+try {
+  const r = await fetch('https://bitbo.io/treasuries/etf-flows/', { headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36', Accept: 'text/html' }, signal: AbortSignal.timeout(40000) });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  const html = await r.text();
+  const tb = html.slice(html.indexOf('<table'), html.indexOf('</table>'));
+  const cells = tb.replace(/<[^>]+>/g, '|').replace(/\s+/g, ' ').split('|').map(x => x.trim()).filter(Boolean);
+  const head = cells.indexOf('Date'), tot = cells.indexOf('Totals');
+  if (head < 0 || tot < 0) throw new Error('表格格式改變');
+  const width = tot - head + 1, MON = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
+  const px = new Map(S.price.map(x => [x[0], x[1]]));
+  const rows = [];
+  for (let i = tot + 1; i + width <= cells.length; i += width) {
+    const m = cells[i].match(/^([A-Z][a-z]{2}) (\d{1,2}), (\d{4})$/); if (!m) break;
+    const d = `${m[3]}-${String(MON[m[1]]).padStart(2, '0')}-${m[2].padStart(2, '0')}`;
+    const usdM = Number(cells[i + width - 1].replace(/,/g, '')), p = px.get(d);
+    if (Number.isFinite(usdM) && p) rows.push([d, +(usdM * 1e6 / p).toFixed(2), 'bitbo']);
+  }
+  if (!rows.length) throw new Error('沒有資料');
+  // 與 BGeometrics 重疊的日子比對單位，差太多就不採用
+  const bg = new Map(S.etf.filter(x => x[2] !== 'bitbo').map(x => [x[0], x[1]]));
+  const ov = rows.filter(x => bg.has(x[0]) && Math.abs(bg.get(x[0])) > 1000 && Math.abs(x[1]) > 0);
+  const ratios = ov.map(x => x[1] / bg.get(x[0])).sort((a, b) => a - b), med = ratios.length ? ratios[ratios.length >> 1] : null;
+  if (med != null && (med < 0.5 || med > 2)) throw new Error(`與 BGeometrics 數值不一致（比值 ${med.toFixed(2)}）`);
+  const lastBg = [...bg.keys()].sort().at(-1) || '';
+  const add = rows.filter(x => x[0] > lastBg);
+  S.etf = merge(S.etf.filter(x => x[2] !== 'bitbo' || x[0] > lastBg), add);
+  setStatus('etf2', true);
+  console.log(`ETF 補充（bitbo）：補上 ${add.map(x => x[0]).join('、') || '無'}；重疊 ${ov.length} 天比值 ${med?.toFixed(2) ?? '—'}；BGeometrics 最後一天 ${lastBg}`);
+} catch (e) { setStatus('etf2', false, e.message); console.warn('ETF 補充來源失敗：', e.message); }
 
 let lsr = null;
 try {
