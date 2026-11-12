@@ -984,6 +984,41 @@ window.addEventListener('hashchange', route);
 matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', () => { if (location.hash === '#history') route(); });
 new MutationObserver(() => { if (location.hash === '#history') route(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+// ---------- 自動更新（iOS 加到主畫面時，App 不會重新載入，回到前景時主動檢查新數據） ----------
+let checking = false, lastCheck = Date.now(), codeTag = null;
+const tagOf = async p => { try { const r = await fetch(p, { method: 'HEAD', cache: 'no-store' }); return r.headers.get('etag') || r.headers.get('last-modified'); } catch { return null; } };
+async function refresh(force = false) {
+  if (checking || document.hidden) return;
+  if (!force && Date.now() - lastCheck < 60e3) return;
+  checking = true; lastCheck = Date.now();
+  const btn = document.getElementById('refreshBtn'); btn?.classList.add('spin');
+  try {
+    // 網站程式更新了就整頁重新載入
+    const tag = await tagOf('assets/app.js');
+    if (tag && codeTag && tag !== codeTag) { location.reload(); return; }
+    if (tag) codeTag = tag;
+    const nl = await fetch('data/latest.json', { cache: 'no-store' }).then(r => r.json());
+    if (force || nl.snapshotAt !== S.latest?.snapshotAt || nl.date !== S.latest?.date) {
+      const y = window.scrollY;
+      await load();
+      if (modal.hidden) { killCharts(); const v = views[location.hash.slice(1)] ? location.hash.slice(1) : 'overview'; views[v](); window.scrollTo(0, y); }
+      toast(`已更新至 ${S.latest.date} 的數據`);
+    } else if (force) toast('已是最新數據');
+  } catch { if (force) toast('更新失敗，請檢查網路'); }
+  finally { checking = false; btn?.classList.remove('spin'); }
+}
+function toast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) { t = document.createElement('div'); t.id = 'toast'; t.setAttribute('role', 'status'); document.body.appendChild(t); }
+  t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2200);
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+window.addEventListener('pageshow', e => { if (e.persisted) refresh(true); });
+window.addEventListener('focus', () => refresh());
+setInterval(() => refresh(), 10 * 60e3);
+document.getElementById('refreshBtn')?.addEventListener('click', () => refresh(true));
+tagOf('assets/app.js').then(t => { codeTag = t; });
+
 load().then(route).catch(e => {
   app.innerHTML = `<div class="notice" style="border-color:var(--sell)">讀不到數據檔：${esc(e.message)}。請確認 data/latest.json 與 config/indicators.json 存在。</div>`;
 });
