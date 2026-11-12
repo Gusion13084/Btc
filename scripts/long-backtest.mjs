@@ -30,7 +30,7 @@ async function cm(asset, metrics) {
   }
   return out;
 }
-const btc = await cm('btc', ['PriceUSD', 'CapMrktCurUSD', 'CapRealUSD', 'IssTotUSD', 'HashRate']);
+const btc = await cm('btc', ['PriceUSD', 'CapMrktCurUSD', 'CapMVRVCur', 'IssTotUSD', 'HashRate']);
 const eth = await cm('eth', ['PriceUSD']);
 console.log(`Coin Metrics：BTC ${btc.length} 天（${btc[0]?.time?.slice(0, 10)} → ${btc.at(-1)?.time?.slice(0, 10)}）、ETH ${eth.length} 天`);
 
@@ -43,7 +43,7 @@ const at = new Map(cal.map((d, i) => [d, i]));
 
 // 鏈上：MVRV Z（以至今為止的市值標準差）、NUPL、Puell
 const mc = new Array(N).fill(null), rc = new Array(N).fill(null), iss = new Array(N).fill(null), hash = new Array(N).fill(null);
-for (const r of btc) { const i = at.get(r.time.slice(0, 10)); if (i == null) continue; mc[i] = r.CapMrktCurUSD ? +r.CapMrktCurUSD : null; rc[i] = r.CapRealUSD ? +r.CapRealUSD : null; iss[i] = r.IssTotUSD ? +r.IssTotUSD : null; hash[i] = r.HashRate ? +r.HashRate : null; }
+for (const r of btc) { const i = at.get(r.time.slice(0, 10)); if (i == null) continue; mc[i] = r.CapMrktCurUSD ? +r.CapMrktCurUSD : null; rc[i] = r.CapMVRVCur && r.CapMrktCurUSD ? +r.CapMrktCurUSD / +r.CapMVRVCur : null; iss[i] = r.IssTotUSD ? +r.IssTotUSD : null; hash[i] = r.HashRate ? +r.HashRate : null; }
 const raw = { mvrv: new Array(N).fill(null), nupl: new Array(N).fill(null), puell: new Array(N).fill(null) };
 { let n = 0, s = 0, s2 = 0; const isq = [];
   for (let i = 0; i < N; i++) {
