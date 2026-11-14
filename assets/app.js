@@ -350,13 +350,22 @@ function liqCard() {
   const m = S.lm; if (!m || !m.buckets?.length) return '';
   const max = Math.max(...m.buckets.map(b => Math.max(b.long, b.short)), 1);
   const rows = m.buckets.filter(b => Math.abs(b.price / m.price - 1) <= 0.12);
+  // 累計清算：從現價一路打到該價位，沿途所有清算區的合計
+  const cum = new Map();
+  { let a = 0; for (const b of m.buckets.filter(b => b.price >= m.price).sort((x, y) => x.price - y.price)) { a += b.short; cum.set(b.price, a); }
+    let c = 0; for (const b of m.buckets.filter(b => b.price < m.price).sort((x, y) => y.price - x.price)) { c += b.long; cum.set(b.price, c); } }
+  const cumTo = (side, pct) => { const tgt = m.price * (1 + pct / 100); let v = 0, px = null;
+    for (const b of m.buckets) if (side === 'up' ? (b.price >= m.price && b.price <= tgt) : (b.price < m.price && b.price >= tgt)) { v += side === 'up' ? b.short : b.long; } return { v, px: tgt }; };
+  const steps = [3, 5, 10];
+  const milestones = `<div class="lq-cum"><div class="sub">打到該價位沿途累計可清算</div><table><thead><tr><th>幅度</th><th class="up">上漲・空單</th><th class="dn">下跌・多單</th></tr></thead><tbody>${steps.map(p => { const u = cumTo('up', p), d = cumTo('dn', -p);
+    return `<tr><td class="mono">±${p}%</td><td class="mono"><span class="sub">${usd(u.px)}</span> ${mUsd(u.v)}</td><td class="mono"><span class="sub">${usd(d.px)}</span> ${mUsd(d.v)}</td></tr>`; }).join('')}</tbody></table></div>`;
   let priceRowDone = false;
   const bars = rows.map(b => {
     let line = '';
     if (!priceRowDone && b.price < m.price) { priceRowDone = true; line = `<div class="lq-now"><span class="mono">${usd(m.price)}</span><i></i><b>現價</b></div>`; }
     const above = b.price >= m.price, v = above ? b.short : b.long;
     const isTop = (above ? m.topShort : m.topLong).slice(0, 1).some(t => t.price === b.price);
-    return line + `<div class="lq-row ${above ? 'up' : 'dn'} ${isTop ? 'top' : ''}"><span class="mono">${usd(b.price)}</span><i style="width:${(v / max * 100).toFixed(1)}%"></i><em class="mono">${v >= 1e6 ? mUsd(v) : ''}</em></div>`;
+    return line + `<div class="lq-row ${above ? 'up' : 'dn'} ${isTop ? 'top' : ''}" title="${usd(b.price)}：此價位 ${mUsd(v)}，從現價打到這裡累計 ${mUsd(cum.get(b.price) || 0)}"><span class="mono">${usd(b.price)}</span><i style="width:${(v / max * 100).toFixed(1)}%"></i><em class="mono">${v >= 1e6 ? mUsd(v) : ''}</em></div>`;
   }).join('') + (priceRowDone ? '' : `<div class="lq-now"><span class="mono">${usd(m.price)}</span><i></i><b>現價</b></div>`);
   const u = m.near5.short, d = m.near5.long;
   const ratio = u && d ? Math.max(u, d) / Math.min(u, d) : null;
@@ -369,10 +378,11 @@ function liqCard() {
   return `<section class="panel lq" aria-label="清算地圖">
     <div class="panel-head"><h2 style="font-size:18px">清算地圖</h2><span class="sub">${m.method === 'coinalyze' ? `${esc((m.exchanges || []).join('、'))} 合計` : 'OKX BTC 永續'}・估算・${twTime(m.generatedAt)}</span></div>
     <div class="lq-sum">
-      ${tS ? `<div class="lq-k up"><span>上方最大空單清算區</span><b class="mono">${usd(tS.price)}</b><span class="mono">+${tS.dist}%・約 ${mUsd(tS.usd)}</span></div>` : ''}
-      ${tL ? `<div class="lq-k dn"><span>下方最大多單清算區</span><b class="mono">${usd(tL.price)}</b><span class="mono">${tL.dist}%・約 ${mUsd(tL.usd)}</span></div>` : ''}
+      ${tS ? `<div class="lq-k up"><span>上方最大空單清算區</span><b class="mono">${usd(tS.price)}</b><span class="mono">+${tS.dist}%・此區約 ${mUsd(tS.usd)}</span><span class="lq-acc">打到這裡累計 <b class="mono">${mUsd(cum.get(tS.price) || tS.usd)}</b></span></div>` : ''}
+      ${tL ? `<div class="lq-k dn"><span>下方最大多單清算區</span><b class="mono">${usd(tL.price)}</b><span class="mono">${tL.dist}%・此區約 ${mUsd(tL.usd)}</span><span class="lq-acc">打到這裡累計 <b class="mono">${mUsd(cum.get(tL.price) || tL.usd)}</b></span></div>` : ''}
     </div>
     <p class="lq-lean">${esc(lean)}<span class="sub">（±5% 內：上方空單 ${mUsd(u)}・下方多單 ${mUsd(d)}）</span></p>
+    ${milestones}
     <div class="lq-chart">${bars}</div>
     ${m.realized?.h24 ? `<div class="lq-real">
       <div class="sub">實際已發生的清算（各交易所合計）</div>
@@ -382,7 +392,7 @@ function liqCard() {
     </div>` : ''}
     ${daily.length ? `<div class="lq-daily"><div class="sub">全市場每日實際清算（BGeometrics，最新 ${esc(daily.at(-1).date)}）</div>
       ${daily.map(x => `<div class="lqd"><span class="mono">${shortDate(x.date)}</span><span class="lqd-bars"><i class="dn" style="width:${(x.long / dmax * 100).toFixed(1)}%"></i><i class="up" style="width:${(x.short / dmax * 100).toFixed(1)}%"></i></span><span class="mono sub">多 ${mUsd(x.long)}・空 ${mUsd(x.short)}</span></div>`).join('')}</div>` : ''}
-    <p class="sub">估算方式：近 30 天${m.method === 'coinalyze' ? '各交易所' : ' OKX'}每小時新增的未平倉量視為新開倉，依主動買賣比例分配多空、依 5–100 倍常見槓桿推算爆倉價，價格掃過的部位視為已清算。所有清算熱力圖（包括 CoinGlass）都是類似的估算，交易所不會公開個別倉位；${m.method === 'coinalyze' ? '涵蓋上列主要交易所，' : '目前只涵蓋 OKX 一家，'}用來看相對分布。屬盤勢輔助，不計分。數據來源：${m.method === 'coinalyze' ? '<a href="https://coinalyze.net" target="_blank" rel="noopener">Coinalyze</a>' : 'OKX'}。</p>
+    <p class="sub">估算方式：近 30 天${m.method === 'coinalyze' ? '各交易所' : ' OKX'}每小時新增的未平倉量視為新開倉，依主動買賣比例分配多空、依 5–100 倍常見槓桿推算爆倉價，價格掃過的部位視為已清算。所有清算熱力圖（包括 CoinGlass）都是類似的估算，交易所不會公開個別倉位；${m.method === 'coinalyze' ? '涵蓋上列主要交易所，' : '目前只涵蓋 OKX 一家，'}用來看相對分布。累計金額是把沿途各價位相加，實際清算常會連鎖觸發，也可能在途中被新倉位改變。屬盤勢輔助，不計分。數據來源：${m.method === 'coinalyze' ? '<a href="https://coinalyze.net" target="_blank" rel="noopener">Coinalyze</a>' : 'OKX'}。</p>
   </section>`;
 }
 
