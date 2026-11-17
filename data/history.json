@@ -2853,5 +2853,192 @@
     "type": "buy"
    }
   }
+ },
+ {
+  "date": "2026-11-17",
+  "btcPrice": 64744,
+  "cbs": 4,
+  "cts": 0,
+  "cbsConfirm": 21,
+  "ctsConfirm": 7,
+  "idx": 19.9,
+  "cbsLevel": "無信號",
+  "ctsLevel": "無信號",
+  "action": "繼續期限套利，不動作",
+  "values": {
+   "mvrv": 0.6457,
+   "nupl": 0.2702,
+   "puell": 0.9162,
+   "hashribbons": "normal",
+   "ssr": 4.54604,
+   "rsi_w": 38.16288,
+   "wma200": 0.95052,
+   "pi_bottom": 1.20983,
+   "pi_top": 0.50795,
+   "fng": 12,
+   "funding": 0.01,
+   "etf_flow": -12305.85483,
+   "liq": 75855221.86596,
+   "sth_mvrv": 0.85524,
+   "profit_supply": 51.84349,
+   "whale": 0.27733,
+   "mayer": 0.88936,
+   "lsr": 2.69,
+   "btcdom": 58.56,
+   "stable30": -5.32189,
+   "ethbtc": 0.02812,
+   "dvol": 43.3,
+   "skew": 6.6,
+   "pcr": 0.774,
+   "basis": 5.46,
+   "fundapr": 4.32,
+   "cbprem": -0.002,
+   "oi": 30.26
+  },
+  "pct": {
+   "mvrv": 30.2,
+   "nupl": 25.9,
+   "puell": 37.8,
+   "ssr": 28.2,
+   "rsi_w": 12.6,
+   "wma200": 9.1,
+   "pi_bottom": 28.4,
+   "pi_top": 32.3,
+   "fng": 4,
+   "sth_mvrv": 8.3,
+   "profit_supply": 3.9,
+   "mayer": 18.3,
+   "ethbtc": 14.8,
+   "dvol": 32.5
+  },
+  "items": {
+   "mvrv": [
+    0,
+    0
+   ],
+   "nupl": [
+    0,
+    0
+   ],
+   "puell": [
+    1,
+    0
+   ],
+   "hashribbons": [
+    0,
+    null
+   ],
+   "ssr": [
+    0,
+    0
+   ],
+   "rsi_w": [
+    0,
+    0
+   ],
+   "wma200": [
+    1,
+    0
+   ],
+   "pi_bottom": [
+    0,
+    null
+   ],
+   "pi_top": [
+    null,
+    0
+   ],
+   "fng": [
+    2,
+    0
+   ],
+   "funding": [
+    0,
+    0
+   ],
+   "etf_flow": [
+    0,
+    0
+   ],
+   "liq": [
+    1,
+    0
+   ],
+   "sth_mvrv": [
+    1,
+    0
+   ],
+   "profit_supply": [
+    1,
+    0
+   ],
+   "whale": [
+    0,
+    0
+   ],
+   "mayer": [
+    0,
+    0
+   ],
+   "lsr": [
+    0,
+    1
+   ],
+   "btcdom": [
+    null,
+    null
+   ],
+   "stable30": [
+    null,
+    null
+   ],
+   "ethbtc": [
+    null,
+    null
+   ],
+   "dvol": [
+    null,
+    null
+   ],
+   "skew": [
+    null,
+    null
+   ],
+   "pcr": [
+    null,
+    null
+   ],
+   "basis": [
+    null,
+    null
+   ],
+   "fundapr": [
+    null,
+    null
+   ],
+   "cbprem": [
+    null,
+    null
+   ]
+  },
+  "indexZone": "偏低",
+  "decision": {
+   "tone": "hold",
+   "title": "已完成第一批・預警進場",
+   "action": "系統在 2026-02-23（約 $64,624）觸發此批次（現貨提高到 45%）。持有並等待：距上一批至少 7 天，且：CBS 近 7 天有 3 天達 16 分；或近 7 天有 2 天「週期指數低於 12，且 ETF 近 30 日淨流量落在上市以來最低 5%」（機構投降）；或價格較第一批再跌 20%，即啟動第二批・確認加碼（現貨提高到 65%）。",
+   "notes": [
+    "週期指數 30 天下降 25 點，市場明顯轉弱。"
+   ],
+   "target": {
+    "floor": 45,
+    "cap": null
+   },
+   "last": {
+    "date": "2026-02-23",
+    "label": "第一批・預警進場（機構資金路線）",
+    "target": 45,
+    "type": "buy"
+   }
+  }
  }
 ]
