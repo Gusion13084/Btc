@@ -444,14 +444,57 @@ function changesCard() {
 }
 
 // ---------- 盤勢快照：最常看的短線數字 ----------
-const TILE_IDS = ['fng', 'fundapr', 'basis', 'dvol', 'skew', 'cbprem', 'etf_flow', 'ethbtc'];
+// 盤勢快照：固定 3 項＋清算區，另外每天自動挑出最值得注意的 5 項
+const TILE_FIXED = ['fng', 'fundapr', 'etf_flow'];
+function focusPicks(n = 5) {
+  const prev = S.history.filter(h => h.date < S.latest.date && !h.legacy).at(-1);
+  const out = [];
+  for (const def of S.config.indicators) {
+    if (TILE_FIXED.includes(def.id)) continue;
+    const ind = S.latest.indicators?.[def.id];
+    if (!ind || ind.value == null || ind.ok === false) continue;
+    let score = 0; const why = [];
+    const b = bandOf(def, ind);
+    // 1) 判讀區間今天改變
+    if (b && !def.bandField && prev?.values?.[def.id] != null) {
+      const pv = +prev.values[def.id], pb = def.bands.find(x => x.to == null || pv < x.to);
+      if (pb && pb.label !== b.label) { score += 100; why.push(`今日 ${pb.label} → ${b.label}`); }
+    }
+    // 2) 抄底或止盈分數改變
+    const it = prev?.items?.[def.id];
+    for (const [k, side, nm] of [[0, 'cbs', '抄底'], [1, 'cts', '止盈']]) {
+      const cur = S.sc[side].items[def.id]?.pts;
+      if (it && it[k] != null && cur != null && it[k] !== cur) { score += 60; why.push(`${nm}分 ${it[k]} → ${cur}`); }
+      else if (cur > 0 && (def.tier || 'core') !== 'core') { score += 15 * cur; why.push(`${nm} ${cur} 分`); }
+    }
+    // 3) 近 4 年極端位置
+    const pct = ind.fields?.p;
+    if (pct != null) {
+      if (pct <= 5 || pct >= 95) { score += 55; why.push(`近 4 年${pct <= 5 ? '最低' : '最高'} ${Math.max(1, Math.round(pct <= 5 ? pct : 100 - pct))}%`); }
+      else if (pct <= 10 || pct >= 90) { score += 35; why.push(`近 4 年${pct <= 10 ? '最低' : '最高'} 10% 內`); }
+    }
+    // 4) 落在強烈的判讀區間
+    if (b && b.tone !== 'neutral') score += /極|恐慌|大幅|過熱|擁擠|急|快速|大量/.test(b.label) ? 30 : 10;
+    if (score <= 10) continue;
+    const tierW = { core: 3, aux: 3, supply: 2, macro: 2, short: 2, info: 1 }[def.tier || 'core'] || 1;
+    out.push({ def, ind, b, score: score + tierW, why: why[0] || (b ? b.label : '') });
+  }
+  return out.sort((x, y) => y.score - x.score).slice(0, n);
+}
+function tile(def, ind, why) {
+  const b = bandOf(def, ind);
+  return `<button class="tile${why ? ' focus' : ''}" data-ind="${def.id}"><span class="t-name">${esc(def.name.replace(/（.*）/, ''))}</span><span class="t-val mono">${fmtVal(def, ind)}</span>${b ? `<span class="chip band ${toneCls(b.tone)}">${esc(b.label)}</span>` : ind?.fields?.p != null ? `<span class="chip">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}${why ? `<span class="t-why">${esc(why)}</span>` : ''}</button>`;
+}
 function tilesCard() {
-  const defs = TILE_IDS.map(id => S.config.indicators.find(d => d.id === id)).filter(Boolean);
+  const fixed = TILE_FIXED.map(id => S.config.indicators.find(d => d.id === id)).filter(Boolean);
   const m = S.lm;
   const lq = m?.topShort?.[0] && m?.topLong?.[0] ? `<button class="tile lqt" onclick="location.hash='#short'"><span class="t-name">最近清算區</span><span class="t-val mono">↑ ${usd(m.topShort[0].price)}</span><span class="t-sub mono">↓ ${usd(m.topLong[0].price)}</span><span class="chip band neu">${m.topShort[0].dist > -m.topLong[0].dist ? '下方較近' : '上方較近'}</span></button>` : '';
+  const picks = focusPicks(5);
   return `<section class="panel" aria-label="盤勢快照">
     <div class="panel-head"><h3>盤勢快照</h3><a class="more" href="#short">看短線盤勢 →</a></div>
-    <div class="tiles">${defs.map(def => { const ind = S.latest.indicators[def.id], b = bandOf(def, ind); return `<button class="tile" data-ind="${def.id}"><span class="t-name">${esc(def.name.replace(/（.*）/, ''))}</span><span class="t-val mono">${fmtVal(def, ind)}</span>${b ? `<span class="chip band ${toneCls(b.tone)}">${esc(b.label)}</span>` : '<span class="chip">—</span>'}</button>`; }).join('')}${lq}</div>
+    <div class="tiles">${fixed.map(d => tile(d, S.latest.indicators[d.id])).join('')}${lq}</div>
+    ${picks.length ? `<div class="tiles-head"><h4>今日焦點</h4><span class="sub">系統依區間變化、分數變動與極端位置自動挑選</span></div>
+    <div class="tiles">${picks.map(x => tile(x.def, x.ind, x.why)).join('')}</div>` : ''}
   </section>`;
 }
 
