@@ -1,13 +1,17 @@
 const UA = { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36', Accept: '*/*' };
-const show = async (u, opt = {}) => { try { const r = await fetch(u, { headers: UA, signal: AbortSignal.timeout(40000), ...opt }); const t = await r.text(); console.log(`\n### ${r.status} ${u} (${t.length}B)\n${t.slice(0, 300).replace(/\s+/g, ' ')}\n…${t.slice(-200).replace(/\s+/g, ' ')}`); return t; } catch (e) { console.log(`\n### ERR ${u} ${e.message}`); } };
-for (const id of ['WALCL', 'WTREGEN', 'RRPONTSYD', 'DFII10', 'DTWEXBGS', 'M2SL', 'NASDAQCOM', 'SP500', 'VIXCLS'])
-  await show(`https://fred.stlouisfed.org/graph/fredgraph.csv?id=${id}&cosd=2026-10-01`);
-await show('https://api.fiscaldata.treasury.gov/services/api/fiscal_service/v1/accounting/dts/operating_cash_balance?sort=-record_date&page[size]=3');
-for (const s of ['^ndq', 'dx.f', '^spx', 'qqq.us']) await show(`https://stooq.com/q/d/l/?s=${encodeURIComponent(s)}&i=d&d1=20261101`);
-const cm = await show('https://community-api.coinmetrics.io/v4/catalog-v2/asset-metrics?assets=btc&page_size=1000');
-if (cm) { try { const j = JSON.parse(cm); const ms = j.data[0].metrics.map(m => m.metric); console.log('\nCM METRICS', ms.length, ms.filter(m => /Flow|Sply|Rev|Fee|Act|Adr|Ex|Hash|CDD|Out/i.test(m)).join(' ')); } catch (e) { console.log('cm parse', e.message); } }
-for (const u of ['https://bitbo.io/treasuries/', 'https://bitbo.io/treasuries/countries/', 'https://bitbo.io/treasuries/strategy/', 'https://bitcointreasuries.net/']) {
-  const t = await show(u);
-  if (t) { const s = t.replace(/<[^>]+>/g, '|').replace(/\s+/g, ' ').replace(/(\| ?)+/g, '|'); for (const k of ['Public Companies', 'Countries', 'Governments', 'ETFs', 'Total', 'Strategy']) { const i = s.indexOf(k); if (i >= 0) console.log(`  [${k}] ${s.slice(i, i + 220)}`); } }
-}
-for (const u of ['https://bitcoin-data.com/v1/exchange-reserve-btc/last', 'https://bitcoin-data.com/v1/exchange-netflow-btc/last', 'https://bitcoin-data.com/v1/lth-supply/last', 'https://bitcoin-data.com/v1/miner-reserve/last']) await show(u);
+const show = async (u, opt = {}) => { try { const r = await fetch(u, { headers: { ...UA, ...(opt.headers || {}) }, signal: AbortSignal.timeout(30000) }); const t = await r.text(); console.log(`\n### ${r.status} ${u} (${t.length}B)\n${t.slice(0, 350).replace(/\s+/g, ' ')}`); return t; } catch (e) { console.log(`\n### ERR ${u} ${e.message}`); } };
+await show('https://api.stlouisfed.org/fred/series/observations?series_id=WALCL&file_type=json&api_key=abcdefghijklmnopqrstuvwxyz123456');
+await show('https://markets.newyorkfed.org/api/rp/reverserepo/propositions/search.json?startDate=2026-11-01');
+await show('https://www.federalreserve.gov/datadownload/Output.aspx?rel=H41&series=6c47ec3ad6af8b3fb6b4e4ef1abb5b0e&lastobs=5&from=&to=&filetype=csv&label=include&layout=seriescolumn');
+await show('https://home.treasury.gov/resource-center/data-chart-center/interest-rates/daily-treasury-rates.csv/2026/all?type=daily_treasury_real_yield_curve&field_tdr_date_value=2026&page&_format=csv');
+await show('https://api.frankfurter.app/latest?from=USD&to=EUR,JPY,GBP,CAD,SEK,CHF');
+await show('https://api.frankfurter.app/2026-10-01..?from=USD&to=EUR,JPY');
+await show('https://query2.finance.yahoo.com/v8/finance/chart/%5EIXIC?range=1mo&interval=1d');
+await show('https://api.nasdaq.com/api/quote/QQQ/historical?assetclass=etf&fromdate=2026-10-01&limit=30', { headers: { Accept: 'application/json' } });
+await show('https://api.nasdaq.com/api/quote/COMP/historical?assetclass=index&fromdate=2026-10-01&limit=30', { headers: { Accept: 'application/json' } });
+await show('https://www.cnbc.com/quotes/.IXIC');
+await show('https://api.coinbase.com/v2/prices/BTC-USD/spot');
+const cm = await (await fetch('https://community-api.coinmetrics.io/v4/catalog-v2/asset-metrics?assets=btc&page_size=1000')).json();
+console.log('\nCM ALL', cm.data[0].metrics.map(m => m.metric + '@' + m.frequencies[0].min_time.slice(0, 4)).join(' '));
+const r = await (await fetch('https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=SplyExNtv,FlowInExNtv,FlowOutExNtv,AdrBalCnt&frequency=1d&start_time=2026-11-10&page_size=20')).json();
+console.log('CM SAMPLE', JSON.stringify(r.data.slice(-3)));
