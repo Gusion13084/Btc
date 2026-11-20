@@ -45,6 +45,22 @@ async function spot() {
 }
 
 // 每日快照摘要：與前一筆快照比較
+// 推播狀態的摘要：決策、分數、各指標判讀區間
+function signature(latest, hist, config) {
+  const cur = hist.at(-1) || {};
+  const bands = {};
+  for (const def of config.indicators) { const b = bandOf(def, latest.indicators?.[def.id]); if (b) bands[def.name] = b.label; }
+  return { date: cur.date, decision: cur.decision?.title || '', floor: cur.decision?.target?.floor ?? null, cap: cur.decision?.target?.cap ?? null, cbs: cur.cbs, cts: cur.cts, cbsLevel: cur.cbsLevel, ctsLevel: cur.ctsLevel, bands, items: cur.items || {} };
+}
+function sameDayUpdate(a, b) {
+  const L = [], names = {};
+  if (a.decision !== b.decision) L.push(`⚠️ <b>操作建議改變</b>：${esc(a.decision)} → <b>${esc(b.decision)}</b>`);
+  if (a.floor !== b.floor || a.cap !== b.cap) L.push(`建議現貨：${b.floor != null ? `至少 ${b.floor}%` : ''}${b.cap != null ? `${b.floor != null ? '、' : ''}最多 ${b.cap}%` : ''}`);
+  if (a.cbs !== b.cbs) L.push(`抄底 CBS ${a.cbs} → <b>${b.cbs}</b> 分（${esc(b.cbsLevel)}）`);
+  if (a.cts !== b.cts) L.push(`止盈 CTS ${a.cts} → <b>${b.cts}</b> 分（${esc(b.ctsLevel)}）`);
+  for (const [id, lb] of Object.entries(b.bands)) if (a.bands?.[id] && a.bands[id] !== lb) L.push(`・${esc(id)}：${esc(a.bands[id])} → <b>${esc(lb)}</b>`);
+  return L.length ? `🔄 <b>BTC 週期雷達・${b.date} 快照更新</b>\n與今天稍早的推播相比：\n${L.join('\n')}\n\n<a href="${SITE}">開啟網站</a>` : null;
+}
 function digest(latest, hist, config) {
   const cur = hist.at(-1), prev = hist.filter(h => h.date < cur.date && !h.legacy).at(-1);
   const defs = config.indicators, L = [];
@@ -82,10 +98,14 @@ async function run(env) {
 
   const [latest, lm, hist, config, bt] = await Promise.all([asset(env, 'data/latest.json'), asset(env, 'data/liqmap.json').catch(() => null), asset(env, 'data/history.json'), asset(env, 'config/indicators.json'), asset(env, 'data/backtest.json').catch(() => null)]);
 
-  // 1) 每日快照摘要
+  // 1) 每日快照摘要：每天第一份快照推完整摘要；同一天重跑只推和上次推播相比真正改變的部分
   if (latest.snapshotAt && latest.snapshotAt !== st.lastSnap && !latest.pending) {
-    if (st.lastSnap) await tg(env, digest(latest, hist, config));
-    st.lastSnap = latest.snapshotAt; sent.push('digest');
+    const sig = signature(latest, hist, config);
+    if (st.lastSnap) {
+      if (st.dg?.date !== sig.date) await tg(env, digest(latest, hist, config));
+      else { const t = sameDayUpdate(st.dg, sig); if (t) await tg(env, t); }
+    }
+    st.dg = sig; st.lastSnap = latest.snapshotAt; sent.push('digest');
   }
   // 快照逾時：超過 30 小時沒有新快照
   if (latest.snapshotAt && now - Date.parse(latest.snapshotAt) > 30 * H) await fire('stale', 12, `⏰ 網站快照已超過 30 小時沒有更新（最後 ${esc(latest.date)}），請檢查每日排程。`);
