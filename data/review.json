@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-20T04:24:18.547Z",
+ "generatedAt": "2026-11-20T10:25:06.017Z",
  "date": "2026-11-20",
  "horizonDays": 7,
  "journal": {
@@ -168,7 +168,7 @@
   "maxDrawdownAt": "2026-06-30",
   "drawdownNow": 27.9,
   "spotWeight": 64.3,
-  "price": 61678
+  "price": 61679
  },
  "ledger": [
   {
@@ -221,16 +221,7 @@
    "target": 65
   }
  ],
- "ledgerChanges": [
-  {
-   "change": "新增",
-   "date": "2026-06-10",
-   "type": "buy",
-   "label": "第二批・確認加碼（機構資金路線）",
-   "price": 61464,
-   "target": 65
-  }
- ],
+ "ledgerChanges": [],
  "changeLog": [
   {
    "date": "2026-11-20",
