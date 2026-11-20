@@ -45,6 +45,7 @@ async function load() {
   S.sc = scoreAll(S.config, S.latest.indicators);
   try { S.lm = await get('data/liqmap.json'); } catch { S.lm = null; }
   try { S.rv = await get('data/review.json'); } catch { S.rv = null; }
+  try { S.cb = await get('data/combos.json'); } catch { S.cb = null; }
   // 最新一份日報判斷紀錄（含重大新聞）：今天的還沒產出就用前一天
   S.jn = null;
   for (const d of [S.latest.date, new Date(Date.parse(S.latest.date) - 864e5).toISOString().slice(0, 10)]) { try { S.jn = await get(`data/journal/${d}.json`); break; } catch {} }
@@ -516,6 +517,7 @@ function viewOverview() {
       <div class="ov-col">${decisionCard()}${changesCard()}</div>
       <div class="ov-col">${indexCard()}<div class="scores">${scorePanel('cbs', sc.cbs, '抄底 CBS')}${scorePanel('cts', sc.cts, '止盈 CTS')}</div></div>
     </div>
+    ${contextCard()}
     ${tilesCard()}
     ${newsCard(true)}
     <nav class="ov-more" aria-label="更多">
@@ -531,7 +533,8 @@ function viewIndicators() {
   let f = 'all'; try { f = localStorage.getItem('radar.tier') || 'all'; } catch {}
   const counts = Object.fromEntries(TIERS.map(([t]) => [t, S.config.indicators.filter(d => (d.tier || 'core') === t).length]));
   app.innerHTML = `
-    <div class="panel-head"><h2>指標</h2><span class="sub">點任一指標可看原理、評分區間與目前判斷</span></div>
+    <div class="panel-head"><h2>指標</h2><span class="sub">先看組合信號，再看單一指標；點任一指標可看原理、評分區間與目前判斷</span></div>
+    ${combosPanel()}
     <div class="seg filt" role="tablist">${[['all', '全部', S.config.indicators.length], ...TIERS.map(([t, n]) => [t, n, counts[t]])].map(([t, n, k]) => `<button role="tab" data-t="${t}" aria-selected="${f === t}">${n}<span class="cnt">${k}</span></button>`).join('')}</div>
     <div id="indList"></div>`;
   const draw = t => {
@@ -576,6 +579,37 @@ function viewShort() {
     <section class="ind-group"><h3>衍生品與槓桿</h3><div class="inds">${by(['fundapr', 'basis', 'liq', 'lsr', 'funding'])}</div></section>
     <section class="ind-group"><h3>期權</h3><div class="inds">${by(['dvol', 'skew', 'pcr'])}</div></section>
     <section class="ind-group"><h3>現貨買盤與資金</h3><div class="inds">${by(['cbprem', 'etf_flow', 'stable30', 'fng'])}</div></section>`;
+}
+
+// ---------- 組合信號 ----------
+const sgn = v => v == null ? '—' : `${v > 0 ? '+' : ''}${v}%`;
+function comboCard(c) {
+  const st = c.stats || {};
+  return `<article class="combo ${c.active ? 'on' : ''}">
+    <div class="combo-h"><b>${esc(c.name)}</b>${c.active ? `<span class="chip band buy">成立${c.since ? `・${esc(c.since.slice(5))} 起` : ''}</span>` : `<span class="chip">${c.met}/${c.total} 條件</span>`}</div>
+    <p class="sub">${esc(c.idea)}</p>
+    <ul class="combo-c">${c.conds.map(k => `<li class="${k.met ? 'ok' : ''}"><span>${k.met ? '✓' : '○'}</span>${esc(k.label)}<b class="mono">${esc(k.value)}</b></li>`).join('')}</ul>
+    <div class="combo-s"><span>歷史 ${st.events} 次</span><span>30 天 <b class="mono">${sgn(st.avg30)}</b></span><span>90 天 <b class="mono">${sgn(st.avg90)}</b>${st.up90 != null ? `（${st.up90}% 上漲）` : ''}</span><span>期間最大跌幅 <b class="mono">${sgn(st.mae30)}</b></span></div>
+    ${c.events?.length ? `<details><summary>歷次發生</summary><div class="combo-e">${c.events.map(e => `<span class="mono">${esc(e.date)} $${(e.price / 1000).toFixed(0)}k → 30 天 ${sgn(e.r30)}・90 天 ${sgn(e.r90)}</span>`).join('')}</div></details>` : ''}
+  </article>`;
+}
+function combosPanel() {
+  const C = S.cb; if (!C?.combos?.length) return '';
+  return `<section class="panel" id="combos"><div class="panel-head"><h3 style="font-size:16px">組合信號</h3><span class="sub">多個指標同時成立時，比單一指標更少假信號；只作參考，不計分</span></div>
+    <div class="combos">${C.combos.map(comboCard).join('')}</div>
+    <p class="sub">統計期間 ${esc(C.from)} 起（每天只用當時拿得到的數據）。所有日子的平均：30 天 ${sgn(C.base.avg30)}、90 天 ${sgn(C.base.avg90)}。每個組合只發生 2–6 次，屬單一週期的參考。抄底類組合適合看 90 天，30 天內常再探底。${esc(C.note || '')}</p></section>`;
+}
+// 總覽：組合信號與外部環境的一列摘要
+function contextCard() {
+  const C = S.cb?.combos || [];
+  const on = C.filter(c => c.active);
+  const wm = windOf(['netliq', 'tga', 'realrate', 'dxy', 'nasdaq']), wp = windOf(['ex_reserve', 'ex_netflow', 'treasury', 'strategy', 'etf_flow', 'whale']);
+  if (!C.length && !wm.n) return '';
+  return `<section class="panel ctx"><div class="ctx-row">
+    <a class="ctx-k" href="#indicators"><span class="sub">組合信號</span><b>${on.length} / ${C.length} 成立</b><span class="sub">${on.length ? on.map(c => esc(c.name)).join('、') : '目前沒有組合成立'}</span></a>
+    <a class="ctx-k ${wm.tone}" href="#macro"><span class="sub">總體流動性</span><b>${wm.label}</b><span class="sub">順風 ${wm.up}・逆風 ${wm.dn}</span></a>
+    <a class="ctx-k ${wp.tone}" href="#macro"><span class="sub">供給與大戶</span><b>${wp.label}</b><span class="sub">偏多 ${wp.up}・偏空 ${wp.dn}</span></a>
+  </div></section>`;
 }
 
 // ---------- 重大新聞（每日日報整理） ----------

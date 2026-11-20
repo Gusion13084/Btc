@@ -490,6 +490,15 @@ button.refresh.spin svg{animation:rspin .8s linear infinite} @keyframes rspin{to
 .tile .t-why{font-size:12px;color:var(--muted);line-height:1.35;text-align:left}.tile.focus{border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
 .news-list{list-style:none;margin:0;padding:0;display:grid}.news-list li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)}
 .news-list li:last-child{border-bottom:0}.news-list li div{display:grid;gap:3px}.news-list b{font-size:14.5px;font-weight:600}.news-list a{color:var(--ink)}
+.combos{display:grid;gap:12px;grid-template-columns:1fr}@media (min-width:860px){.combos{grid-template-columns:1fr 1fr}}
+.combo{border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:8px;background:var(--surface)}.combo.on{border-color:color-mix(in srgb,var(--buy) 55%,var(--line));background:color-mix(in srgb,var(--buy) 5%,var(--surface))}
+.combo-h{display:flex;justify-content:space-between;align-items:center;gap:8px}.combo-h b{font-size:15.5px}.combo p{margin:0}
+.combo-c{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:13.5px}.combo-c li{display:grid;grid-template-columns:18px 1fr auto;gap:6px;color:var(--muted)}.combo-c li.ok{color:var(--ink)}.combo-c li.ok span{color:var(--buy)}
+.combo-s{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--muted)}.combo-s b{color:var(--ink)}
+.combo details summary{cursor:pointer;font-size:12.5px;color:var(--muted)}.combo-e{display:grid;gap:2px;font-size:12px;color:var(--muted);margin-top:4px}
+.ctx-row{display:grid;gap:10px;grid-template-columns:1fr}@media (min-width:760px){.ctx-row{grid-template-columns:repeat(3,1fr)}}
+.ctx-k{display:grid;gap:2px;padding:10px 12px;border-radius:8px;background:var(--sunk);color:var(--ink);text-decoration:none;border-left:3px solid var(--line)}.ctx-k b{font-size:18px}
+.ctx-k.buy{border-left-color:var(--buy)}.ctx-k.sell{border-left-color:var(--sell)}.ctx-k.buy b{color:var(--buy)}.ctx-k.sell b{color:var(--sell)}
 </style>
 
 <header class="top"><div class="wrap">

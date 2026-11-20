@@ -35,6 +35,7 @@ const out = {
   previous: prev && { date: prev.date, btcPrice: prev.btcPrice, cbs: prev.cbs, cts: prev.cts, cbsLevel: prev.cbsLevel, ctsLevel: prev.ctsLevel, idx: prev.idx, decisionTitle: prev.decision?.title },
   arb: l.arb ?? null,
   events: l.events ?? [],
+  combos: await (async () => { try { const c = JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../data/combos.json', import.meta.url), 'utf8')); return { base: c.base, items: c.combos.map(x => ({ name: x.name, active: x.active, since: x.since, met: x.met, total: x.total, conds: x.conds, stats: x.stats })) }; } catch { return null; } })(),
   review: await (async () => { try { const r = JSON.parse(await (await import('node:fs/promises')).readFile(new URL('../data/review.json', import.meta.url), 'utf8')); return { journal: { hitRate: r.journal.hitRate, matured: r.journal.matured, total: r.journal.total, invalidatedRate: r.journal.invalidatedRate, byBias: r.journal.byBias, byIndicator: r.journal.byIndicator, recent: r.journal.recent.slice(0, 7) }, signals: r.signals.filter(x => x.n >= 3), system: r.system, ledgerChanges: r.ledgerChanges }; } catch { return null; } })(),
   levels: { cbs: c.levels.cbs.map(x => ({ min: x.min, name: x.name, target: x.batch?.target ?? null })), cts: c.levels.cts.map(x => ({ min: x.min, name: x.name, target: x.batch?.target ?? null })) },
   indicators: ind,
