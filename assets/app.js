@@ -19,11 +19,13 @@ function ago(iso) {
 const twTime = iso => iso ? new Date(iso).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', hour12: false, year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
 const shortDate = d => { const [, m, dd] = d.split('-'); return `${+m}/${+dd}`; };
 
+const noScore = def => !['core', 'aux'].includes(def.tier || 'core');
 function fmtVal(def, ind) {
   if (!ind || ind.value == null) return '—';
   if (def.type === 'state') return def.states[ind.value] ?? ind.value;
   if (ind.display) return ind.display;
-  return Number(ind.value).toFixed(def.decimals ?? 2) + (def.unit || '');
+  const v = Number(ind.value), dp = def.decimals ?? 2;
+  return (Math.abs(v) >= 1000 ? v.toLocaleString('en-US', { minimumFractionDigits: dp, maximumFractionDigits: dp }) : v.toFixed(dp)) + (def.unit || '');
 }
 // 規則摘要（評分規則頁表格用）
 function ruleText(rule, def) {
@@ -103,11 +105,11 @@ function openModal(id) {
   const ind = S.latest.indicators[def.id];
   const rb = def.cbs ? S.sc.cbs.items[def.id] : null, rt = def.cts ? S.sc.cts.items[def.id] : null;
   const sides = def.cbs && def.cts ? '抄底 & 止盈' : def.cbs ? '抄底' : def.cts ? '止盈' : '';
-  const badge = def.tier === 'info' ? '市場資訊・不計分' : def.tier === 'short' ? '短線盤勢・不計分' : def.tier === 'aux' ? `輔助確認・${sides}` : `核心・${sides}`;
+  const badge = def.tier === 'info' ? '市場資訊・不計分' : def.tier === 'short' ? '短線盤勢・不計分' : def.tier === 'macro' ? '總體流動性・不計分' : def.tier === 'supply' ? '供給與大戶・不計分' : def.tier === 'aux' ? `輔助確認・${sides}` : `核心・${sides}`;
   const band = bandOf(def, ind);
   const src = S.latest.sources?.[def.source]?.name || def.source;
   let summary;
-  if (def.tier === 'info' || def.tier === 'short') summary = band ? `目前判讀：${band.label}。此項用於盤勢判讀，不計入分數。` : '此項僅供參考，不計入任何分數。';
+  if (noScore(def)) summary = band ? `目前判讀：${band.label}。此項用於盤勢判讀，不計入分數。` : '此項僅供參考，不計入任何分數。';
   else if (!rb?.pts && !rt?.pts) summary = '目前不在抄底或止盈的計分區間，屬中性，繼續觀察。';
   else if (rb?.pts) summary = rb.pts === rb.max ? '已觸發此指標的最強抄底信號。' : '已進入抄底計分區間，尚未達到此指標最強信號。';
   else summary = rt.pts === rt.max ? '已觸發此指標的最強止盈信號。' : '已進入止盈計分區間，尚未達到此指標最強信號。';
@@ -123,7 +125,7 @@ function openModal(id) {
     <p>${esc(def.howto)}</p>
     ${def.cbs ? `<h4>抄底評分區間</h4>${tierRows('cbs', def, def.cbs, rb)}` : ''}
     ${def.cts ? `<h4>止盈評分區間</h4>${tierRows('cts', def, def.cts, rt)}` : ''}
-    ${def.bands ? `<h4>判讀區間</h4><ul class="tiers">${def.bands.map((b, i, a) => `<li class="tier ${toneCls(b.tone) === 'sell' ? 'sell' : 'buy'} band-${toneCls(b.tone)} ${band === b ? 'cur' : ''}" style="--a:${b.tone === 'neutral' ? 0 : 0.6}"><b class="mono">${i === 0 ? `&lt; ${b.to}` : b.to == null ? `≥ ${a[i - 1].to}` : `${a[i - 1].to}–${b.to}`}${esc(def.unit || '')}</b><span class="rng"></span><span class="st">${esc(b.label)}</span>${band === b ? '<em>目前</em>' : ''}</li>`).join('')}</ul>` : ''}
+    ${def.bands ? `<h4>判讀區間</h4><ul class="tiers">${def.bands.map((b, i, a) => `<li class="tier ${toneCls(b.tone) === 'sell' ? 'sell' : 'buy'} band-${toneCls(b.tone)} ${band === b ? 'cur' : ''}" style="--a:${b.tone === 'neutral' ? 0 : 0.6}"><b class="mono">${i === 0 ? `&lt; ${b.to}` : b.to == null ? `≥ ${a[i - 1].to}` : `${a[i - 1].to}–${b.to}`}${esc(def.bandUnit ?? def.unit ?? '')}</b><span class="rng"></span><span class="st">${esc(b.label)}</span>${band === b ? '<em>目前</em>' : ''}</li>`).join('')}</ul>` : ''}
     <section class="judge">
       <h4>當前數值判斷</h4>
       <div class="judge-v"><span class="mono">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct">近 4 年百分位 ${ind.fields.p}%</span>` : ''}${ind?.detail ? `<span class="sub">${esc(ind.detail)}</span>` : ''}</div>
@@ -239,7 +241,7 @@ function indCard(def) {
   return `<article class="ind ${hot} ${def.tier || 'core'}" data-ind="${def.id}">
     <div class="ind-row1">
       <button class="ind-name" data-ind="${def.id}" aria-haspopup="dialog">${esc(def.name)}${CHEV}</button>
-      <div class="chips">${(def.tier === 'info' || def.tier === 'short') ? (bandOf(def, ind) ? `<span class="chip band ${toneCls(bandOf(def, ind).tone)}">${esc(bandOf(def, ind).label)}</span>` : '<span class="chip">參考</span>') : chip(b, 'buy', '抄底') + chip(t, 'sell', '止盈')}</div>
+      <div class="chips">${noScore(def) ? (bandOf(def, ind) ? `<span class="chip band ${toneCls(bandOf(def, ind).tone)}">${esc(bandOf(def, ind).label)}</span>` : '<span class="chip">參考</span>') : chip(b, 'buy', '抄底') + chip(t, 'sell', '止盈')}</div>
     </div>
     ${def.type === 'state' ? '' : `<div class="ind-val"><span class="v">${fmtVal(def, ind)}</span>${ind?.fields?.p != null ? `<span class="pct" title="近 4 年百分位">4 年 ${Math.round(ind.fields.p)}%</span>` : ''}${ind?.fields?.oi != null ? `<span class="pct" title="未平倉合約（OI）">OI $${ind.fields.oi.toFixed(1)}B${ind.fields.oiDrop != null ? `（較一年高點 -${Math.round(ind.fields.oiDrop)}%）` : ''}</span>` : ''}${ind?.age >= 2 && ind?.asOf ? `<span class="pct lag" title="來源數據延遲，這是 ${esc(ind.asOf)} 的數值">至 ${shortDate(ind.asOf)}</span>` : ''}<span class="d">${esc(ind?.detail || '')}</span></div>`}
     ${strip(def, ind)}
@@ -476,7 +478,7 @@ function viewOverview() {
 }
 
 // ---------- 指標頁：分類篩選 ----------
-const TIERS = [['core', '核心', '依抄底策略手冊計分，決定 CBS / CTS 等級'], ['aux', '輔助確認', '不改變等級，用來確認信號強弱'], ['short', '短線盤勢', '衍生品、期權與現貨買盤，不計分'], ['info', '市場資訊', '僅供參考，不計分']];
+const TIERS = [['core', '核心', '依抄底策略手冊計分，決定 CBS / CTS 等級'], ['aux', '輔助確認', '不改變等級，用來確認信號強弱'], ['short', '短線盤勢', '衍生品、期權與現貨買盤，不計分'], ['macro', '總體流動性', '美元流動性、利率與美股，判斷順風或逆風，不計分'], ['supply', '供給與大戶', '交易所籌碼與機構、國家持倉，不計分'], ['info', '市場資訊', '僅供參考，不計分']];
 function viewIndicators() {
   let f = 'all'; try { f = localStorage.getItem('radar.tier') || 'all'; } catch {}
   const counts = Object.fromEntries(TIERS.map(([t]) => [t, S.config.indicators.filter(d => (d.tier || 'core') === t).length]));
@@ -526,6 +528,45 @@ function viewShort() {
     <section class="ind-group"><h3>衍生品與槓桿</h3><div class="inds">${by(['fundapr', 'basis', 'liq', 'lsr', 'funding'])}</div></section>
     <section class="ind-group"><h3>期權</h3><div class="inds">${by(['dvol', 'skew', 'pcr'])}</div></section>
     <section class="ind-group"><h3>現貨買盤與資金</h3><div class="inds">${by(['cbprem', 'etf_flow', 'stable30', 'fng'])}</div></section>`;
+}
+
+// ---------- 總經與籌碼 ----------
+function windOf(ids) {
+  let up = 0, dn = 0, n = 0; const why = [];
+  for (const id of ids) {
+    const def = S.config.indicators.find(d => d.id === id), ind = S.latest.indicators?.[id];
+    if (!def || !ind || ind.value == null || !ind.ok) continue;
+    const b = bandOf(def, ind); if (!b) continue; n++;
+    if (b.tone === 'buy') { up++; why.push(['buy', `${def.name}：${b.label}`]); }
+    else if (b.tone === 'sell' || b.tone === 'warn') { dn++; why.push(['sell', `${def.name}：${b.label}`]); }
+  }
+  const score = up - dn;
+  const label = !n ? '數據不足' : score >= 2 ? '順風' : score === 1 ? '偏順風' : score === 0 ? '中性' : score === -1 ? '偏逆風' : '逆風';
+  const tone = !n ? 'neu' : score > 0 ? 'buy' : score < 0 ? 'sell' : 'neu';
+  return { label, tone, up, dn, n, why };
+}
+function eventsCard(n = 5) {
+  const E = (S.latest.events || []).slice(0, n); if (!E.length) return '';
+  const tw = iso => new Date(iso).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', month: 'numeric', day: 'numeric', weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+  const days = iso => Math.ceil((Date.parse(iso) - Date.now()) / 864e5);
+  return `<section class="panel"><div class="panel-head"><h3 style="font-size:16px">近期重要事件</h3><span class="sub">台灣時間</span></div>
+    <ul class="ev-list">${E.map(e => { const d = days(e.at); return `<li class="ev ${e.type === 'FOMC' ? 'hot' : ''}"><span class="ev-t mono">${esc(tw(e.at))}</span><span class="ev-n">${esc(e.name)}</span><span class="ev-d sub">${d <= 0 ? '今天' : d === 1 ? '明天' : `${d} 天後`}</span></li>`; }).join('')}</ul>
+    <p class="sub">FOMC 利率決議、CPI 與非農就業報告公布前後，BTC 波動通常放大；日報會提前提醒。</p></section>`;
+}
+function viewMacro() {
+  const by = ids => ids.map(id => S.config.indicators.find(d => d.id === id)).filter(Boolean).map(indCard).join('');
+  const M = ['netliq', 'tga', 'realrate', 'dxy', 'nasdaq'], P = ['ex_reserve', 'ex_netflow', 'treasury', 'strategy', 'etf_flow', 'whale'];
+  const wm = windOf(M), wp = windOf(P);
+  const box = (t, w, sub) => `<div class="wind ${w.tone}"><span class="sub">${t}</span><b>${w.label}</b><span class="sub">${sub}</span>${w.why.length ? `<ul>${w.why.map(([c, x]) => `<li class="${c}">${esc(x)}</li>`).join('')}</ul>` : ''}</div>`;
+  app.innerHTML = `
+    <div class="panel-head"><h2>總經與籌碼</h2><span class="sub">外部環境與供給面，不計入週期評分，用來判斷順風或逆風</span></div>
+    <section class="panel"><div class="wind-grid">
+      ${box('總體流動性', wm, `${wm.n} 項有判讀・順風 ${wm.up}・逆風 ${wm.dn}`)}
+      ${box('供給與大戶', wp, `${wp.n} 項有判讀・偏多 ${wp.up}・偏空 ${wp.dn}`)}
+    </div><p class="sub">綜合判讀＝偏多項目數減偏空項目數，僅作背景參考；週期倉位仍以 CBS、CTS 與抄底規則為準。</p></section>
+    ${eventsCard()}
+    <section class="ind-group"><h3>總體流動性</h3><div class="inds">${by(M)}</div></section>
+    <section class="ind-group"><h3>供給與大戶</h3><div class="inds">${by(P)}</div></section>`;
 }
 
 // ---------- 歷史 ----------
@@ -984,7 +1025,7 @@ function viewGuide() {
 }
 
 // ---------- 路由 ----------
-const views = { overview: viewOverview, indicators: viewIndicators, short: viewShort, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc, guide: viewGuide };
+const views = { overview: viewOverview, indicators: viewIndicators, short: viewShort, macro: viewMacro, history: viewHistory, sources: viewSources, rules: viewRules, calc: viewCalc, guide: viewGuide };
 function route() {
   killCharts();
   if (!modal.hidden) closeModal();

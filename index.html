@@ -475,6 +475,13 @@ button.refresh.spin svg{animation:rspin .8s linear infinite} @keyframes rspin{to
 .lq-cum{margin:6px 0 14px}.lq-cum table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px}
 .lq-cum th,.lq-cum td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}.lq-cum th:first-child,.lq-cum td:first-child{text-align:left}
 .lq-cum th{font-weight:600;color:var(--muted);font-size:12.5px}.lq-cum td .sub{font-size:12px;margin-right:4px}
+.wind-grid{display:grid;gap:12px;grid-template-columns:1fr}@media (min-width:760px){.wind-grid{grid-template-columns:1fr 1fr}}
+.wind{display:grid;gap:4px;padding:14px;border-radius:10px;background:var(--sunk);border-left:4px solid var(--c,var(--line))}
+.wind b{font-size:22px}.wind.buy{--c:var(--buy)}.wind.sell{--c:var(--sell)}.wind.buy b{color:var(--buy)}.wind.sell b{color:var(--sell)}
+.wind ul{margin:6px 0 0;padding-left:18px;font-size:13.5px}.wind li.buy::marker{color:var(--buy)}.wind li.sell::marker{color:var(--sell)}
+.ev-list{list-style:none;margin:0;padding:0;display:grid}.ev{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.ev:last-child{border-bottom:0}.ev-t{color:var(--muted);font-size:13px;white-space:nowrap}.ev.hot .ev-n{font-weight:700}
+@media (max-width:420px){.ev{grid-template-columns:1fr auto}.ev-t{grid-column:1/-1}}
 </style>
 
 <header class="top"><div class="wrap">
@@ -488,6 +495,7 @@ button.refresh.spin svg{animation:rspin .8s linear infinite} @keyframes rspin{to
     <a href="#overview">總覽</a>
     <a href="#indicators">指標</a>
     <a href="#short">短線</a>
+    <a href="#macro">總經</a>
     <a href="#history">紀錄</a>
     <a href="#calc">計算</a>
     <a href="#rules">規則</a>
