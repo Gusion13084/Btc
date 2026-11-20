@@ -1,0 +1,207 @@
+{
+ "generatedAt": "2026-11-20T02:58:35.002Z",
+ "date": "2026-11-20",
+ "horizonDays": 7,
+ "journal": {
+  "total": 0,
+  "matured": 0,
+  "hitRate": null,
+  "invalidatedRate": null,
+  "byBias": {},
+  "byConfidence": {},
+  "byIndicator": [],
+  "recent": []
+ },
+ "signals": [
+  {
+   "id": "fng",
+   "name": "恐懼貪婪指數",
+   "band": "恐懼",
+   "tone": "neutral",
+   "n": 8,
+   "avg7": -12.5,
+   "up7": 0
+  },
+  {
+   "id": "fng",
+   "name": "恐懼貪婪指數",
+   "band": "中性",
+   "tone": "neutral",
+   "n": 1,
+   "avg7": -6.1,
+   "up7": 0
+  },
+  {
+   "id": "fng",
+   "name": "恐懼貪婪指數",
+   "band": "極度恐懼",
+   "tone": "buy",
+   "n": 1,
+   "avg7": -9.2,
+   "up7": 0
+  },
+  {
+   "id": "dvol",
+   "name": "DVOL 隱含波動率",
+   "band": "低波動，市場自滿",
+   "tone": "warn",
+   "n": 5,
+   "avg7": -12.3,
+   "up7": 0
+  },
+  {
+   "id": "dvol",
+   "name": "DVOL 隱含波動率",
+   "band": "正常",
+   "tone": "neutral",
+   "n": 4,
+   "avg7": -11.4,
+   "up7": 0
+  },
+  {
+   "id": "skew",
+   "name": "期權偏斜（約 30 天 ±10%）",
+   "band": "避險需求偏高",
+   "tone": "buy",
+   "n": 5,
+   "avg7": -12.3,
+   "up7": 0
+  },
+  {
+   "id": "skew",
+   "name": "期權偏斜（約 30 天 ±10%）",
+   "band": "恐慌避險",
+   "tone": "buy",
+   "n": 4,
+   "avg7": -11.4,
+   "up7": 0
+  },
+  {
+   "id": "pcr",
+   "name": "Put/Call 未平倉比",
+   "band": "中性",
+   "tone": "neutral",
+   "n": 9,
+   "avg7": -11.9,
+   "up7": 0
+  },
+  {
+   "id": "basis",
+   "name": "期現價差年化（基差）",
+   "band": "正常",
+   "tone": "neutral",
+   "n": 9,
+   "avg7": -11.9,
+   "up7": 0
+  },
+  {
+   "id": "fundapr",
+   "name": "資金費率年化（即時）",
+   "band": "正常",
+   "tone": "neutral",
+   "n": 9,
+   "avg7": -11.9,
+   "up7": 0
+  },
+  {
+   "id": "cbprem",
+   "name": "Coinbase 溢價",
+   "band": "中性",
+   "tone": "neutral",
+   "n": 9,
+   "avg7": -11.9,
+   "up7": 0
+  }
+ ],
+ "agreement": {
+  "n": 3,
+  "agreeRate": 33.3,
+  "items": [
+   {
+    "id": "dvol",
+    "name": "DVOL 隱含波動率",
+    "band": "低波動，市場自滿",
+    "tone": "warn",
+    "n": 5,
+    "avg7": -12.3,
+    "up7": 0,
+    "agree": true
+   },
+   {
+    "id": "skew",
+    "name": "期權偏斜（約 30 天 ±10%）",
+    "band": "避險需求偏高",
+    "tone": "buy",
+    "n": 5,
+    "avg7": -12.3,
+    "up7": 0,
+    "agree": false
+   },
+   {
+    "id": "skew",
+    "name": "期權偏斜（約 30 天 ±10%）",
+    "band": "恐慌避險",
+    "tone": "buy",
+    "n": 4,
+    "avg7": -11.4,
+    "up7": 0,
+    "agree": false
+   }
+  ]
+ },
+ "system": {
+  "from": "2022-11-11",
+  "multiple": 3.527,
+  "maxDrawdown": 30.2,
+  "maxDrawdownAt": "2026-06-30",
+  "drawdownNow": 27.3,
+  "spotWeight": 41.3,
+  "price": 61946
+ },
+ "ledger": [
+  {
+   "date": "2022-11-13",
+   "type": "buy",
+   "label": "第一批・預警進場",
+   "price": 16776,
+   "target": 45
+  },
+  {
+   "date": "2022-11-20",
+   "type": "buy",
+   "label": "第二批・確認加碼",
+   "price": 16688,
+   "target": 65
+  },
+  {
+   "date": "2024-03-08",
+   "type": "sell",
+   "label": "第一批・試探減倉",
+   "price": 66937,
+   "target": 70
+  },
+  {
+   "date": "2025-11-14",
+   "type": "sell",
+   "label": "趨勢保護第一段",
+   "price": 94517,
+   "target": 50
+  },
+  {
+   "date": "2025-12-12",
+   "type": "sell",
+   "label": "趨勢保護第二段",
+   "price": 90277,
+   "target": 35
+  },
+  {
+   "date": "2026-02-20",
+   "type": "buy",
+   "label": "第一批・預警進場（機構資金路線）",
+   "price": 67998,
+   "target": 45
+  }
+ ],
+ "ledgerChanges": [],
+ "changeLog": []
+}
