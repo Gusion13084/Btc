@@ -186,11 +186,33 @@ for (const [name, path, prefer, group] of BG) {
     if (!rows.length) throw new Error('沒有資料');
     if (rows.some(r => !r[0])) throw new Error('找不到日期欄位：' + JSON.stringify(arr.at(-1)).slice(0, 120));
     S[name] = merge(S[name], rows);
-    meta[name] = { fetched: today, ok: true, last: S[name].at(-1)[0] };
+    meta[name] = { ...(meta[name] || {}), fetched: today, ok: true, last: S[name].at(-1)[0], first: S[name][0][0], error: undefined };
   } catch (e) {
-    meta[name] = { fetched: today, ok: false, error: e.message };
+    meta[name] = { ...(meta[name] || {}), fetched: today, ok: false, error: e.message };
     bgErr[group].push(`${name}：${e.message}`);
   }
+}
+// ---------- BGeometrics 歷史回補：用當天剩餘額度（每天上限 15 次）把每個序列補到最早，只做一次 ----------
+// 序列只增不刪，避免日後來源不再提供舊數據時，長週期回測缺資料
+{
+  const day = meta._bgDay?.date === today ? meta._bgDay : { date: today, calls: 0 };
+  day.calls += bgCalls;
+  for (const [name, path, prefer] of BG) {
+    if (meta[name]?.backfilled || name === 'liq') continue;
+    if (day.calls >= 14 || bgCalls >= BG_BUDGET) break;
+    try {
+      bgCalls++; day.calls++;
+      const arr = rowsOf(await getJSON(`https://bitcoin-data.com/v1/${path}?startday=2010-01-01`, 1));
+      let rows = arr.map(o => [pickDate(o), pickNumber(o, prefer)]).filter(r => r[0] && Number.isFinite(r[1]));
+      if (name === 'profit') rows = rows.map(r => [r[0], r[1] > 100 ? (r[1] / supplyAt(r[0])) * 100 : r[1]]);
+      if (!rows.length) throw new Error('沒有資料');
+      const before = S[name][0]?.[0];
+      S[name] = merge(S[name], rows.filter(r => !before || r[0] < before));  // 只補舊資料，不動近期
+      meta[name] = { ...(meta[name] || {}), backfilled: true, first: S[name][0][0] };
+      console.log(`BGeometrics 回補 ${name}：${rows[0][0]} 起，共 ${rows.length} 筆（原本從 ${before} 開始）`);
+    } catch (e) { console.warn(`BGeometrics 回補 ${name} 失敗：${e.message}`); }
+  }
+  meta._bgDay = day;
 }
 for (const g of ['bgcore', 'bgaux']) setStatus(g, !bgErr[g].length, bgErr[g].join('；') || null);
 
@@ -249,6 +271,10 @@ try {
   MC = await fetchMacro({ today, priceSeries: S.price, treasury: await read('data/series/treasury.json', []), fredKey: process.env.FRED_API_KEY || null });
   if (MC.treasury) await write('data/series/treasury.json', MC.treasury, false);
   if (MC.charts) await write('data/macro.json', { generatedAt: nowISO, charts: MC.charts }, false);
+  // Coin Metrics BTC 完整日線（2010 年起：價格、市值、MVRV、發行量、算力、交易所存量與流量），供長週期回測
+  if (MC.cm?.length) await write('data/series/cm_btc.json', { fields: ['date', 'price', 'mcap', 'mvrvRatio', 'issUsd', 'hash', 'exSply', 'exIn', 'exOut'], rows: merge((await read('data/series/cm_btc.json', { rows: [] })).rows, MC.cm) }, false);
+  // 總經與交易所數據也逐日保存（只增不刪）
+  for (const [k, rows] of Object.entries(MC.series || {})) if (rows?.length) await write(`data/series/m_${k}.json`, merge(await read(`data/series/m_${k}.json`, []), rows.map(([d, v]) => [d, +(+v).toPrecision(8)])), false);
 } catch (e) { console.warn('總經數據失敗：', e.message); MC.errs.macro = e.message; }
 for (const k of ['fred', 'tga', 'rrp', 'treasury', 'fx', 'nasdaq', 'coinmetrics', 'bitbo']) setStatus(k, !MC.errs[k], MC.errs[k] || null);
 
@@ -439,6 +465,8 @@ if (etf0 >= 0) {
 // ---------- 回測：每一天都只用當時已知的資料計分 ----------
 let bt0 = V.mvrv ? V.mvrv.findIndex(v => v != null) : -1;
 if (bt0 < 0) bt0 = Math.max(0, N - WINDOW);
+// 回測起點固定（歷史數據補得更早時，只用來讓百分位更完整，不改變操作回測的起點）
+{ const st = config.backtestStart || '2022-11-11'; const k = cal.findIndex(d => d >= st); if (k > bt0) bt0 = k; }
 const backtest = [];
 for (let i = bt0; i < N; i++) {
   const s = scoreAll(config, indicatorsAt(i));
@@ -549,4 +577,9 @@ if (hi >= 0) history[hi] = entry; else history.push(entry);
 history.sort((a, b) => a.date.localeCompare(b.date));
 await write('data/latest.json', latest);
 await write('data/history.json', history);
+// 每日封存：完整快照與清算地圖，供日後回測使用（網站不讀這個資料夾）
+try {
+  const lm = await read('data/liqmap.json', null);
+  await write(`data/archive/${today.slice(0, 4)}/${today}.json`, { date: today, snapshotAt: latest.snapshotAt, latest: { ...latest, ledger: undefined }, liqmap: lm ? { price: lm.price, generatedAt: lm.generatedAt, near5: lm.near5, near10: lm.near10, topLong: lm.topLong, topShort: lm.topShort, buckets: lm.buckets, realized: lm.realized } : null }, false);
+} catch (e) { console.warn('封存失敗：', e.message); }
 console.log(`快照 ${today}：CBS ${s.cbs.score}/${s.cbs.max} ${s.cbs.level.name}（確認 ${s.cbs.confirm.pct ?? '—'}%）・CTS ${s.cts.score}/${s.cts.max} ${s.cts.level.name}・週期指數 ${latest.index ?? '—'}・BGeometrics 用量 ${bgCalls}・回測 ${backtest.length} 天`);

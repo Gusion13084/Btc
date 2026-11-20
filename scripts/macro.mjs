@@ -81,8 +81,9 @@ export async function fetchMacro({ today, priceSeries = [], treasury = [], fredK
     // ---- 交易所存量與流量（日）----
     (async () => {
       const rows = [];
-      let url = `https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=SplyExNtv,FlowInExNtv,FlowOutExNtv&frequency=1d&start_time=2018-01-01&page_size=10000`;
+      let url = `https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=SplyExNtv,FlowInExNtv,FlowOutExNtv,PriceUSD,CapMrktCurUSD,CapMVRVCur,IssTotUSD,HashRate&frequency=1d&start_time=2010-07-18&page_size=10000`;
       for (let k = 0; k < 3 && url; k++) { const j = await get(url); rows.push(...j.data); url = j.next_page_url || null; }
+      S.cm = rows.map(x => [x.time.slice(0, 10), num(x.PriceUSD), num(x.CapMrktCurUSD), num(x.CapMVRVCur), num(x.IssTotUSD), num(x.HashRate), num(x.SplyExNtv), num(x.FlowInExNtv), num(x.FlowOutExNtv)]);
       S.exSply = rows.map(x => [x.time.slice(0, 10), num(x.SplyExNtv)]).filter(x => x[1] != null);
       S.exNet = rows.map(x => [x.time.slice(0, 10), (num(x.FlowInExNtv) ?? 0) - (num(x.FlowOutExNtv) ?? 0)]).filter((x, i) => rows[i].FlowInExNtv != null);
       if (S.exSply.length < 400) throw new Error('交易所資料不足');
@@ -159,6 +160,8 @@ export async function fetchMacro({ today, priceSeries = [], treasury = [], fredK
   const thin = (ser, n = 1) => (ser || []).filter(x => x[0] >= addDays(today, -400)).filter((_, i, a) => i % n === 0 || i === a.length - 1).map(([d, v]) => [d, r(v, 3)]);
   out.charts = { netliq: thin(S.netliq, 3), tga: thin(S.tga, 3), real10: thin(S.real10, 2), dxy: thin(S.dxy, 2), ndq: thin(S.ndq, 2), exSply: thin(S.exSply, 3) };
   log(`總經與供給：${Object.keys(ind).join('、')}${Object.keys(errs).length ? `；失敗 ${JSON.stringify(errs)}` : ''}`);
+  out.cm = S.cm;
+  out.series = { walcl: S.walcl, tga: S.tga, rrp: S.rrp, real10: S.real10, dxy: S.dxy, ndq: S.ndq, exSply: S.exSply, exNet: S.exNet };
   return { ind, errs, ...out };
 }
 

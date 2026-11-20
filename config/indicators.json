@@ -3070,5 +3070,6 @@
  "buyPause": {
   "cbs": 8,
   "idx": 25
- }
+ },
+ "backtestStart": "2022-11-11"
 }
