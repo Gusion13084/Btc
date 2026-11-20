@@ -1,6 +1,10 @@
-// Cloudflare Workers 靜態網站設定（只發布網頁與數據檔）
+// Cloudflare Workers：靜態網站＋Telegram 推播排程
 {
   "name": "btc-radar",
   "compatibility_date": "2026-11-01",
-  "assets": { "directory": "." }
+  "main": "worker/index.js",
+  "assets": { "directory": ".", "binding": "ASSETS" },
+  "triggers": { "crons": ["*/15 * * * *"] },
+  "durable_objects": { "bindings": [{ "name": "STATE", "class_name": "AlertState" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AlertState"] }]
 }

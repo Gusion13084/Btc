@@ -7,3 +7,4 @@ cloudflare
 node_modules
 data/series
 *.md
+worker
