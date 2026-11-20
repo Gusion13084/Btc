@@ -2489,6 +2489,486 @@
      "tone": "buy"
     }
    ]
+  },
+  {
+   "id": "netliq",
+   "name": "美國淨流動性",
+   "group": "總體流動性",
+   "tier": "macro",
+   "source": "fred",
+   "decimals": 2,
+   "unit": " 兆",
+   "bandField": "chg4w",
+   "bandUnit": "%",
+   "scaleField": "chg4w",
+   "scale": [
+    -6,
+    6
+   ],
+   "scaleLabel": "4 週變化",
+   "links": [
+    [
+     "FRED WALCL",
+     "https://fred.stlouisfed.org/series/WALCL"
+    ],
+    [
+     "財政部 TGA",
+     "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/"
+    ]
+   ],
+   "principle": "Fed 資產負債表減去財政部帳戶（TGA）與逆回購（RRP），代表實際留在金融體系裡的美元流動性（兆美元）。判讀看 4 週變化。",
+   "howto": "淨流動性增加，風險資產通常比較有支撐；連續收緊時 BTC 反彈常走不遠。它是背景條件，不決定進出場，用來判斷順風或逆風。",
+   "history": [
+    "2022 年 Fed 縮表加上 TGA 回補，淨流動性大幅下降，BTC 同步進入熊市",
+    "2023 年第四季到 2024 年第一季：逆回購釋出資金，淨流動性回升，BTC 跟著走強"
+   ],
+   "bands": [
+    {
+     "to": -3,
+     "label": "快速收緊",
+     "tone": "sell"
+    },
+    {
+     "to": -1,
+     "label": "偏緊",
+     "tone": "warn"
+    },
+    {
+     "to": 1,
+     "label": "持平",
+     "tone": "neutral"
+    },
+    {
+     "to": 3,
+     "label": "偏寬",
+     "tone": "buy"
+    },
+    {
+     "label": "寬鬆",
+     "tone": "buy"
+    }
+   ]
+  },
+  {
+   "id": "tga",
+   "name": "財政部帳戶 TGA",
+   "group": "總體流動性",
+   "tier": "macro",
+   "source": "treasury",
+   "decimals": 0,
+   "unit": " 億",
+   "bandField": "chg4w",
+   "bandUnit": " 億",
+   "scaleField": "chg4w",
+   "scale": [
+    -3000,
+    3000
+   ],
+   "scaleLabel": "4 週變化",
+   "links": [
+    [
+     "Daily Treasury Statement",
+     "https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/"
+    ]
+   ],
+   "principle": "美國財政部在 Fed 的帳戶餘額（億美元）。財政部發債補帳戶時，資金從市場流進帳戶；花錢時，資金流回市場。",
+   "howto": "4 週增加超過 1,000 億代表正在抽走市場流動性，常見於發債高峰或繳稅季；大幅下降代表資金釋出。和淨流動性一起看。",
+   "history": [
+    "2023 年 6 月債務上限解除後，TGA 在三個月內回補約 6,000 億美元，同期風險資產承壓"
+   ],
+   "bands": [
+    {
+     "to": -1000,
+     "label": "大幅釋出資金",
+     "tone": "buy"
+    },
+    {
+     "to": -300,
+     "label": "釋出資金",
+     "tone": "buy"
+    },
+    {
+     "to": 300,
+     "label": "持平",
+     "tone": "neutral"
+    },
+    {
+     "to": 1000,
+     "label": "抽走資金",
+     "tone": "warn"
+    },
+    {
+     "label": "大幅抽走資金",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "realrate",
+   "name": "10 年期實質利率",
+   "group": "總體流動性",
+   "tier": "macro",
+   "source": "treasury",
+   "decimals": 2,
+   "unit": "%",
+   "bandField": "chg30",
+   "bandUnit": " 基點",
+   "scaleField": "chg30",
+   "scale": [
+    -60,
+    60
+   ],
+   "scaleLabel": "30 天變化",
+   "links": [
+    [
+     "財政部實質殖利率",
+     "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_real_yield_curve"
+    ]
+   ],
+   "principle": "10 年期抗通膨公債（TIPS）殖利率，代表扣除通膨後的真實資金成本。判讀看 30 天變化（基點，1 基點 = 0.01%）。",
+   "howto": "實質利率快速上升，持有不生息資產（BTC、黃金）的機會成本變高，常壓抑估值；下降則有利。單日大幅跳動通常來自 CPI、非農或 FOMC。",
+   "history": [
+    "2022 年實質利率從 −1% 升到 +1.5% 以上，BTC 同期下跌約 75%"
+   ],
+   "bands": [
+    {
+     "to": -25,
+     "label": "快速下降",
+     "tone": "buy"
+    },
+    {
+     "to": -10,
+     "label": "下降",
+     "tone": "buy"
+    },
+    {
+     "to": 10,
+     "label": "持平",
+     "tone": "neutral"
+    },
+    {
+     "to": 25,
+     "label": "上升",
+     "tone": "warn"
+    },
+    {
+     "label": "快速上升",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "dxy",
+   "name": "美元指數（估算）",
+   "group": "總體流動性",
+   "tier": "macro",
+   "source": "fx",
+   "decimals": 2,
+   "unit": "",
+   "bandField": "chg30",
+   "bandUnit": "%",
+   "scaleField": "chg30",
+   "scale": [
+    -5,
+    5
+   ],
+   "scaleLabel": "30 天變化",
+   "links": [
+    [
+     "Frankfurter（歐洲央行匯率）",
+     "https://www.frankfurter.app/"
+    ]
+   ],
+   "principle": "依 ICE 美元指數的六種貨幣權重，用歐洲央行每日匯率估算，和官方 DXY 誤差很小。判讀看 30 天變化。",
+   "howto": "美元走強代表全球美元流動性收緊，通常不利 BTC；美元走弱有利。和 BTC 的關係在大行情時比較明顯，短期常有例外。",
+   "history": [
+    "2022 年美元指數升到 114，BTC 同期跌到 1.6 萬美元",
+    "2023 年美元回落期間 BTC 從低點回升"
+   ],
+   "bands": [
+    {
+     "to": -2,
+     "label": "大幅走弱",
+     "tone": "buy"
+    },
+    {
+     "to": -0.5,
+     "label": "走弱",
+     "tone": "buy"
+    },
+    {
+     "to": 0.5,
+     "label": "持平",
+     "tone": "neutral"
+    },
+    {
+     "to": 2,
+     "label": "走強",
+     "tone": "warn"
+    },
+    {
+     "label": "大幅走強",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "nasdaq",
+   "name": "那斯達克 30 日漲跌",
+   "group": "總體流動性",
+   "tier": "macro",
+   "source": "nasdaq",
+   "decimals": 1,
+   "unit": "%",
+   "scale": [
+    -20,
+    20
+   ],
+   "links": [
+    [
+     "Nasdaq Composite",
+     "https://www.nasdaq.com/market-activity/index/comp"
+    ]
+   ],
+   "principle": "那斯達克綜合指數近 30 天漲跌，代表美股風險偏好；詳細資訊另列 BTC 與那斯達克近 60 個交易日的報酬相關係數。",
+   "howto": "相關係數高（0.5 以上）時，美股急跌常帶動 BTC 下跌；相關係數低時 BTC 走自己的行情。美股急跌又遇到高相關，是短線風險升高的信號。",
+   "history": [
+    "2022 年 BTC 與那斯達克相關係數長期在 0.5 以上",
+    "2024 年 ETF 上市後相關性一度降低"
+   ],
+   "bands": [
+    {
+     "to": -10,
+     "label": "急跌，風險偏好轉弱",
+     "tone": "sell"
+    },
+    {
+     "to": -3,
+     "label": "走弱",
+     "tone": "warn"
+    },
+    {
+     "to": 3,
+     "label": "持平",
+     "tone": "neutral"
+    },
+    {
+     "to": 10,
+     "label": "走強",
+     "tone": "buy"
+    },
+    {
+     "label": "強勢",
+     "tone": "buy"
+    }
+   ]
+  },
+  {
+   "id": "ex_reserve",
+   "name": "交易所 BTC 存量",
+   "group": "供給與大戶",
+   "tier": "supply",
+   "source": "coinmetrics",
+   "decimals": 1,
+   "unit": " 萬",
+   "bandField": "chg30",
+   "bandUnit": "%",
+   "scaleField": "chg30",
+   "scale": [
+    -5,
+    5
+   ],
+   "scaleLabel": "30 天變化",
+   "links": [
+    [
+     "Coin Metrics",
+     "https://charts.coinmetrics.io/"
+    ]
+   ],
+   "principle": "所有已知交易所地址持有的 BTC（萬枚）。判讀看 30 天變化；近 4 年百分位放在詳細資訊。",
+   "howto": "存量持續下降代表幣被提到自有錢包長期持有，可賣籌碼變少；突然大增代表有人準備賣。看趨勢不看單日，交易所整理錢包也會造成跳動。",
+   "history": [
+    "2020 年 3 月後交易所存量長期下降，配合 2020–2021 年牛市",
+    "2022 年 FTX 倒閉後大量提幣，交易所存量快速下降"
+   ],
+   "bands": [
+    {
+     "to": -2,
+     "label": "大量提出，籌碼鎖定",
+     "tone": "buy"
+    },
+    {
+     "to": -0.5,
+     "label": "流出",
+     "tone": "buy"
+    },
+    {
+     "to": 0.5,
+     "label": "持平",
+     "tone": "neutral"
+    },
+    {
+     "to": 2,
+     "label": "流入，潛在賣壓",
+     "tone": "warn"
+    },
+    {
+     "label": "大量流入",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "ex_netflow",
+   "name": "交易所 7 日淨流量",
+   "group": "供給與大戶",
+   "tier": "supply",
+   "source": "coinmetrics",
+   "decimals": 0,
+   "unit": " BTC",
+   "bandField": "pct",
+   "bandUnit": "%",
+   "scaleField": "pct",
+   "scale": [
+    0,
+    100
+   ],
+   "scaleLabel": "一年百分位",
+   "links": [
+    [
+     "Coin Metrics",
+     "https://charts.coinmetrics.io/"
+    ]
+   ],
+   "principle": "近 7 天流入交易所減去流出交易所的 BTC，和近一年所有 7 日區間比較算出百分位。正數代表淨流入。",
+   "howto": "淨流入落在一年最高的 10%，代表大量幣轉進交易所，短線賣壓風險高；淨流出落在最低的 10%，代表大量提幣，偏多。",
+   "history": [
+    "2022 年 6 月與 11 月崩盤前後，交易所出現大額淨流入"
+   ],
+   "bands": [
+    {
+     "to": 10,
+     "label": "大量提出",
+     "tone": "buy"
+    },
+    {
+     "to": 30,
+     "label": "偏流出",
+     "tone": "neutral"
+    },
+    {
+     "to": 70,
+     "label": "中性",
+     "tone": "neutral"
+    },
+    {
+     "to": 90,
+     "label": "偏流入",
+     "tone": "neutral"
+    },
+    {
+     "label": "大量轉入，留意賣壓",
+     "tone": "sell"
+    }
+   ]
+  },
+  {
+   "id": "treasury",
+   "name": "ETF、企業與國家持倉",
+   "group": "供給與大戶",
+   "tier": "supply",
+   "source": "bitbo",
+   "decimals": 0,
+   "unit": " BTC",
+   "bandField": "chg30",
+   "bandUnit": " BTC",
+   "scaleField": "chg30",
+   "scale": [
+    -60000,
+    60000
+   ],
+   "scaleLabel": "30 天變化",
+   "links": [
+    [
+     "BitcoinTreasuries",
+     "https://bitbo.io/treasuries/"
+    ]
+   ],
+   "principle": "現貨 ETF、上市公司、私人公司、礦企與國家持有的 BTC 合計，每天快照一次，系統自行累積歷史，30 天後才有月變化。",
+   "howto": "合計持續增加代表機構與國家在吸收供給；30 天減少代表機構在減持，和 ETF 流量一起看。國家持倉變動少，主要變化來自 ETF 與上市公司。",
+   "history": [
+    "2024–2025 年 ETF 與上市公司合計增加超過 200 萬 BTC，是這一輪牛市的主要買盤"
+   ],
+   "bands": [
+    {
+     "to": -20000,
+     "label": "機構減持",
+     "tone": "sell"
+    },
+    {
+     "to": 0,
+     "label": "小幅減少",
+     "tone": "warn"
+    },
+    {
+     "to": 20000,
+     "label": "小幅增加",
+     "tone": "neutral"
+    },
+    {
+     "label": "機構增持",
+     "tone": "buy"
+    }
+   ]
+  },
+  {
+   "id": "strategy",
+   "name": "Strategy 持倉",
+   "group": "供給與大戶",
+   "tier": "supply",
+   "source": "bitbo",
+   "decimals": 0,
+   "unit": " BTC",
+   "bandField": "chg30",
+   "bandUnit": " BTC",
+   "scaleField": "chg30",
+   "scale": [
+    -10000,
+    40000
+   ],
+   "scaleLabel": "30 天變化",
+   "links": [
+    [
+     "Strategy 公告",
+     "https://www.strategy.com/purchases"
+    ]
+   ],
+   "principle": "Strategy（前 MicroStrategy）持有的 BTC，是最大的單一企業買家。系統每天快照，比較 30 天變化。",
+   "howto": "持續買入代表這個最大買盤還在；停止買入或出現賣出，會被市場視為重要信號。它的買入資金來自發債與增資，和股價溢價有關。",
+   "history": [
+    "2024 年 11 月到 2025 年初，Strategy 連續數週每週買入上萬枚 BTC"
+   ],
+   "bands": [
+    {
+     "to": 0,
+     "label": "減持",
+     "tone": "sell"
+    },
+    {
+     "to": 1,
+     "label": "30 天沒有買入",
+     "tone": "neutral"
+    },
+    {
+     "to": 20000,
+     "label": "持續買入",
+     "tone": "buy"
+    },
+    {
+     "label": "大舉買入",
+     "tone": "buy"
+    }
+   ]
   }
  ],
  "confirm": {

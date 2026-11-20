@@ -5,6 +5,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { scoreAll, indexZone, decide } from '../assets/scoring.js';
 import { buildLiqMap, buildLiqMapMulti } from './liqmap.mjs';
 import { fetchMarket } from './market.mjs';
+import { fetchMacro, upcomingEvents } from './macro.mjs';
 
 const ROOT = new URL('../', import.meta.url);
 const read = async (p, fb) => { try { return JSON.parse(await readFile(new URL(p, ROOT), 'utf8')); } catch { return fb; } };
@@ -71,7 +72,7 @@ const pctRank = (arr, x) => ((arr.filter(v => v < x).length + 0.5 * arr.filter(v
 // ---------- 來源狀態與序列快取 ----------
 const meta = await read('data/series/_meta.json', {});
 const status = {};
-const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', etf2: 'ETF 流量補充（bitbo）', okx: 'OKX 合約數據' };
+const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', etf2: 'ETF 流量補充（bitbo）', okx: 'OKX 合約數據', fred: 'FRED（Fed 資產負債表）', tga: '美國財政部 TGA', rrp: '紐約聯準銀行 逆回購', treasury: '美國財政部 實質利率', fx: '歐洲央行匯率（美元指數）', nasdaq: 'Nasdaq 指數', coinmetrics: 'Coin Metrics 交易所數據', bitbo: 'BitcoinTreasuries 持倉' };
 const setStatus = (k, ok, error = null) => { status[k] = { name: NAMES[k], ok, error, checkedAt: nowISO }; };
 const S = {};
 const now = {};
@@ -241,6 +242,15 @@ try {
   if (MK.dvolSeries?.length) await write('data/series/dvol.json', MK.dvolSeries, false);
 } catch (e) { console.warn('短線數據失敗：', e.message); MK.errs.deribit = e.message; }
 for (const k of ['deribit', 'coinbase', 'okxfund']) setStatus(k, !MK.errs[k], MK.errs[k] || null);
+
+// ---------- 總體流動性與供給端 ----------
+let MC = { ind: {}, errs: {} };
+try {
+  MC = await fetchMacro({ today, priceSeries: S.price, treasury: await read('data/series/treasury.json', []), fredKey: process.env.FRED_API_KEY || null });
+  if (MC.treasury) await write('data/series/treasury.json', MC.treasury, false);
+  if (MC.charts) await write('data/macro.json', { generatedAt: nowISO, charts: MC.charts }, false);
+} catch (e) { console.warn('總經數據失敗：', e.message); MC.errs.macro = e.message; }
+for (const k of ['fred', 'tga', 'rrp', 'treasury', 'fx', 'nasdaq', 'coinmetrics', 'bitbo']) setStatus(k, !MC.errs[k], MC.errs[k] || null);
 
 try {
   let lm = null;
@@ -479,19 +489,22 @@ if (ind.liq) {
 if (ind.whale) detail.whale = `持倉 ${Math.round(F.whale.v[L]).toLocaleString('en-US')} BTC（30 日 ${ind.whale.value >= 0 ? '+' : ''}${Math.round(F.whale.v[L] - F.whale.v[L - 30]).toLocaleString('en-US')}）`;
 if (now.btcDom != null) ind.btcdom = { value: r4(now.btcDom, 2), fields: {} };
 for (const [k, v] of Object.entries(MK.ind)) { ind[k] = { value: v.value, fields: v.fields || {} }; detail[k] = v.detail; }
+const macroAsOf = {};
+for (const [k, v] of Object.entries(MC.ind)) { ind[k] = { value: v.value, fields: v.fields || {} }; detail[k] = v.detail; macroAsOf[k] = v.asOf; }
 if (lsr != null) { ind.lsr = { value: r4(lsr, 3), fields: {} }; detail.lsr = `多頭帳戶約 ${(lsr / (1 + lsr) * 100).toFixed(0)}%`; }
 
 // 指標對應的來源與資料新鮮度
-const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth', dvol: 'deribit', skew: 'deribit', pcr: 'deribit', basis: 'deribit', fundapr: 'okxfund', cbprem: 'coinbase' };
+const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth', dvol: 'deribit', skew: 'deribit', pcr: 'deribit', basis: 'deribit', fundapr: 'okxfund', cbprem: 'coinbase', netliq: 'fred', tga: 'tga', realrate: 'treasury', dxy: 'fx', nasdaq: 'nasdaq', ex_reserve: 'coinmetrics', ex_netflow: 'coinmetrics', treasury: 'bitbo', strategy: 'bitbo' };
 const lagOf = { mvrv: 'mvrv', nupl: 'nupl', puell: 'puell', hashribbons: 'hash', funding: 'funding', sth_mvrv: 'sthrp', profit_supply: 'profit', whale: 'whale', etf_flow: 'etf', liq: 'liq' };
 const ageOf = { mvrv: F.mvrv, nupl: F.nupl, puell: F.puell, fng: F.fng, hashribbons: F.hash, funding: F.funding, sth_mvrv: F.sthrp, profit_supply: F.profit, whale: F.whale, stable30: F.stable, ssr: F.stable };
 const lastReal = { etf_flow: S.etf.at(-1)?.[0], liq: S.liq.at(-1)?.[0] };
-const maxAge = { etf_flow: 10, liq: 10, fng: 3 };
+const maxAge = { etf_flow: 10, liq: 10, fng: 3, netliq: 12, tga: 7, realrate: 7, dxy: 7, nasdaq: 7, ex_reserve: 5, ex_netflow: 5, treasury: 3, strategy: 3 };
 latest.indicators = {};
 for (const d of defs) {
   const x = ind[d.id], src = srcOf[d.id] || 'price';
   let age = (ageOf[d.id]?.age?.[L] ?? 0) + (LAG[lagOf[d.id]] || 0);
   if (lastReal[d.id]) age = Math.round((Date.parse(cal[L]) - Date.parse(lastReal[d.id])) / 86400000);
+  if (macroAsOf[d.id]) age = Math.max(0, Math.round((Date.parse(cal[L]) - Date.parse(macroAsOf[d.id])) / 86400000));
   const ok = !!x && age <= (maxAge[d.id] ?? 14);
   const asOf = addDays(cal[L], -age);
   latest.indicators[d.id] = x ? { ...x, detail: detail[d.id] || '', ok, date: today, asOf, fetchedAt: nowISO, source: src, age } : { value: null, ok: false, source: src };
@@ -503,6 +516,7 @@ latest.indexZone = indexZone(config, latest.index)?.name ?? null;
 latest.bgCalls = bgCalls;
 latest.lags = LAG;
 latest.arb = MK.arb;
+latest.events = upcomingEvents((await read('config/events.json', { events: [] })).events, nowISO, 8);
 latest.ethPrice = now.ethPrice ?? latest.ethPrice ?? null;
 
 if (fetchOnly) {
