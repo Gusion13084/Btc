@@ -45,6 +45,9 @@ async function load() {
   S.sc = scoreAll(S.config, S.latest.indicators);
   try { S.lm = await get('data/liqmap.json'); } catch { S.lm = null; }
   try { S.rv = await get('data/review.json'); } catch { S.rv = null; }
+  // 最新一份日報判斷紀錄（含重大新聞）：今天的還沒產出就用前一天
+  S.jn = null;
+  for (const d of [S.latest.date, new Date(Date.parse(S.latest.date) - 864e5).toISOString().slice(0, 10)]) { try { S.jn = await get(`data/journal/${d}.json`); break; } catch {} }
   try { const b = await get('data/backtest.json'); S.bt = b.rows.map(r => Object.fromEntries(b.fields.map((f, i) => [f, r[i]]))); } catch { S.bt = []; }
   // 每日序列（用於變化量、持續天數）：優先用回測，沒有就用歷史快照；最後一天換成今天的即時分數
   const base = S.bt.length ? S.bt : S.history.filter(h => !h.legacy).map(h => ({ date: h.date, price: h.btcPrice, cbs: h.cbs, cts: h.cts, idx: h.idx ?? null }));
@@ -514,6 +517,7 @@ function viewOverview() {
       <div class="ov-col">${indexCard()}<div class="scores">${scorePanel('cbs', sc.cbs, '抄底 CBS')}${scorePanel('cts', sc.cts, '止盈 CTS')}</div></div>
     </div>
     ${tilesCard()}
+    ${newsCard(true)}
     <nav class="ov-more" aria-label="更多">
       <a href="#indicators"><b>全部指標</b><span>核心、輔助確認與市場資訊 ${S.config.indicators.length} 項</span></a>
       <a href="#short"><b>短線盤勢</b><span>清算地圖、衍生品、期權、套利池建議</span></a>
@@ -574,6 +578,14 @@ function viewShort() {
     <section class="ind-group"><h3>現貨買盤與資金</h3><div class="inds">${by(['cbprem', 'etf_flow', 'stable30', 'fng'])}</div></section>`;
 }
 
+// ---------- 重大新聞（每日日報整理） ----------
+function newsCard(compact = false) {
+  const N = S.jn?.news; if (!N?.length) return '';
+  const tone = t => t === '偏多' ? 'buy' : t === '偏空' ? 'sell' : 'neu';
+  return `<section class="panel news"><div class="panel-head"><h3 style="font-size:16px">重大新聞與監管</h3><span class="sub">${esc(S.jn.date)} 日報整理${S.jn.report ? `・<a href="${esc(S.jn.report)}" target="_blank" rel="noopener">看日報</a>` : ''}</span></div>
+    <ul class="news-list">${N.slice(0, compact ? 3 : 8).map(n => `<li><span class="chip band ${tone(n.impact)}">${esc(n.impact || '中性')}</span><div><b>${n.url ? `<a href="${esc(n.url)}" target="_blank" rel="noopener">${esc(n.title)}</a>` : esc(n.title)}</b>${n.note ? `<span class="sub">${esc(n.note)}</span>` : ''}${n.source ? `<span class="sub">— ${esc(n.source)}</span>` : ''}</div></li>`).join('')}</ul></section>`;
+}
+
 // ---------- 總經與籌碼 ----------
 function windOf(ids) {
   let up = 0, dn = 0, n = 0; const why = [];
@@ -608,6 +620,7 @@ function viewMacro() {
       ${box('總體流動性', wm, `${wm.n} 項有判讀・順風 ${wm.up}・逆風 ${wm.dn}`)}
       ${box('供給與大戶', wp, `${wp.n} 項有判讀・偏多 ${wp.up}・偏空 ${wp.dn}`)}
     </div><p class="sub">綜合判讀＝偏多項目數減偏空項目數，僅作背景參考；週期倉位仍以 CBS、CTS 與抄底規則為準。</p></section>
+    ${newsCard()}
     ${eventsCard()}
     <section class="ind-group"><h3>總體流動性</h3><div class="inds">${by(M)}</div></section>
     <section class="ind-group"><h3>供給與大戶</h3><div class="inds">${by(P)}</div></section>`;
