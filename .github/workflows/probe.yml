@@ -11,4 +11,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npx -y wrangler@4 deploy --dry-run --outdir=/tmp/out 2>&1 | tail -30
+      - run: |
+          cp scripts/test/wrangler.jsonc wrangler.jsonc
+          cp scripts/test/assetsignore .assetsignore
+          npx -y wrangler@4 deploy --dry-run --outdir=/tmp/out 2>&1 | tail -30
+          ls -la /tmp/out
