@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-20T04:14:35.770Z",
+ "generatedAt": "2026-11-20T04:24:18.547Z",
  "date": "2026-11-20",
  "horizonDays": 7,
  "journal": {
@@ -49,7 +49,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 1,
-   "avg7": -9.5,
+   "avg7": -9.6,
    "up7": 0
   },
   {
@@ -163,12 +163,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.522,
-  "maxDrawdown": 30.2,
+  "multiple": 3.496,
+  "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 27.4,
-  "spotWeight": 41.2,
-  "price": 61751
+  "drawdownNow": 27.9,
+  "spotWeight": 64.3,
+  "price": 61678
  },
  "ledger": [
   {
@@ -212,8 +212,38 @@
    "label": "第一批・預警進場（機構資金路線）",
    "price": 67998,
    "target": 45
+  },
+  {
+   "date": "2026-06-10",
+   "type": "buy",
+   "label": "第二批・確認加碼（機構資金路線）",
+   "price": 61464,
+   "target": 65
   }
  ],
- "ledgerChanges": [],
- "changeLog": []
+ "ledgerChanges": [
+  {
+   "change": "新增",
+   "date": "2026-06-10",
+   "type": "buy",
+   "label": "第二批・確認加碼（機構資金路線）",
+   "price": 61464,
+   "target": 65
+  }
+ ],
+ "changeLog": [
+  {
+   "date": "2026-11-20",
+   "changes": [
+    {
+     "change": "新增",
+     "date": "2026-06-10",
+     "type": "buy",
+     "label": "第二批・確認加碼（機構資金路線）",
+     "price": 61464,
+     "target": 65
+    }
+   ]
+  }
+ ]
 }
