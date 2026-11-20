@@ -44,6 +44,7 @@ async function load() {
   document.getElementById('siteName').textContent = S.config.siteName || 'BTC 週期雷達';
   S.sc = scoreAll(S.config, S.latest.indicators);
   try { S.lm = await get('data/liqmap.json'); } catch { S.lm = null; }
+  try { S.rv = await get('data/review.json'); } catch { S.rv = null; }
   try { const b = await get('data/backtest.json'); S.bt = b.rows.map(r => Object.fromEntries(b.fields.map((f, i) => [f, r[i]]))); } catch { S.bt = []; }
   // 每日序列（用於變化量、持續天數）：優先用回測，沒有就用歷史快照；最後一天換成今天的即時分數
   const base = S.bt.length ? S.bt : S.history.filter(h => !h.legacy).map(h => ({ date: h.date, price: h.btcPrice, cbs: h.cbs, cts: h.cts, idx: h.idx ?? null }));
@@ -569,6 +570,33 @@ function viewMacro() {
     <section class="ind-group"><h3>供給與大戶</h3><div class="inds">${by(P)}</div></section>`;
 }
 
+// ---------- 判斷檢討 ----------
+function reviewCard() {
+  const R = S.rv; if (!R) return '';
+  const J = R.journal || {}, sys = R.system;
+  const mark = j => !j.matured ? '<span class="sub">等待中</span>' : j.hit ? '<b class="up-c">✓</b>' : '<b class="dn-c">✗</b>';
+  const biasCls = b => b === '偏多' ? 'buy' : b === '偏空' ? 'sell' : 'neu';
+  const sig = (R.signals || []).filter(x => x.n >= 3).sort((a, b) => b.n - a.n).slice(0, 12);
+  const chg = (R.changeLog || [])[0];
+  return `<section class="panel rv">
+    <div class="panel-head"><h3 style="font-size:16px">判斷檢討</h3><span class="sub">每天記錄日報判斷，${R.horizonDays} 天後對照實際走勢；每週整理修正提案，經你同意才改動</span></div>
+    <div class="rv-k">
+      <div><span class="sub">日報判斷命中率</span><b class="mono">${J.hitRate != null ? J.hitRate + '%' : '—'}</b><span class="sub">已到期 ${J.matured || 0} / ${J.total || 0} 筆</span></div>
+      <div><span class="sub">失效條件被觸發</span><b class="mono">${J.invalidatedRate != null ? J.invalidatedRate + '%' : '—'}</b><span class="sub">越低代表停損位設得合理</span></div>
+      ${sys ? `<div><span class="sub">系統目前回撤</span><b class="mono">${sys.drawdownNow}%</b><span class="sub">回測最大 ${sys.maxDrawdown}%（${esc(sys.maxDrawdownAt)}）</span></div>
+      <div><span class="sub">回測現貨比例</span><b class="mono">${sys.spotWeight}%</b><span class="sub">依目前規則重算</span></div>` : ''}
+    </div>
+    ${chg ? `<div class="rv-warn"><b>⚠ ${esc(chg.date)} 回測操作點位有變動</b>：${chg.changes.map(c => `${c.change} ${esc(c.date)} ${esc(c.label)}（$${c.price.toLocaleString('en-US')}，${c.type === 'buy' ? '提高到' : '降到'} ${c.target}%）`).join('；')}。原因通常是來源修正歷史數據或延遲改變，已執行的操作不受影響。</div>` : ''}
+    ${J.recent?.length ? `<h4>最近的判斷</h4><div class="tbl-wrap"><table><thead><tr><th>日期</th><th>短線偏向</th><th>信心</th><th>當時價格</th><th>${R.horizonDays} 天後</th><th>結果</th></tr></thead><tbody>
+      ${J.recent.map(j => `<tr><td class="mono">${esc(j.date.slice(5))}</td><td><span class="chip band ${biasCls(j.bias)}">${esc(j.bias)}</span></td><td>${esc(j.confidence || '')}</td><td class="mono">$${Math.round(j.price || 0).toLocaleString('en-US')}</td><td class="mono">${j.ret7 != null ? (j.ret7 > 0 ? '+' : '') + j.ret7 + '%' : '—'}</td><td>${mark(j)}${j.invalidated ? ' <span class="sub">失效</span>' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <p class="sub">判定：偏多需 ${R.horizonDays} 天後上漲超過 2%，偏空需下跌超過 2%，中性需漲跌在 ±5% 內。</p>` : '<p class="sub">日報判斷從明天起開始記錄，7 天後出現第一筆結果。</p>'}
+    ${J.byIndicator?.length ? `<h4>被引用的指標</h4><p class="sub">${J.byIndicator.slice(0, 8).map(x => `${esc(x.name)} ${x.n} 次・命中 ${x.hitRate ?? '—'}%`).join('；')}</p>` : ''}
+    ${sig.length ? `<h4>指標判讀區間之後 ${R.horizonDays} 天的表現</h4><div class="tbl-wrap"><table><thead><tr><th>指標</th><th>判讀區間</th><th>天數</th><th>平均漲跌</th><th>上漲比例</th></tr></thead><tbody>
+      ${sig.map(x => `<tr><td>${esc(x.name)}</td><td><span class="chip band ${toneCls(x.tone)}">${esc(x.band)}</span></td><td class="mono">${x.n}</td><td class="mono">${x.avg7 > 0 ? '+' : ''}${x.avg7}%</td><td class="mono">${x.up7}%</td></tr>`).join('')}</tbody></table></div>
+      <p class="sub">樣本從每日快照累積，天數少時只代表近期行情，至少累積 30 天以上才有參考價值。</p>` : ''}
+  </section>`;
+}
+
 // ---------- 歷史 ----------
 function chartTheme() {
   return { muted: css('--muted'), line: css('--line'), buy: css('--buy'), sell: css('--sell'), accent: css('--accent'), font: css('--f-mono') };
@@ -583,6 +611,7 @@ function viewHistory() {
   if (!numeric.find(d => d.id === sel)) sel = numeric[0].id;
   app.innerHTML = `
     <div class="panel-head"><h2>歷史紀錄</h2><span class="sub mono">${H.length} 筆快照・${esc(H[0]?.date)} 起</span></div>
+    ${reviewCard()}
     ${S.bt.length ? `<section class="panel">
       <div class="panel-head"><h3 style="font-size:16px">回測：近 4 年評分與價格</h3><span class="sub">每天只用當時已知的資料計分</span></div>
       <div class="chart-box tall"><canvas id="c0" aria-label="近 4 年回測：BTC 價格、CBS、CTS 與週期指數"></canvas></div>
