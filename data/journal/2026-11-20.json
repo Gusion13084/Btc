@@ -1,0 +1,13 @@
+{"date":"2026-11-20","snapshotAt":"2026-11-20T02:56:17.433Z","price":61946,"bias":"偏空","confidence":"低","horizonDays":7,
+ "cycleCall":"熊市下半段，估值進入深度低估區，但還沒出現投降式底部",
+ "summary":"多頭未洗淨且總經逆風，先往 58,500 掃多單",
+ "reasons":[
+  {"id":"lsr","value":"3.35（多頭帳戶 77%）","claim":"散戶多單擁擠，賣壓未結束"},
+  {"id":"liq","value":"±5% 內多單 5.65 億對空單 3.83 億；近 7 天清算多單 8.03 億","claim":"下方多單清算區較近較大，向下掃單機率高"},
+  {"id":"dxy","value":"30 天 +1.84%","claim":"美元走強，總經逆風"},
+  {"id":"nasdaq","value":"30 天 −7.6%，相關係數 0.64","claim":"美股走弱且高度連動"},
+  {"id":"fng","value":"12","claim":"極度恐懼為逆向偏多，降低偏空信心"}
+ ],
+ "invalidation":{"above":66000,"below":null},
+ "system":{"decision":"已完成第一批・預警進場","floor":45,"cap":null},
+ "macroWind":"逆風","report":"https://docs.google.com/document/d/1-KDTGe3kivQPF34Wri7ipNDT6fztcVUX9GTLFMXqD_E/edit"}
