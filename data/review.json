@@ -1,16 +1,28 @@
 {
- "generatedAt": "2026-11-20T02:58:35.002Z",
+ "generatedAt": "2026-11-20T03:55:49.104Z",
  "date": "2026-11-20",
  "horizonDays": 7,
  "journal": {
-  "total": 0,
+  "total": 1,
   "matured": 0,
   "hitRate": null,
   "invalidatedRate": null,
   "byBias": {},
   "byConfidence": {},
   "byIndicator": [],
-  "recent": []
+  "recent": [
+   {
+    "date": "2026-11-20",
+    "bias": "偏空",
+    "confidence": "低",
+    "price": 61946,
+    "summary": "多頭未洗淨且總經逆風，先往 58,500 掃多單",
+    "matured": false,
+    "ret7": null,
+    "hit": null,
+    "invalidated": null
+   }
+  ]
  },
  "signals": [
   {
@@ -37,7 +49,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 1,
-   "avg7": -9.2,
+   "avg7": -9,
    "up7": 0
   },
   {
@@ -55,7 +67,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 4,
-   "avg7": -11.4,
+   "avg7": -11.3,
    "up7": 0
   },
   {
@@ -73,7 +85,7 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 4,
-   "avg7": -11.4,
+   "avg7": -11.3,
    "up7": 0
   },
   {
@@ -143,7 +155,7 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 4,
-    "avg7": -11.4,
+    "avg7": -11.3,
     "up7": 0,
     "agree": false
    }
@@ -151,12 +163,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.527,
+  "multiple": 3.531,
   "maxDrawdown": 30.2,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 27.3,
-  "spotWeight": 41.3,
-  "price": 61946
+  "drawdownNow": 27.2,
+  "spotWeight": 41.4,
+  "price": 62123
  },
  "ledger": [
   {
