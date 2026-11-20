@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-20T04:04:00.213Z",
+ "generatedAt": "2026-11-20T04:14:35.770Z",
  "date": "2026-11-20",
  "horizonDays": 7,
  "journal": {
@@ -49,7 +49,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 1,
-   "avg7": -9.2,
+   "avg7": -9.5,
    "up7": 0
   },
   {
@@ -67,7 +67,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 4,
-   "avg7": -11.4,
+   "avg7": -11.5,
    "up7": 0
   },
   {
@@ -85,7 +85,7 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 4,
-   "avg7": -11.4,
+   "avg7": -11.5,
    "up7": 0
   },
   {
@@ -155,7 +155,7 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 4,
-    "avg7": -11.4,
+    "avg7": -11.5,
     "up7": 0,
     "agree": false
    }
@@ -163,12 +163,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.527,
+  "multiple": 3.522,
   "maxDrawdown": 30.2,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 27.3,
-  "spotWeight": 41.3,
-  "price": 61944
+  "drawdownNow": 27.4,
+  "spotWeight": 41.2,
+  "price": 61751
  },
  "ledger": [
   {
