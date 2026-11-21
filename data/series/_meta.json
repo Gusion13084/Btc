@@ -1,74 +1,75 @@
 {
  "mvrv": {
-  "fetched": "2026-11-20",
+  "fetched": "2026-11-21",
   "ok": true,
-  "last": "2026-11-13",
+  "last": "2026-11-14",
   "backfilled": true,
   "first": "2022-11-04"
  },
  "nupl": {
-  "fetched": "2026-11-20",
+  "fetched": "2026-11-21",
   "ok": true,
-  "last": "2026-11-13",
+  "last": "2026-11-14",
   "backfilled": true,
   "first": "2022-11-04"
  },
  "puell": {
-  "fetched": "2026-11-20",
+  "fetched": "2026-11-21",
   "ok": true,
-  "last": "2026-11-13",
+  "last": "2026-11-14",
   "backfilled": true,
   "first": "2022-11-04"
  },
  "funding": {
-  "fetched": "2026-11-20",
-  "ok": true,
-  "last": "2026-11-12",
-  "backfilled": true,
-  "first": "2022-11-04"
- },
- "oi": {
-  "fetched": "2026-11-20",
-  "ok": true,
-  "last": "2026-11-17",
-  "backfilled": true,
-  "first": "2022-11-04"
- },
- "etf": {
-  "fetched": "2026-11-20",
-  "ok": true,
-  "last": "2026-11-18",
-  "backfilled": true,
-  "first": "2024-01-11"
- },
- "liq": {
-  "fetched": "2026-11-20",
-  "ok": true,
-  "last": "2026-11-18"
- },
- "sthrp": {
-  "fetched": "2026-11-20",
+  "fetched": "2026-11-21",
   "ok": true,
   "last": "2026-11-13",
   "backfilled": true,
   "first": "2022-11-04"
  },
- "whale": {
-  "fetched": "2026-11-20",
+ "oi": {
+  "fetched": "2026-11-21",
   "ok": true,
   "last": "2026-11-18",
+  "backfilled": true,
+  "first": "2022-11-04"
+ },
+ "etf": {
+  "fetched": "2026-11-21",
+  "ok": true,
+  "last": "2026-11-19",
+  "backfilled": true,
+  "first": "2024-01-11"
+ },
+ "liq": {
+  "fetched": "2026-11-21",
+  "ok": true,
+  "last": "2026-11-19",
+  "first": "2026-03-01"
+ },
+ "sthrp": {
+  "fetched": "2026-11-21",
+  "ok": true,
+  "last": "2026-11-14",
+  "backfilled": true,
+  "first": "2022-11-04"
+ },
+ "whale": {
+  "fetched": "2026-11-21",
+  "ok": true,
+  "last": "2026-11-19",
   "backfilled": true,
   "first": "2022-11-04"
  },
  "profit": {
-  "fetched": "2026-11-20",
+  "fetched": "2026-11-21",
   "ok": true,
-  "last": "2026-11-18",
+  "last": "2026-11-19",
   "backfilled": true,
   "first": "2022-11-04"
  },
  "_bgDay": {
-  "date": "2026-11-20",
-  "calls": 9
+  "date": "2026-11-21",
+  "calls": 10
  }
 }
