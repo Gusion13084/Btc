@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-21T10:09:33.484Z",
+ "generatedAt": "2026-11-21T13:47:52.289Z",
  "date": "2026-11-21",
  "horizonDays": 7,
  "journal": {
@@ -60,7 +60,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 2,
-   "avg7": -11.8,
+   "avg7": -9.8,
    "up7": 0
   },
   {
@@ -78,7 +78,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 5,
-   "avg7": -12,
+   "avg7": -11.2,
    "up7": 0
   },
   {
@@ -96,7 +96,7 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 5,
-   "avg7": -12,
+   "avg7": -11.2,
    "up7": 0
   },
   {
@@ -105,7 +105,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 10,
-   "avg7": -12.1,
+   "avg7": -11.7,
    "up7": 0
   },
   {
@@ -114,7 +114,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 10,
-   "avg7": -12.1,
+   "avg7": -11.7,
    "up7": 0
   },
   {
@@ -123,7 +123,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 10,
-   "avg7": -12.1,
+   "avg7": -11.7,
    "up7": 0
   },
   {
@@ -132,7 +132,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 10,
-   "avg7": -12.1,
+   "avg7": -11.7,
    "up7": 0
   }
  ],
@@ -166,7 +166,7 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 5,
-    "avg7": -12,
+    "avg7": -11.2,
     "up7": 0,
     "agree": false
    }
@@ -174,12 +174,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.384,
+  "multiple": 3.475,
   "maxDrawdown": 30.5,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 30.2,
-  "spotWeight": 62.8,
-  "price": 57908
+  "drawdownNow": 28.4,
+  "spotWeight": 63.8,
+  "price": 60381
  },
  "ledger": [
   {
