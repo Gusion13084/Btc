@@ -1,0 +1,97 @@
+{
+ "date": "2026-11-21",
+ "snapshotAt": "2026-11-21T02:08:27.786Z",
+ "price": 58905,
+ "bias": "中性",
+ "confidence": "低",
+ "horizonDays": 7,
+ "cycleCall": "熊市後段、深度低估，投降特徵出現但底部仍需時間構築",
+ "summary": "槓桿已清但總經逆風，55,800–63,900 震盪築底",
+ "reasons": [
+  {
+   "id": "combo",
+   "value": "槓桿出清成立：資金費率 0.4%、OI 較 90 日高點 -30%、30 天 -27.6%",
+   "claim": "槓桿出清，下跌動能減弱，偏空降為中性"
+  },
+  {
+   "id": "etf_flow",
+   "value": "近 30 日 -39,814 BTC（百分位 7.2%）",
+   "claim": "機構資金持續流出，缺乏反轉推力"
+  },
+  {
+   "id": "dxy",
+   "value": "30 天 +1.97%；Fed 12 月大概率升息",
+   "claim": "總經逆風，不給偏多"
+  },
+  {
+   "id": "liq",
+   "value": "±5% 內下方多單 3.43 億對上方空單 1.00 億（3.4 倍），最大區 $55,800",
+   "claim": "下方仍可能再探一次多單清算區"
+  },
+  {
+   "id": "lsr",
+   "value": "3.08（多頭帳戶約 75%）",
+   "claim": "散戶多單未洗淨，限制反彈"
+  }
+ ],
+ "invalidation": {
+  "above": 63900,
+  "below": 55000
+ },
+ "system": {
+  "decision": "已完成第二批・確認加碼",
+  "floor": 65,
+  "cap": null
+ },
+ "macroWind": "逆風",
+ "combosActive": [
+  "槓桿出清",
+  "投降共振",
+  "情緒＋估值",
+  "期權恐慌",
+  "機構投降＋低估"
+ ],
+ "news": [
+  {
+   "title": "美股因 AI 交易崩跌，S&P 500 與道瓊進入修正、那斯達克單日跌 5.28%",
+   "source": "Yahoo Finance",
+   "date": "2026-11-20",
+   "url": "https://finance.yahoo.com/markets/live/stock-market-today-friday-november-19-dow-sp-500-nasdaq-anthropic-nvidia-141644188.html",
+   "impact": "偏空",
+   "note": "BTC 與那斯達克高度連動，美股去槓桿拖累風險資產"
+  },
+  {
+   "title": "Fed 官員 Waller、Cook、Paulson 偏鷹，12 月升息 1 碼為基本情境",
+   "source": "Investing.com",
+   "date": "2026-11-20",
+   "url": "https://uk.investing.com/news/stock-market-news/fed-signals-and-data-what-happened-the-week-of-nov-1620-2026-93CH-4996610",
+   "impact": "偏空",
+   "note": "升息循環收緊流動性、推升美元"
+  },
+  {
+   "title": "美國現貨 BTC ETF 11 月累計淨流出約 34.7 億美元，11/19 單日贖回 5.82 億",
+   "source": "Yahoo Finance",
+   "date": "2026-11-20",
+   "url": "https://finance.yahoo.com/markets/crypto/articles/bitcoin-etf-outflows-november-near-150000594.html",
+   "impact": "偏空",
+   "note": "機構資金持續撤出"
+  },
+  {
+   "title": "Strategy 股價創 52 週新低，買幣大幅放緩、11/30 後遭 MSCI 剔除",
+   "source": "BigGo Finance",
+   "date": "2026-11-20",
+   "url": "https://finance.biggo.com/news/ead0ea34-5155-4110-aee2-6bc20c974ad5",
+   "impact": "偏空",
+   "note": "最大企業買盤縮水，指數剔除帶來被動賣壓疑慮"
+  },
+  {
+   "title": "CLARITY 市場結構法案仍卡關，Lummis 與民主黨互相指責",
+   "source": "crypto.news",
+   "date": "2026-11-20",
+   "url": "https://crypto.news/clarity-act-lummis-sec-office/",
+   "impact": "中性",
+   "note": "監管利多短期內看不到"
+  }
+ ],
+ "report": "https://docs.google.com/document/d/1c8svkMqLMCRIqU7uDJScKnT0TRRi0OLDE_zXSxyzw20/edit"
+}
