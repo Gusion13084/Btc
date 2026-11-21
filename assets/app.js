@@ -1,4 +1,4 @@
-import { scoreAll, scoreRule, ruleMax, parts, streak, decide, indexZone, levelFor } from './scoring.js?v=__V__';
+import { scoreAll, scoreRule, ruleMax, parts, streak, decide, indexZone, levelFor, signalBoard } from './scoring.js?v=__V__';
 
 const app = document.getElementById('app');
 const S = { config: null, latest: null, history: [], charts: [], sc: null, bt: [], rows: [] };
@@ -56,6 +56,7 @@ async function load() {
   S.rows = base.filter(r => r.date < S.latest.date).concat([{ date: S.latest.date, price: S.latest.btcPrice, cbs: S.sc.cbs.score, cts: S.sc.cts.score, idx: S.latest.index ?? null,
     cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null, etf30p: lastBt?.etf30p ?? null, ethPct: S.latest.indicators.ethbtc?.fields?.p ?? lastBt?.ethPct ?? null }]);
   S.dec = decide(S.config, S.sc, S.rows, S.latest.index);
+  try { S.sig = signalBoard(S.config, S.rows); } catch (e) { console.warn(e); S.sig = null; }
 }
 
 // 判讀區間（bands）：依數值落在哪一段給出文字判讀
@@ -294,6 +295,39 @@ function decisionCard() {
   </section>`;
 }
 
+// 進出場訊號：不分進場時間，只看今天各級條件是否成立（分享給其他人時，各自對照自己的倉位）
+const SGS = { buy: ['抄底', 'buy', '現貨至少'], sell: ['減倉', 'sell', '現貨降到'], trend: ['趨勢保護', 'sell', '現貨上限'] };
+const md = d => d ? d.slice(5).replace('-', '/') : '';
+function signalsCard() {
+  const g = S.sig; if (!g) return '';
+  const act = g.items.filter(x => x.active);
+  const line = x => `<li class="sg-on ${SGS[x.side][1]}"><b>${esc(x.label)}</b> 條件成立中<span class="sub">（${esc(md(x.since))} 起・${usd(x.sincePrice)}${x.via === 'index' ? '・機構資金路線' : ''}）</span><span class="sg-t">→ ${SGS[x.side][2]} ${x.target}%</span></li>`;
+  const cyc = [];
+  if (g.cycleBuy) cyc.push(`本輪抄底週期最高到 <b>${esc(g.cycleBuy.label)}</b>（${esc(g.cycleBuy.start)} 起，約 ${usd(g.cycleBuy.price)}），現貨參考至少 <b>${g.cycleBuy.target}%</b>`);
+  if (g.cycleSell) cyc.push(`本輪減倉週期最高到 <b>${esc(g.cycleSell.label)}</b>（${esc(g.cycleSell.start)} 起，約 ${usd(g.cycleSell.price)}），現貨參考不超過 <b>${g.cycleSell.target}%</b>`);
+  const prog = g.items.filter(x => !x.active && x.side !== 'trend' && x.level <= 2);
+  return `<section class="panel sg" aria-label="進出場訊號">
+    <div class="panel-head"><h3 style="font-size:16px">進出場訊號</h3><span class="sub">不分進場時間・條件成立就顯示</span></div>
+    ${act.length ? `<ul class="sg-list">${act.map(line).join('')}</ul>` : '<p class="sg-none">目前沒有成立中的進出場訊號。</p>'}
+    ${g.recent.length ? `<p class="sub">近 30 天曾成立：${g.recent.map(e => `${esc(e.label)}（${esc(md(e.start))}–${esc(md(e.end))}）`).join('、')}</p>` : ''}
+    ${cyc.length ? `<p class="sg-cyc">${cyc.join('<br>')}</p>` : ''}
+    <details class="sg-prog"><summary>各批次條件進度</summary><ul>${prog.map(x => `<li><span class="dec-tag ${SGS[x.side][1]}">${esc(x.label)}</span> ${x.progress.map(esc).join('；')}</li>`).join('')}</ul></details>
+    <p class="sub">上方「今日操作建議」是平台從 2022 年起連續執行的進度（已買過的批次不重複提示）；這裡只看今天的條件，給不同時間進場的人對照自己的倉位。「較第一批再跌 20%／30%」依個人進場價而定，不列入。</p>
+  </section>`;
+}
+function signalHistory() {
+  const g = S.sig; if (!g) return '';
+  const eps = g.items.flatMap(x => x.episodes.map(e => ({ ...e, side: x.side, label: x.label, target: x.target }))).sort((a, b) => b.start.localeCompare(a.start));
+  if (!eps.length) return '';
+  return `<section class="panel">
+    <div class="panel-head"><h3 style="font-size:16px">歷次進出場訊號</h3><span class="sub">每一段條件成立的期間（中斷 7 天內視為同一段）</span></div>
+    <div class="tbl-wrap"><table class="ledger"><thead><tr><th>期間</th><th>訊號</th><th>開始時 BTC</th><th>目標現貨</th></tr></thead><tbody>
+    ${eps.map(e => `<tr><td class="mono">${esc(e.start)}${e.end !== e.start ? ` – ${esc(e.end)}` : ''}${e.ongoing ? ' <b>成立中</b>' : ''}<div class="sub">${e.days} 天</div></td><td><span class="dec-tag ${SGS[e.side][1]}">${esc(e.label)}</span>${e.via.includes('index') ? '<div class="sub">機構資金路線</div>' : ''}</td><td class="mono">${usd(e.price)}</td><td class="mono"><b>${SGS[e.side][2]} ${e.target}%</b></td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="sub">和「操作紀錄」的差別：操作紀錄是平台連續執行的結果（批次之間要間隔 7 天、同一批不重複）；這裡列出每一次條件成立，給不同時間進場的人參考。</p>
+  </section>`;
+}
+
 function posBlock(d) {
   const t = d.target || {}, last = d.position?.last;
   const active = t.cap ?? t.floor;
@@ -514,7 +548,7 @@ function viewOverview() {
     </section>
     ${introHint()}
     <div class="ov-grid">
-      <div class="ov-col">${decisionCard()}${changesCard()}</div>
+      <div class="ov-col">${decisionCard()}${signalsCard()}${changesCard()}</div>
       <div class="ov-col">${indexCard()}<div class="scores">${scorePanel('cbs', sc.cbs, '抄底 CBS')}${scorePanel('cts', sc.cts, '止盈 CTS')}</div></div>
     </div>
     ${contextCard()}
@@ -724,6 +758,7 @@ function viewHistory() {
       </tbody></table></div>
       <p class="sub">${esc(S.config.position?.note || '')}</p>
     </section>` : ''}
+    ${signalHistory()}
     <section class="panel" id="logPanel"></section>`;
   renderLog();
   drawHistory(sel);

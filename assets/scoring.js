@@ -297,3 +297,56 @@ export function trendState(config, rows) {
   return { ma: last.ma50w, price: last.price, below, armed, armedBy, stage, next: armed ? T.stages.find(s => below < s.days && below >= 1) || null : null,
     cum: done.reduce((a, s) => a + s.pct, 0) };
 }
+
+// ---------- 進出場訊號看板：不看「平台已經執行到第幾批」，只看今天各級條件是否成立 ----------
+// 給進場時間不同的使用者：條件成立就顯示，各自依自己的倉位對照目標比例
+// （「較第一批再跌 20%／30%」與批次間隔、暫停規則依個人進場價而定，不列入）
+export function signalBoard(config, rows, { gap = 7 } = {}) {
+  const LB = config.levels.cbs.filter(l => l.batch), LS = config.levels.cts.filter(l => l.batch);
+  const n = rows.length, i = n - 1; if (!n) return { items: [], active: [], recent: [] };
+  const buyOk = (l, j) => { const x = batchReady(l, rows, j); return x.ok ? (x.byScore ? 'score' : 'index') : null; };
+  const sellOk = (l, j) => minLast(rows, j, 'cts', 3) >= l.min ? 'score' : null;
+  // 依每天是否成立切出「訊號期間」；中斷不超過 gap 天視為同一段
+  const episodes = f => { const eps = []; let cur = null;
+    for (let j = 0; j < n; j++) { const v = f(j); if (!v) continue;
+      if (cur && j - cur.endI <= gap) { cur.endI = j; cur.via.add(v); }
+      else { cur = { startI: j, endI: j, via: new Set([v]) }; eps.push(cur); } }
+    return eps.map(e => ({ start: rows[e.startI].date, end: rows[e.endI].date, price: rows[e.startI].price, lastPrice: rows[e.endI].price, days: e.endI - e.startI + 1, via: [...e.via], ongoing: e.endI === i })); };
+  const items = [];
+  LB.forEach((l, k) => {
+    const cf = l.batch.confirm || { n: 3, of: 3 }, ix = l.batch.index;
+    const nS = countLast(rows, i, cf.of, r => (r.cbs ?? 0) >= l.min);
+    const nI = ix ? countLast(rows, i, ix.of, r => r.idx != null && r.idx < ix.below && (ix.etfBelow == null || (r.etf30p != null && r.etf30p <= ix.etfBelow))) : null;
+    const eps = episodes(j => buyOk(l, j)), now = buyOk(l, i);
+    items.push({ side: 'buy', level: k + 1, name: l.name, label: l.batch.label, target: l.batch.target, active: !!now, via: now,
+      since: now ? eps.at(-1).start : null, sincePrice: now ? eps.at(-1).price : null,
+      progress: [`CBS ≥ ${l.min}：近 ${cf.of} 天 ${nS}/${cf.n} 天`, ...(ix ? [`週期指數 < ${ix.below}${ix.etfBelow != null ? `＋ETF 最低 ${ix.etfBelow}%` : ''}：近 ${ix.of} 天 ${nI}/${ix.n} 天`] : [])],
+      episodes: eps });
+  });
+  LS.forEach((l, k) => {
+    let run = 0; for (let j = i; j >= 0 && (rows[j].cts ?? 0) >= l.min; j--) run++;
+    const eps = episodes(j => sellOk(l, j)), now = sellOk(l, i);
+    items.push({ side: 'sell', level: k + 1, name: l.name, label: l.batch.label, target: l.batch.target, active: !!now, via: now,
+      since: now ? eps.at(-1).start : null, sincePrice: now ? eps.at(-1).price : null,
+      progress: [`CTS ≥ ${l.min} 連續 3 天：目前連續 ${Math.min(run, 99)} 天`], episodes: eps });
+  });
+  // 趨勢保護（本身就與個人進場時間無關）
+  const T = config.trend;
+  if (T) {
+    const tr = trendState(config, rows.slice(Math.max(0, i - 500)));
+    items.push({ side: 'trend', level: 0, name: '趨勢保護', label: tr.stage ? tr.stage.label : '趨勢保護', target: tr.stage?.target ?? null, active: !!tr.stage, via: tr.stage ? 'trend' : null,
+      since: tr.stage ? rows[i - tr.below + 1]?.date : null, sincePrice: tr.stage ? rows[i - tr.below + 1]?.price : null,
+      progress: [tr.armed ? `曾過熱（${tr.armedBy}），跌破 ${T.maName} ${tr.below} 天` : `近 ${T.lookback} 天未過熱，未啟動`], episodes: [] });
+  }
+  const active = items.filter(x => x.active);
+  const topBuy = active.filter(x => x.side === 'buy').at(-1) || null, topSell = active.filter(x => x.side === 'sell').at(-1) || null;
+  // 本輪週期：抄底在「週期指數連續 30 天 ≥ 50」後重算；止盈在「連續 30 天 < 40」後重算（與倉位規則相同）
+  const resetAt = f => { let c = 0, at = rows[0].date; for (let j = 0; j < n; j++) { c = f(rows[j]) ? c + 1 : 0; if (c === 30) at = rows[j].date; } return at; };
+  const bReset = resetAt(r => (r.idx ?? 0) >= 50), sReset = resetAt(r => r.idx != null && r.idx < 40);
+  const cyc = (side, from) => { const hit = items.filter(x => x.side === side && x.episodes.some(e => e.end >= from)).at(-1); if (!hit) return null; const e = hit.episodes.filter(e => e.end >= from)[0]; return { label: hit.label, target: hit.target, start: e.start, price: e.price, from }; };
+  const cycleBuy = cyc('buy', bReset), cycleSell = cyc('sell', sReset);
+  // 近 30 天內出現過、目前已結束的訊號
+  const cut = rows[Math.max(0, i - 30)].date;
+  const recent = items.flatMap(x => x.episodes.filter(e => !e.ongoing && e.end >= cut).map(e => ({ side: x.side, label: x.label, target: x.target, ...e })));
+  return { date: rows[i].date, items, active: active.map(x => ({ side: x.side, label: x.label, target: x.target, since: x.since, sincePrice: x.sincePrice, via: x.via })), topBuy: topBuy && { label: topBuy.label, target: topBuy.target, since: topBuy.since }, topSell: topSell && { label: topSell.label, target: topSell.target, since: topSell.since }, cycleBuy, cycleSell, recent };
+}

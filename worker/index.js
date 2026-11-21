@@ -50,12 +50,14 @@ function signature(latest, hist, config) {
   const cur = hist.at(-1) || {};
   const bands = {};
   for (const def of config.indicators) { const b = bandOf(def, latest.indicators?.[def.id]); if (b) bands[def.name] = b.label; }
-  return { date: cur.date, decision: cur.decision?.title || '', floor: cur.decision?.target?.floor ?? null, cap: cur.decision?.target?.cap ?? null, cbs: cur.cbs, cts: cur.cts, cbsLevel: cur.cbsLevel, ctsLevel: cur.ctsLevel, bands, items: cur.items || {} };
+  return { date: cur.date, decision: cur.decision?.title || '', floor: cur.decision?.target?.floor ?? null, cap: cur.decision?.target?.cap ?? null, cbs: cur.cbs, cts: cur.cts, cbsLevel: cur.cbsLevel, ctsLevel: cur.ctsLevel, bands, items: cur.items || {}, signals: (cur.signals || []).map(x => x.label) };
 }
 function sameDayUpdate(a, b) {
   const L = [], names = {};
   if (a.decision !== b.decision) L.push(`⚠️ <b>操作建議改變</b>：${esc(a.decision)} → <b>${esc(b.decision)}</b>`);
   if (a.floor !== b.floor || a.cap !== b.cap) L.push(`建議現貨：${b.floor != null ? `至少 ${b.floor}%` : ''}${b.cap != null ? `${b.floor != null ? '、' : ''}最多 ${b.cap}%` : ''}`);
+  for (const x of b.signals || []) if (!(a.signals || []).includes(x)) L.push(`🟢 <b>進出場訊號成立</b>：${esc(x)}`);
+  for (const x of a.signals || []) if (!(b.signals || []).includes(x)) L.push(`⚪ 訊號結束：${esc(x)}`);
   if (a.cbs !== b.cbs) L.push(`抄底 CBS ${a.cbs} → <b>${b.cbs}</b> 分（${esc(b.cbsLevel)}）`);
   if (a.cts !== b.cts) L.push(`止盈 CTS ${a.cts} → <b>${b.cts}</b> 分（${esc(b.ctsLevel)}）`);
   for (const [id, lb] of Object.entries(b.bands)) if (a.bands?.[id] && a.bands[id] !== lb) L.push(`・${esc(id)}：${esc(a.bands[id])} → <b>${esc(lb)}</b>`);
@@ -87,11 +89,29 @@ function overview(latest, cur, config, combos) {
   if (hot.length) t += `\n\n<b>需要留意</b>\n${hot.sort((a, b) => b.s - a.s).slice(0, 6).map(x => x.t).join('\n')}`;
   return t;
 }
+// 進出場訊號（不分進場時間）：新成立放最上面，成立中與本輪週期列在下方
+const SG = { buy: '現貨至少', sell: '現貨降到', trend: '現貨上限' };
+function signalBlock(latest, cur, prev) {
+  const on = cur.signals || [], was = new Set((prev?.signals || []).map(x => x.label));
+  const fresh = on.filter(x => !was.has(x.label)), ended = (prev?.signals || []).filter(x => !on.some(y => y.label === x.label));
+  const head = fresh.map(x => `🟢 <b>新訊號成立：${esc(x.label)}</b> → ${SG[x.side]} ${x.target}%${x.via === 'index' ? '（機構資金路線）' : ''}`);
+  const g = latest.signals || {}, L = [];
+  if (on.length) L.push(...on.filter(x => was.has(x.label)).map(x => `・${esc(x.label)} 成立中（${x.since} 起）→ ${SG[x.side]} ${x.target}%`));
+  if (ended.length) L.push(`・已結束：${ended.map(x => esc(x.label)).join('、')}`);
+  if (!on.length) L.push('・目前沒有成立中的訊號');
+  if (g.cycleBuy) L.push(`・本輪抄底最高到${esc(g.cycleBuy.label)}（${g.cycleBuy.start} 起，${usd(g.cycleBuy.price)}）→ 現貨參考至少 ${g.cycleBuy.target}%`);
+  if (g.cycleSell) L.push(`・本輪減倉最高到${esc(g.cycleSell.label)}（${g.cycleSell.start} 起）→ 現貨參考不超過 ${g.cycleSell.target}%`);
+  const near = (g.progress || []).filter(x => !x.active).slice(0, 1).concat((g.progress || []).filter(x => !x.active && x.side === 'sell').slice(0, 1));
+  if (!on.length && near.length) L.push(...near.map(x => `・${esc(x.label)}進度：${x.progress.map(esc).join('；')}`));
+  return { head, body: `\n<b>進出場訊號</b>（不分進場時間，對照自己的倉位）\n${L.join('\n')}` };
+}
 function digest(latest, hist, config, combos) {
   const cur = hist.at(-1), prev = hist.filter(h => h.date < cur.date && !h.legacy).at(-1);
   const defs = config.indicators, L = [];
   const d = cur.decision || {}, pd = prev?.decision || {};
   const changed = prev && pd.title && pd.title !== d.title;
+  const sg = signalBlock(latest, cur, prev);
+  L.push(...sg.head);
   L.push(`${changed ? '⚠️ <b>操作建議改變</b>：' + esc(pd.title) + ' → ' : '📌 '}<b>${esc(d.title)}</b>`);
   if (d.target) L.push(`建議現貨：${d.target.floor != null ? `至少 ${d.target.floor}%` : ''}${d.target.cap != null ? `${d.target.floor != null ? '、' : ''}最多 ${d.target.cap}%` : ''}`);
   L.push(`BTC ${usd(latest.btcPrice)}${prev?.btcPrice ? `（${latest.btcPrice >= prev.btcPrice ? '+' : ''}${((latest.btcPrice / prev.btcPrice - 1) * 100).toFixed(1)}%）` : ''}・週期指數 ${Math.round(latest.index)}（${esc(latest.indexZone)}）`);
@@ -105,6 +125,7 @@ function digest(latest, hist, config, combos) {
     if (it && cur.items?.[def.id]) for (const [k, nm] of [[0, '抄底'], [1, '止盈']]) if (it[k] != null && cur.items[def.id][k] != null && it[k] !== cur.items[def.id][k]) ch.push(`・${esc(def.name)}：${nm}分 ${it[k]} → <b>${cur.items[def.id][k]}</b>`);
   }
   L.push(ch.length ? `\n<b>指標變化</b>\n${ch.slice(0, 12).join('\n')}${ch.length > 12 ? `\n…另有 ${ch.length - 12} 項` : ''}` : '\n指標判讀區間與前一日相同。');
+  L.push(sg.body);
   L.push(overview(latest, cur, config, combos));
   const ev = (latest.events || []).filter(e => Date.parse(e.at) - Date.now() < 3 * 864e5 && Date.parse(e.at) > Date.now());
   if (ev.length) L.push(`\n🗓 <b>3 天內事件</b>\n${ev.map(e => `・${new Date(e.at).toLocaleString('zh-TW', { timeZone: 'Asia/Taipei', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })} ${esc(e.name)}`).join('\n')}`);

@@ -368,6 +368,11 @@ a.more{font-size:13.5px;color:var(--accent);text-decoration:none;font-weight:500
 table.log td{vertical-align:middle}
 table.log tr.open td{background:var(--sunk)}
 .dec-tag{font-size:13px;font-weight:500}
+.sg{gap:10px}.sg-list{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.sg-on{padding:10px 12px;border-radius:10px;border:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline}
+.sg-on.buy{border-color:var(--buy);background:color-mix(in srgb,var(--buy) 10%,transparent)}.sg-on.sell{border-color:var(--sell);background:color-mix(in srgb,var(--sell) 10%,transparent)}
+.sg-t{margin-left:auto;font-weight:600}.sg-none{margin:0;color:var(--muted)}.sg-cyc{margin:0;font-size:14px;line-height:1.6}
+.sg-prog summary{cursor:pointer;font-size:14px}.sg-prog ul{margin:8px 0 0;padding-left:18px;display:grid;gap:4px;font-size:13px}
 .dec-tag.buy{color:var(--buy)} .dec-tag.sell{color:var(--sell)} .dec-tag.wait{color:var(--warn)}
 .ld-row td{background:var(--sunk);white-space:normal;padding:12px 14px 16px}
 .ld-dec{display:grid;gap:4px;margin-bottom:12px;font-size:14px;border-left:3px solid var(--muted);padding-left:10px}
