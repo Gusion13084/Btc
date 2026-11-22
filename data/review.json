@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-22T02:10:32.287Z",
+ "generatedAt": "2026-11-22T10:12:24.929Z",
  "date": "2026-11-22",
  "horizonDays": 7,
  "journal": {
-  "total": 2,
+  "total": 3,
   "matured": 0,
   "hitRate": null,
   "invalidatedRate": null,
@@ -11,6 +11,17 @@
   "byConfidence": {},
   "byIndicator": [],
   "recent": [
+   {
+    "date": "2026-11-22",
+    "bias": "中性",
+    "confidence": "低",
+    "price": 59955,
+    "summary": "槓桿清空有軋空條件，但總經逆風，55,000–65,700 震盪",
+    "matured": false,
+    "ret7": null,
+    "hit": null,
+    "invalidated": null
+   },
    {
     "date": "2026-11-21",
     "bias": "中性",
@@ -60,7 +71,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 3,
-   "avg7": -9.4,
+   "avg7": -8.8,
    "up7": 0
   },
   {
@@ -78,7 +89,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 6,
-   "avg7": -10.8,
+   "avg7": -10.5,
    "up7": 0
   },
   {
@@ -96,7 +107,7 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 6,
-   "avg7": -10.8,
+   "avg7": -10.5,
    "up7": 0
   },
   {
@@ -105,7 +116,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 11,
-   "avg7": -11.5,
+   "avg7": -11.3,
    "up7": 0
   },
   {
@@ -114,7 +125,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 11,
-   "avg7": -11.5,
+   "avg7": -11.3,
    "up7": 0
   },
   {
@@ -123,7 +134,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 11,
-   "avg7": -11.5,
+   "avg7": -11.3,
    "up7": 0
   },
   {
@@ -132,7 +143,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 11,
-   "avg7": -11.5,
+   "avg7": -11.3,
    "up7": 0
   }
  ],
@@ -146,7 +157,7 @@
     "band": "極度恐懼",
     "tone": "buy",
     "n": 3,
-    "avg7": -9.4,
+    "avg7": -8.8,
     "up7": 0,
     "agree": false
    },
@@ -176,7 +187,7 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 6,
-    "avg7": -10.8,
+    "avg7": -10.5,
     "up7": 0,
     "agree": false
    }
@@ -184,12 +195,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.459,
+  "multiple": 3.502,
   "maxDrawdown": 30.5,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 28.7,
-  "spotWeight": 63.6,
-  "price": 59955
+  "drawdownNow": 27.8,
+  "spotWeight": 64.1,
+  "price": 61108
  },
  "ledger": [
   {
