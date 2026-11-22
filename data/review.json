@@ -1,15 +1,88 @@
 {
- "generatedAt": "2026-11-22T10:12:24.929Z",
+ "generatedAt": "2026-11-22T12:11:46.586Z",
  "date": "2026-11-22",
  "horizonDays": 7,
  "journal": {
+  "method": "first-touch",
   "total": 3,
-  "matured": 0,
-  "hitRate": null,
-  "invalidatedRate": null,
-  "byBias": {},
-  "byConfidence": {},
-  "byIndicator": [],
+  "matured": 1,
+  "scored": 1,
+  "hitRate": 100,
+  "outcomes": {
+   "成功": 1,
+   "失誤": 0,
+   "未達": 0,
+   "同日觸及": 0,
+   "進行中": 2
+  },
+  "invalidatedRate": 0,
+  "byBias": {
+   "偏空": {
+    "n": 1,
+    "hitRate": 100
+   }
+  },
+  "byConfidence": {
+   "低": {
+    "n": 1,
+    "hitRate": 100
+   }
+  },
+  "byHorizon": {
+   "7 天": {
+    "n": 1,
+    "hitRate": 100
+   }
+  },
+  "direction": {
+   "d1": {
+    "n": 1,
+    "rate": 100
+   },
+   "d3": {
+    "n": 0,
+    "rate": null
+   },
+   "horizon": {
+    "n": 0,
+    "rate": null
+   }
+  },
+  "avgMfe": 11.1,
+  "avgMae": 1,
+  "avgDaysToResolve": 0,
+  "byIndicator": [
+   {
+    "id": "lsr",
+    "name": "多空帳戶比",
+    "n": 1,
+    "hitRate": 100
+   },
+   {
+    "id": "liq",
+    "name": "多空清算",
+    "n": 1,
+    "hitRate": 100
+   },
+   {
+    "id": "dxy",
+    "name": "美元指數（估算）",
+    "n": 1,
+    "hitRate": 100
+   },
+   {
+    "id": "nasdaq",
+    "name": "那斯達克 30 日漲跌",
+    "n": 1,
+    "hitRate": 100
+   },
+   {
+    "id": "fng",
+    "name": "恐懼貪婪指數",
+    "n": 1,
+    "hitRate": 100
+   }
+  ],
   "recent": [
    {
     "date": "2026-11-22",
@@ -17,10 +90,27 @@
     "confidence": "低",
     "price": 59955,
     "summary": "槓桿清空有軋空條件，但總經逆風，55,000–65,700 震盪",
+    "horizonDays": 7,
+    "endDate": "2026-11-29",
+    "target": null,
+    "invalidation": {
+     "above": 65700,
+     "below": 55000
+    },
+    "status": "進行中",
+    "resolvedAt": null,
+    "daysToResolve": null,
     "matured": false,
-    "ret7": null,
+    "ret7": 1.9,
+    "ret1": null,
+    "ret3": null,
+    "mfe": null,
+    "mae": null,
+    "hi": 61288.9,
+    "lo": 58649.8,
     "hit": null,
-    "invalidated": null
+    "invalidated": false,
+    "intraday": true
    },
    {
     "date": "2026-11-21",
@@ -28,10 +118,27 @@
     "confidence": "低",
     "price": 58905,
     "summary": "槓桿已清但總經逆風，55,800–63,900 震盪築底",
+    "horizonDays": 7,
+    "endDate": "2026-11-28",
+    "target": null,
+    "invalidation": {
+     "above": 63900,
+     "below": 55000
+    },
+    "status": "進行中",
+    "resolvedAt": null,
+    "daysToResolve": null,
     "matured": false,
-    "ret7": null,
+    "ret7": 3.7,
+    "ret1": 3.7,
+    "ret3": null,
+    "mfe": null,
+    "mae": null,
+    "hi": 61288.9,
+    "lo": 55100,
     "hit": null,
-    "invalidated": null
+    "invalidated": false,
+    "intraday": true
    },
    {
     "date": "2026-11-20",
@@ -39,10 +146,27 @@
     "confidence": "低",
     "price": 61946,
     "summary": "多頭未洗淨且總經逆風，先往 58,500 掃多單",
-    "matured": false,
-    "ret7": null,
-    "hit": null,
-    "invalidated": null
+    "horizonDays": 7,
+    "endDate": "2026-11-27",
+    "target": 58500,
+    "invalidation": {
+     "above": 66000,
+     "below": null
+    },
+    "status": "成功",
+    "resolvedAt": "2026-11-20",
+    "daysToResolve": 0,
+    "matured": true,
+    "ret7": -1.4,
+    "ret1": -3,
+    "ret3": null,
+    "mfe": 11.1,
+    "mae": 1,
+    "hi": 62550,
+    "lo": 55100,
+    "hit": true,
+    "invalidated": false,
+    "intraday": true
    }
   ]
  },

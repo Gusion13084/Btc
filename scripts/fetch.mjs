@@ -88,8 +88,12 @@ try {
     base = j.values.map(v => [isoDay(v.x), v.y]).filter(r => r[0] >= START && r[1] > 0);
   } catch (e) { console.warn('Blockchain.com 價格失敗，改用 Kraken 與快取：', e.message); }
   const k = await getJSON('https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440');
-  const kr = Object.values(k.result).find(Array.isArray).map(r => [isoDay(+r[0]), +r[4]]);
+  const kraw = Object.values(k.result).find(Array.isArray);
+  const kr = kraw.map(r => [isoDay(+r[0]), +r[4]]);
   S.price = merge(merge(S.price, base), kr);
+  // 日線高低點（UTC 日 K：日期、最高、最低、收盤），供判斷檢討用盤中高低點計分；序列只增不刪
+  await load('ohlc');
+  S.ohlc = merge(S.ohlc, kraw.map(r => [isoDay(+r[0]), +r[2], +r[3], +r[4]]));
   try { const e = await getJSON('https://api.kraken.com/0/public/Ticker?pair=ETHUSD'); now.ethPrice = +Object.values(e.result)[0].c[0]; } catch {}
   setStatus('price', true);
 } catch (e) { setStatus('price', false, e.message); }

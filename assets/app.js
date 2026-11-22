@@ -698,22 +698,32 @@ function viewMacro() {
 function reviewCard() {
   const R = S.rv; if (!R) return '';
   const J = R.journal || {}, sys = R.system;
-  const mark = j => !j.matured ? '<span class="sub">等待中</span>' : j.hit ? '<b class="up-c">✓</b>' : '<b class="dn-c">✗</b>';
+  const mark = j => {
+    const st = j.status || (!j.matured ? '進行中' : j.hit ? '成功' : '失誤');
+    const cls = st === '成功' ? 'up-c' : st === '失誤' ? 'dn-c' : '';
+    const when = j.resolvedAt && (st === '成功' || st === '失誤') ? `<span class="sub">（${j.daysToResolve ? '第 ' + j.daysToResolve + ' 天' : '當天'}）</span>` : '';
+    return st === '進行中' ? `<span class="sub">追蹤中・到 ${esc((j.endDate || '').slice(5))}</span>` : `<b class="${cls}">${esc(st)}</b>${when}`;
+  };
+  const money = v => v != null ? '$' + Math.round(v).toLocaleString('en-US') : '—';
+  const pct = v => v != null ? (v > 0 ? '+' : '') + v + '%' : '—';
+  const lv = j => { const i = j.invalidation || {}; return `${j.target != null ? '目標 ' + money(j.target) : ''}${j.target != null && (i.above || i.below) ? '<br>' : ''}${i.above || i.below ? '失效 ' + [i.above && '↑' + money(i.above), i.below && '↓' + money(i.below)].filter(Boolean).join(' ') : ''}` || '—'; };
+  const O = J.outcomes || {};
   const biasCls = b => b === '偏多' ? 'buy' : b === '偏空' ? 'sell' : 'neu';
   const sig = (R.signals || []).filter(x => x.n >= 3).sort((a, b) => b.n - a.n).slice(0, 12);
   const chg = (R.changeLog || [])[0];
   return `<section class="panel rv">
-    <div class="panel-head"><h3 style="font-size:16px">判斷檢討</h3><span class="sub">每天記錄日報判斷，${R.horizonDays} 天後對照實際走勢；每週整理修正提案，經你同意才改動</span></div>
+    <div class="panel-head"><h3 style="font-size:16px">判斷檢討</h3><span class="sub">每天追蹤日報判斷，看價格先碰到目標價還是失效價；每週盤點一整週的判斷，整理修正提案，經你同意才改動</span></div>
     <div class="rv-k">
-      <div><span class="sub">日報判斷命中率</span><b class="mono">${J.hitRate != null ? J.hitRate + '%' : '—'}</b><span class="sub">已到期 ${J.matured || 0} / ${J.total || 0} 筆</span></div>
+      <div><span class="sub">日報判斷命中率</span><b class="mono">${J.hitRate != null ? J.hitRate + '%' : '—'}</b><span class="sub">成功 ${O['成功'] ?? 0}・失誤 ${O['失誤'] ?? 0}・未達 ${O['未達'] ?? 0}・追蹤中 ${O['進行中'] ?? 0}</span></div>
+      <div><span class="sub">平均最大有利／不利</span><b class="mono">${J.avgMfe != null ? '+' + J.avgMfe + '%' : '—'} / ${J.avgMae != null ? '−' + J.avgMae + '%' : '—'}</b><span class="sub">已結算的偏多／偏空判斷</span></div>
       <div><span class="sub">失效條件被觸發</span><b class="mono">${J.invalidatedRate != null ? J.invalidatedRate + '%' : '—'}</b><span class="sub">越低代表停損位設得合理</span></div>
       ${sys ? `<div><span class="sub">系統目前回撤</span><b class="mono">${sys.drawdownNow}%</b><span class="sub">回測最大 ${sys.maxDrawdown}%（${esc(sys.maxDrawdownAt)}）</span></div>
       <div><span class="sub">回測現貨比例</span><b class="mono">${sys.spotWeight}%</b><span class="sub">依目前規則重算</span></div>` : ''}
     </div>
     ${chg ? `<div class="rv-warn"><b>⚠ ${esc(chg.date)} 回測操作點位有變動</b>：${chg.changes.map(c => `${c.change} ${esc(c.date)} ${esc(c.label)}（$${c.price.toLocaleString('en-US')}，${c.type === 'buy' ? '提高到' : '降到'} ${c.target}%）`).join('；')}。原因通常是來源修正歷史數據或延遲改變，已執行的操作不受影響。</div>` : ''}
-    ${J.recent?.length ? `<h4>最近的判斷</h4><div class="tbl-wrap"><table><thead><tr><th>日期</th><th>短線偏向</th><th>信心</th><th>當時價格</th><th>${R.horizonDays} 天後</th><th>結果</th></tr></thead><tbody>
-      ${J.recent.map(j => `<tr><td class="mono">${esc(j.date.slice(5))}</td><td><span class="chip band ${biasCls(j.bias)}">${esc(j.bias)}</span></td><td>${esc(j.confidence || '')}</td><td class="mono">$${Math.round(j.price || 0).toLocaleString('en-US')}</td><td class="mono">${j.ret7 != null ? (j.ret7 > 0 ? '+' : '') + j.ret7 + '%' : '—'}</td><td>${mark(j)}${j.invalidated ? ' <span class="sub">失效</span>' : ''}</td></tr>`).join('')}</tbody></table></div>
-      <p class="sub">判定：偏多需 ${R.horizonDays} 天後上漲超過 2%，偏空需下跌超過 2%，中性需漲跌在 ±5% 內。</p>` : '<p class="sub">日報判斷從明天起開始記錄，7 天後出現第一筆結果。</p>'}
+    ${J.recent?.length ? `<h4>最近的判斷</h4><div class="tbl-wrap"><table><thead><tr><th>日期</th><th>短線偏向</th><th>信心</th><th>當時價格</th><th>期限</th><th>目標／失效</th><th>最大有利／不利</th><th>目前／到期漲跌</th><th>結果</th></tr></thead><tbody>
+      ${J.recent.map(j => `<tr><td class="mono">${esc(j.date.slice(5))}</td><td><span class="chip band ${biasCls(j.bias)}">${esc(j.bias)}</span></td><td>${esc(j.confidence || '')}</td><td class="mono">${money(j.price)}</td><td class="mono">${j.horizonDays ?? R.horizonDays} 天</td><td class="mono">${lv(j)}</td><td class="mono">${j.mfe != null ? '+' + j.mfe + '%' : '—'} / ${j.mae != null ? '−' + j.mae + '%' : '—'}</td><td class="mono">${pct(j.ret7)}</td><td>${mark(j)}${j.invalidated && j.status !== '失誤' ? ' <span class="sub">之後碰到失效價</span>' : ''}</td></tr>`).join('')}</tbody></table></div>
+      <p class="sub">判定：用每日 K 線最高／最低價逐日檢查。偏多／偏空先碰到目標價＝成功、先碰到失效價＝失誤，期限內都沒碰到＝未達；中性在期限內沒碰到上下失效價＝成功。同一天兩邊都碰到無法分辨先後，不計入命中率。期限由每天的日報依判斷內容決定。</p>` : '<p class="sub">日報判斷從明天起開始記錄。</p>'}
     ${J.byIndicator?.length ? `<h4>被引用的指標</h4><p class="sub">${J.byIndicator.slice(0, 8).map(x => `${esc(x.name)} ${x.n} 次・命中 ${x.hitRate ?? '—'}%`).join('；')}</p>` : ''}
     ${sig.length ? `<h4>指標判讀區間之後 ${R.horizonDays} 天的表現</h4><div class="tbl-wrap"><table><thead><tr><th>指標</th><th>判讀區間</th><th>天數</th><th>平均漲跌</th><th>上漲比例</th></tr></thead><tbody>
       ${sig.map(x => `<tr><td>${esc(x.name)}</td><td><span class="chip band ${toneCls(x.tone)}">${esc(x.band)}</span></td><td class="mono">${x.n}</td><td class="mono">${x.avg7 > 0 ? '+' : ''}${x.avg7}%</td><td class="mono">${x.up7}%</td></tr>`).join('')}</tbody></table></div>

@@ -9,5 +9,6 @@
   {"id":"fng","value":"12","claim":"極度恐懼為逆向偏多，降低偏空信心"}
  ],
  "invalidation":{"above":66000,"below":null},
+ "target":{"price":58500,"note":"2026-11-22 依當日摘要「先往 58,500 掃多單」補登"},
  "system":{"decision":"已完成第一批・預警進場","floor":45,"cap":null},
  "macroWind":"逆風","report":"https://docs.google.com/document/d/1-KDTGe3kivQPF34Wri7ipNDT6fztcVUX9GTLFMXqD_E/edit"}
