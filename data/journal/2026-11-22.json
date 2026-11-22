@@ -1,0 +1,28 @@
+{
+ "date": "2026-11-22",
+ "snapshotAt": "2026-11-22T02:08:12.583Z",
+ "price": 59955,
+ "bias": "中性",
+ "confidence": "低",
+ "horizonDays": 7,
+ "cycleCall": "熊市後段、深度低估區，5 個組合信號成立，中期偏有利但底部仍在構築",
+ "summary": "槓桿清空有軋空條件，但總經逆風，55,000–65,700 震盪",
+ "reasons": [
+  {"id": "liq", "value": "±10% 內上方空單 10.64 億 vs 下方多單 4.70 億（2.3 倍），最大空單區 $65,700；資金費率年化 -0.02%", "claim": "清算壓力轉到上方，短線不再偏空、可能先往上掃空單"},
+  {"id": "dxy", "value": "美元指數 30 天 +1.97%、那斯達克 30 天 -15.3%；Waller 喊 12 月升息 2 碼", "claim": "總經逆風壓制反彈，不給偏多"},
+  {"id": "etf_flow", "value": "近 30 日 -50,414 BTC（上市以來 4.1% 百分位），11/19 單日 -5.82 億美元", "claim": "機構資金未回流，短期仍可能再探底"}
+ ],
+ "invalidation": {"above": 65700, "below": 55000},
+ "system": {"decision": "已完成第二批・確認加碼", "floor": 65, "cap": null},
+ "macroWind": "逆風",
+ "combosActive": ["槓桿出清", "投降共振", "情緒＋估值", "期權恐慌", "機構投降＋低估"],
+ "news": [
+  {"title": "BTC 早盤跌到 $55,130 兩年新低後反彈逾 9% 回到 $60,000 上方，24 小時清算約 18 億美元", "source": "CoinDesk", "date": "2026-11-21", "url": "https://www.coindesk.com/markets/2026/11/21/bitcoin-bounces-9-from-two-year-low-to-retake-usd60-000-as-traders-eye-monday-s-stock-open", "impact": "中性", "note": "強迫賣壓釋放、最大清算區被清掉，但趨勢未轉"},
+  {"title": "Fed 理事 Waller 表示 12 月可能需升息 2 碼，財長 Bessent 呼籲不要升那麼多", "source": "The Crypto Desk", "date": "2026-11-21", "url": "https://thecryptodesk.substack.com/p/the-crypto-desk-saturday-21-november", "impact": "偏空", "note": "升息預期擴大，推升美元與實質利率"},
+  {"title": "美國現貨 BTC ETF 11/19 單日淨流出 5.82 億美元，11/16–19 合計約 11.2 億", "source": "KuCoin（Crypto Alpha Hub）", "date": "2026-11-21", "url": "https://www.kucoin.com/news/insight/BTC/6b01c0b49278e40007d8f432", "impact": "偏空", "note": "機構資金持續撤出"},
+  {"title": "CFTC 主席 Selig：Hyperliquid 等鏈上永續平台服務美國客戶須取得牌照", "source": "The Crypto Desk", "date": "2026-11-21", "url": "https://thecryptodesk.substack.com/p/the-crypto-desk-saturday-21-november", "impact": "中性", "note": "鏈上衍生品監管收緊，影響套利池平台選擇"},
+  {"title": "穩定幣總市值約 2,804 億美元，30 天減少 6.3%", "source": "KuCoin（Crypto Alpha Hub）", "date": "2026-11-21", "url": "https://www.kucoin.com/news/insight/BTC/6b01c0b49278e40007d8f432", "impact": "偏空", "note": "場內美元流動性縮水"},
+  {"title": "Binance 駭客相關錢包移動約 8.6 億美元 ETH；Twenty One Capital 買進 172.25 BTC", "source": "The Crypto Desk", "date": "2026-11-21", "url": "https://thecryptodesk.substack.com/p/the-crypto-desk-saturday-21-november", "impact": "中性", "note": "潛在拋壓與小規模企業買盤並存"}
+ ],
+ "report": "https://docs.google.com/document/d/1hiD8tYCV2gLzWSBubGwfpF1YAIBkjobPZUngIVY4vbQ/edit"
+}
