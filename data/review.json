@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-21T13:47:52.289Z",
- "date": "2026-11-21",
+ "generatedAt": "2026-11-22T02:10:32.287Z",
+ "date": "2026-11-22",
  "horizonDays": 7,
  "journal": {
   "total": 2,
@@ -59,8 +59,8 @@
    "name": "恐懼貪婪指數",
    "band": "極度恐懼",
    "tone": "buy",
-   "n": 2,
-   "avg7": -9.8,
+   "n": 3,
+   "avg7": -9.4,
    "up7": 0
   },
   {
@@ -77,8 +77,8 @@
    "name": "DVOL 隱含波動率",
    "band": "正常",
    "tone": "neutral",
-   "n": 5,
-   "avg7": -11.2,
+   "n": 6,
+   "avg7": -10.8,
    "up7": 0
   },
   {
@@ -95,8 +95,8 @@
    "name": "期權偏斜（約 30 天 ±10%）",
    "band": "恐慌避險",
    "tone": "buy",
-   "n": 5,
-   "avg7": -11.2,
+   "n": 6,
+   "avg7": -10.8,
    "up7": 0
   },
   {
@@ -104,8 +104,8 @@
    "name": "Put/Call 未平倉比",
    "band": "中性",
    "tone": "neutral",
-   "n": 10,
-   "avg7": -11.7,
+   "n": 11,
+   "avg7": -11.5,
    "up7": 0
   },
   {
@@ -113,8 +113,8 @@
    "name": "期現價差年化（基差）",
    "band": "正常",
    "tone": "neutral",
-   "n": 10,
-   "avg7": -11.7,
+   "n": 11,
+   "avg7": -11.5,
    "up7": 0
   },
   {
@@ -122,8 +122,8 @@
    "name": "資金費率年化（即時）",
    "band": "正常",
    "tone": "neutral",
-   "n": 10,
-   "avg7": -11.7,
+   "n": 11,
+   "avg7": -11.5,
    "up7": 0
   },
   {
@@ -131,15 +131,25 @@
    "name": "Coinbase 溢價",
    "band": "中性",
    "tone": "neutral",
-   "n": 10,
-   "avg7": -11.7,
+   "n": 11,
+   "avg7": -11.5,
    "up7": 0
   }
  ],
  "agreement": {
-  "n": 3,
-  "agreeRate": 33.3,
+  "n": 4,
+  "agreeRate": 25,
   "items": [
+   {
+    "id": "fng",
+    "name": "恐懼貪婪指數",
+    "band": "極度恐懼",
+    "tone": "buy",
+    "n": 3,
+    "avg7": -9.4,
+    "up7": 0,
+    "agree": false
+   },
    {
     "id": "dvol",
     "name": "DVOL 隱含波動率",
@@ -165,8 +175,8 @@
     "name": "期權偏斜（約 30 天 ±10%）",
     "band": "恐慌避險",
     "tone": "buy",
-    "n": 5,
-    "avg7": -11.2,
+    "n": 6,
+    "avg7": -10.8,
     "up7": 0,
     "agree": false
    }
@@ -174,12 +184,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.475,
+  "multiple": 3.459,
   "maxDrawdown": 30.5,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 28.4,
-  "spotWeight": 63.8,
-  "price": 60381
+  "drawdownNow": 28.7,
+  "spotWeight": 63.6,
+  "price": 59955
  },
  "ledger": [
   {

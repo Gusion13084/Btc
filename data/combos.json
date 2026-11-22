@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-21T13:47:52.175Z",
- "date": "2026-11-21",
+ "generatedAt": "2026-11-22T02:10:32.175Z",
+ "date": "2026-11-22",
  "from": "2023-01-30",
  "base": {
   "avg30": 3.5,
@@ -17,23 +17,23 @@
     {
      "label": "資金費率年化 ≤ 1%",
      "met": true,
-     "value": "0.2%"
+     "value": "-0.0%"
     },
     {
      "label": "未平倉量比 90 日高點少 20% 以上",
      "met": true,
-     "value": "−30.0%"
+     "value": "−29.4%"
     },
     {
      "label": "30 天跌幅超過 10%",
      "met": true,
-     "value": "-25.7%"
+     "value": "-26.1%"
     }
    ],
    "met": 3,
    "total": 3,
    "active": true,
-   "since": "2026-11-21",
+   "since": "2026-11-22",
    "stats": {
     "events": 6,
     "avg7": 1.8,
@@ -80,8 +80,8 @@
      "r90": 20.5
     },
     {
-     "date": "2026-11-21",
-     "price": 60381,
+     "date": "2026-11-22",
+     "price": 59955,
      "r30": null,
      "r90": null
     }
@@ -101,12 +101,12 @@
     {
      "label": "獲利籌碼 < 55%",
      "met": true,
-     "value": "45.4%"
+     "value": "43.4%"
     },
     {
      "label": "恐懼貪婪 ≤ 20",
      "met": true,
-     "value": "12"
+     "value": "11"
     }
    ],
    "met": 3,
@@ -157,12 +157,12 @@
     {
      "label": "恐懼貪婪 ≤ 15",
      "met": true,
-     "value": "12"
+     "value": "11"
     },
     {
      "label": "MVRV Z-Score ≤ 1",
      "met": true,
-     "value": "0.34"
+     "value": "0.38"
     }
    ],
    "met": 2,
@@ -207,12 +207,12 @@
     {
      "label": "DVOL 在一年 80% 百分位以上",
      "met": true,
-     "value": "97.5%"
+     "value": "98.1%"
     },
     {
      "label": "14 天跌幅超過 10%",
      "met": true,
-     "value": "-20.3%"
+     "value": "-19.8%"
     }
    ],
    "met": 2,
@@ -269,18 +269,18 @@
     {
      "label": "ETF 30 日淨流量百分位 ≤ 10",
      "met": true,
-     "value": "7.2%"
+     "value": "4.1%"
     },
     {
      "label": "週期指數 < 20",
      "met": true,
-     "value": "13.4"
+     "value": "15.0"
     }
    ],
    "met": 2,
    "total": 2,
    "active": true,
-   "since": "2026-11-20",
+   "since": "2026-11-21",
    "stats": {
     "events": 2,
     "avg7": -6.3,
@@ -303,8 +303,8 @@
      "r90": 20.9
     },
     {
-     "date": "2026-11-20",
-     "price": 58806,
+     "date": "2026-11-21",
+     "price": 60089,
      "r30": null,
      "r90": null
     }
