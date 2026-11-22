@@ -42,6 +42,12 @@ jobs:
         run: node scripts/combos.mjs || echo "組合信號失敗（不影響快照）"
       - name: 判斷檢討
         run: node scripts/review.mjs || echo "檢討失敗（不影響快照）"
+      - name: 每日數據庫（所有指標逐日保存）
+        run: node scripts/store.mjs || echo "數據庫寫入失敗（不影響快照）"
+      - name: 歷史數據回補（只在序列不完整時執行）
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: node scripts/backfill.mjs || echo "回補失敗（不影響快照）"
       - name: 提交數據
         run: |
           git config user.name "btc-radar-bot"
