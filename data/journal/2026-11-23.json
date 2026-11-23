@@ -1,0 +1,99 @@
+{
+ "date": "2026-11-23",
+ "snapshotAt": "2026-11-23T02:08:03.204Z",
+ "price": 60709,
+ "bias": "偏多",
+ "confidence": "低",
+ "horizonDays": 4,
+ "horizonReason": "槓桿出清後的軋空反彈通常數天內發生或失敗，且感恩節週流動性變薄，4 天後需重新評估",
+ "target": {
+  "price": 63500
+ },
+ "cycleCall": "熊市後段、深度低估區，5 個組合信號成立，數月尺度偏有利但底部仍在構築",
+ "summary": "槓桿已清、空單堆積，4 天內反彈測 63,500",
+ "reasons": [
+  {
+   "id": "liq",
+   "value": "24 小時空單清算 5,168 萬 vs 多單 1,689 萬（3.1 倍）；±10% 內上方空單 14.48 億 vs 下方多單 8.28 億（1.75 倍）；資金費率年化 0.36%",
+   "claim": "槓桿已清、空單累積，短線偏向往上掃空單"
+  },
+  {
+   "id": "combo",
+   "value": "槓桿出清成立：歷史 6 次之後 7 天平均 +1.8%、30 天 +0.2%、期間最大跌幅 -6.3%",
+   "claim": "支持短線反彈，但不代表見底"
+  },
+  {
+   "id": "etf_flow",
+   "value": "ETF 近 30 日 -57,796 BTC（上市以來 2.5% 百分位），11 月流出逾 34 億美元；12 月升息預期、那斯達克 30 天 -15.3%",
+   "claim": "機構資金與總經逆風，限制反彈高度，信心只給低"
+  }
+ ],
+ "invalidation": {
+  "above": null,
+  "below": 57500
+ },
+ "system": {
+  "decision": "已完成第二批・確認加碼",
+  "floor": 65,
+  "cap": null
+ },
+ "macroWind": "逆風",
+ "combosActive": [
+  "槓桿出清",
+  "投降共振",
+  "情緒＋估值",
+  "期權恐慌",
+  "機構投降＋低估"
+ ],
+ "news": [
+  {
+   "title": "BTC 重回 6 萬美元上方，前一波約 18 億美元槓桿清算、週五觸及約 55,000 兩年低點",
+   "source": "Yahoo Finance（Motley Fool）",
+   "date": "2026-11-22",
+   "url": "https://finance.yahoo.com/markets/crypto/articles/crypto-market-today-nov-22-224002736.html",
+   "impact": "中性",
+   "note": "槓桿出清後的技術性反彈，跌勢原因仍在"
+  },
+  {
+   "title": "11 月現貨 BTC ETF 淨流出逾 34 億美元，IBIT 單日流出 5.41 億創紀錄；市場預期 12 月升息 1 碼",
+   "source": "CryptoTicker",
+   "date": "2026-11-21",
+   "url": "https://cryptoticker.io/en/bitcoin-etf-outflows-november-2026-blackrock-ibit/",
+   "impact": "偏空",
+   "note": "機構資金撤出加升息預期壓制反彈"
+  },
+  {
+   "title": "參議院通過 DEATH BETS 法案；SEC 凍結涉嫌 5.6 億美元詐騙案資產",
+   "source": "crypto.news",
+   "date": "2026-11-21",
+   "url": "https://crypto.news/bitcoin-56k-death-bets-act-sec-fraud-weekly-recap/",
+   "impact": "中性",
+   "note": "監管針對預測市場與詐騙，不直接影響 BTC 供需"
+  },
+  {
+   "title": "Binance 10 月被駭相關錢包轉出 137,602 ETH（約 2.48 億美元）",
+   "source": "crypto.news",
+   "date": "2026-11-21",
+   "url": "https://crypto.news/bitcoin-56k-death-bets-act-sec-fraud-weekly-recap/",
+   "impact": "偏空",
+   "note": "被盜資金可能拋售，增加賣壓與信心疑慮"
+  },
+  {
+   "title": "11 月 BTC 累跌約 22%，加密總市值自 11/1 蒸發逾 5,000 億美元",
+   "source": "Bitcoin.com News",
+   "date": "2026-11-22",
+   "url": "https://news.bitcoin.com/market-updates/bitcoin-price-takes-a-beating-as-november-rout-erases-summer-gains/",
+   "impact": "偏空",
+   "note": "全市場去槓桿規模顯示熊市未結束"
+  },
+  {
+   "title": "Saylor 暗示 Strategy 下週再買 BTC",
+   "source": "Bitcoin Sistemi",
+   "date": "2026-11-22",
+   "url": "https://en.bitcoinsistemi.com/live/live-november-22-2026-bitcoin-and-crypto-news-daily-highlights/",
+   "impact": "偏多",
+   "note": "最大企業持有者持續買進提供支撐，但不足以抵銷 ETF 流出"
+  }
+ ],
+ "report": "https://docs.google.com/document/d/1_Rj2nRqP_rEPNrR8iXG3nEXUmjOfiUr4kmko0JRIV-A/edit?usp=drivesdk"
+}
