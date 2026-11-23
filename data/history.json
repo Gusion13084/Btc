@@ -4115,5 +4115,239 @@
    }
   },
   "signals": []
+ },
+ {
+  "date": "2026-11-23",
+  "btcPrice": 60709,
+  "cbs": 7,
+  "cts": 0,
+  "cbsConfirm": 36,
+  "ctsConfirm": 7,
+  "idx": 15,
+  "cbsLevel": "觀察期",
+  "ctsLevel": "無信號",
+  "action": "開始關注市場，準備資金",
+  "values": {
+   "mvrv": 0.3666,
+   "nupl": 0.1746,
+   "puell": 0.9786,
+   "hashribbons": "normal",
+   "ssr": 4.32002,
+   "rsi_w": 35.05685,
+   "wma200": 0.88912,
+   "pi_bottom": 1.20177,
+   "pi_top": 0.5105,
+   "fng": 11,
+   "funding": -0.00025,
+   "etf_flow": -19405.46871,
+   "liq": 208246803.26364,
+   "sth_mvrv": 0.8169,
+   "profit_supply": 45.09234,
+   "whale": -1.02891,
+   "mayer": 0.8405,
+   "lsr": 2.14,
+   "btcdom": 58.85,
+   "stable30": -5.99027,
+   "ethbtc": 0.02809,
+   "dvol": 54.6,
+   "skew": 9.8,
+   "pcr": 0.811,
+   "basis": 4.32,
+   "fundapr": 0.36,
+   "cbprem": -0.004,
+   "netliq": 5.85,
+   "tga": 8912,
+   "realrate": 2.77,
+   "dxy": 103.65,
+   "nasdaq": -15.3,
+   "ex_reserve": 269.8,
+   "ex_netflow": -33520,
+   "treasury": 3727200,
+   "strategy": 850364,
+   "oi": 27.12
+  },
+  "pct": {
+   "mvrv": 11.9,
+   "nupl": 11.5,
+   "puell": 42.6,
+   "ssr": 21.5,
+   "rsi_w": 7.2,
+   "wma200": 5.2,
+   "pi_bottom": 27.2,
+   "pi_top": 32.6,
+   "fng": 3,
+   "sth_mvrv": 4.3,
+   "profit_supply": 0.1,
+   "mayer": 12.5,
+   "ethbtc": 14.6,
+   "dvol": 68.5,
+   "ex_reserve": 21
+  },
+  "items": {
+   "mvrv": [
+    1,
+    0
+   ],
+   "nupl": [
+    1,
+    0
+   ],
+   "puell": [
+    1,
+    0
+   ],
+   "hashribbons": [
+    0,
+    null
+   ],
+   "ssr": [
+    0,
+    0
+   ],
+   "rsi_w": [
+    1,
+    0
+   ],
+   "wma200": [
+    1,
+    0
+   ],
+   "pi_bottom": [
+    0,
+    null
+   ],
+   "pi_top": [
+    null,
+    0
+   ],
+   "fng": [
+    2,
+    0
+   ],
+   "funding": [
+    0,
+    0
+   ],
+   "etf_flow": [
+    1,
+    0
+   ],
+   "liq": [
+    1,
+    0
+   ],
+   "sth_mvrv": [
+    1,
+    0
+   ],
+   "profit_supply": [
+    2,
+    0
+   ],
+   "whale": [
+    0,
+    1
+   ],
+   "mayer": [
+    0,
+    0
+   ],
+   "lsr": [
+    0,
+    0
+   ],
+   "btcdom": [
+    null,
+    null
+   ],
+   "stable30": [
+    null,
+    null
+   ],
+   "ethbtc": [
+    null,
+    null
+   ],
+   "dvol": [
+    null,
+    null
+   ],
+   "skew": [
+    null,
+    null
+   ],
+   "pcr": [
+    null,
+    null
+   ],
+   "basis": [
+    null,
+    null
+   ],
+   "fundapr": [
+    null,
+    null
+   ],
+   "cbprem": [
+    null,
+    null
+   ],
+   "netliq": [
+    null,
+    null
+   ],
+   "tga": [
+    null,
+    null
+   ],
+   "realrate": [
+    null,
+    null
+   ],
+   "dxy": [
+    null,
+    null
+   ],
+   "nasdaq": [
+    null,
+    null
+   ],
+   "ex_reserve": [
+    null,
+    null
+   ],
+   "ex_netflow": [
+    null,
+    null
+   ],
+   "treasury": [
+    null,
+    null
+   ],
+   "strategy": [
+    null,
+    null
+   ]
+  },
+  "indexZone": "偏低",
+  "decision": {
+   "tone": "hold",
+   "title": "已完成第二批・確認加碼",
+   "action": "系統在 2026-06-10（約 $61,464）觸發此批次（現貨提高到 65%）。持有並等待：CBS 連續 3 天達到 20 分，或價格較第一批再跌 30% 以上，即啟動第三批・深度加碼（現貨提高到 85%）。",
+   "notes": [
+    "週期指數 30 天下降 26 點，市場明顯轉弱。"
+   ],
+   "target": {
+    "floor": 65,
+    "cap": null
+   },
+   "last": {
+    "date": "2026-06-10",
+    "label": "第二批・確認加碼（機構資金路線）",
+    "target": 65,
+    "type": "buy"
+   }
+  },
+  "signals": []
  }
 ]

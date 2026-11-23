@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-22T13:41:45.205Z",
- "date": "2026-11-22",
+ "generatedAt": "2026-11-23T02:10:20.653Z",
+ "date": "2026-11-23",
  "horizonDays": 7,
  "journal": {
   "method": "first-touch",
@@ -40,8 +40,8 @@
     "rate": 100
    },
    "d3": {
-    "n": 0,
-    "rate": null
+    "n": 1,
+    "rate": 100
    },
    "horizon": {
     "n": 0,
@@ -101,8 +101,8 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 1.4,
-    "ret1": null,
+    "ret7": 1.3,
+    "ret1": 1.3,
     "ret3": null,
     "mfe": null,
     "mae": null,
@@ -129,8 +129,8 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 3.2,
-    "ret1": 3.2,
+    "ret7": 3.1,
+    "ret1": 3.8,
     "ret3": null,
     "mfe": null,
     "mae": null,
@@ -157,9 +157,9 @@
     "resolvedAt": "2026-11-20",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -1.9,
+    "ret7": -2,
     "ret1": -3,
-    "ret3": null,
+    "ret3": -2,
     "mfe": 11.1,
     "mae": 1,
     "hi": 62550,
@@ -194,8 +194,8 @@
    "name": "恐懼貪婪指數",
    "band": "極度恐懼",
    "tone": "buy",
-   "n": 3,
-   "avg7": -9,
+   "n": 4,
+   "avg7": -8.2,
    "up7": 0
   },
   {
@@ -212,8 +212,8 @@
    "name": "DVOL 隱含波動率",
    "band": "正常",
    "tone": "neutral",
-   "n": 6,
-   "avg7": -10.6,
+   "n": 7,
+   "avg7": -9.9,
    "up7": 0
   },
   {
@@ -221,8 +221,8 @@
    "name": "期權偏斜（約 30 天 ±10%）",
    "band": "避險需求偏高",
    "tone": "buy",
-   "n": 5,
-   "avg7": -12.3,
+   "n": 6,
+   "avg7": -11.3,
    "up7": 0
   },
   {
@@ -231,7 +231,7 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 6,
-   "avg7": -10.6,
+   "avg7": -10.5,
    "up7": 0
   },
   {
@@ -239,8 +239,8 @@
    "name": "Put/Call 未平倉比",
    "band": "中性",
    "tone": "neutral",
-   "n": 11,
-   "avg7": -11.4,
+   "n": 12,
+   "avg7": -10.9,
    "up7": 0
   },
   {
@@ -248,8 +248,8 @@
    "name": "期現價差年化（基差）",
    "band": "正常",
    "tone": "neutral",
-   "n": 11,
-   "avg7": -11.4,
+   "n": 12,
+   "avg7": -10.9,
    "up7": 0
   },
   {
@@ -258,7 +258,16 @@
    "band": "正常",
    "tone": "neutral",
    "n": 11,
-   "avg7": -11.4,
+   "avg7": -11.3,
+   "up7": 0
+  },
+  {
+   "id": "fundapr",
+   "name": "資金費率年化（即時）",
+   "band": "偏低",
+   "tone": "neutral",
+   "n": 1,
+   "avg7": -6.3,
    "up7": 0
   },
   {
@@ -266,8 +275,8 @@
    "name": "Coinbase 溢價",
    "band": "中性",
    "tone": "neutral",
-   "n": 11,
-   "avg7": -11.4,
+   "n": 12,
+   "avg7": -10.9,
    "up7": 0
   }
  ],
@@ -280,8 +289,8 @@
     "name": "恐懼貪婪指數",
     "band": "極度恐懼",
     "tone": "buy",
-    "n": 3,
-    "avg7": -9,
+    "n": 4,
+    "avg7": -8.2,
     "up7": 0,
     "agree": false
    },
@@ -300,8 +309,8 @@
     "name": "期權偏斜（約 30 天 ±10%）",
     "band": "避險需求偏高",
     "tone": "buy",
-    "n": 5,
-    "avg7": -12.3,
+    "n": 6,
+    "avg7": -11.3,
     "up7": 0,
     "agree": false
    },
@@ -311,7 +320,7 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 6,
-    "avg7": -10.6,
+    "avg7": -10.5,
     "up7": 0,
     "agree": false
    }
@@ -319,12 +328,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.489,
+  "multiple": 3.487,
   "maxDrawdown": 30.5,
   "maxDrawdownAt": "2026-06-30",
   "drawdownNow": 28.1,
   "spotWeight": 63.9,
-  "price": 60778
+  "price": 60709
  },
  "ledger": [
   {
