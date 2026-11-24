@@ -7,7 +7,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 const ROOT = new URL('../', import.meta.url);
 const J = async (p, fb) => { try { return JSON.parse(await readFile(new URL(p, ROOT), 'utf8')); } catch { return fb; } };
 const D = 864e5, add = (d, n) => new Date(Date.parse(d) + n * D).toISOString().slice(0, 10);
-const latest = await J('data/latest.json'), lag = latest.lags || {};
+const latest = await J('data/latest.json'), lag = latest.lagsHist || latest.lags || {};
 const price = await J('data/series/price.json', []);
 const dates = price.map(x => x[0]).filter(d => d >= '2022-11-01'); const P = new Map(price);
 const di = new Map(dates.map((d, i) => [d, i]));

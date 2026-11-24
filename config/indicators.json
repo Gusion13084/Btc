@@ -1604,9 +1604,13 @@
    "name": "現貨 ETF 淨流量",
    "group": "資金流向",
    "tier": "aux",
-   "source": "bgeo2",
+   "source": "etf_tftc",
    "decimals": 0,
    "links": [
+    [
+     "TFTC ETF Tracker",
+     "https://www.tftc.io/bitcoin-etf-flows"
+    ],
     [
      "Farside",
      "https://farside.co.uk/btc/"

@@ -143,6 +143,7 @@ function openModal(id) {
       <p class="sub">${verdict(def, 'cbs', def.cbs, rb)} ${verdict(def, 'cts', def.cts, rt)}</p>
       <div class="sub mono">數據日期：${esc(ind?.asOf || '—')}${ind?.age >= 2 ? `（來源延遲 ${ind.age} 天）` : ''}・抓取於 ${twTime(ind?.fetchedAt)}${ind?.ok === false ? '・數據過舊' : ''}</div>
     </section>
+    ${def.id === 'etf_flow' ? etfCheckHtml() : ''}
     ${def.history?.length ? `<h4>歷史驗證</h4><ul class="hist">${def.history.map(h => `<li>${esc(h)}</li>`).join('')}</ul>` : ''}
     ${def.links?.length ? `<div class="m-links">查看圖表：${def.links.map(([n, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join('・')}</div>` : ''}
   `;
@@ -944,6 +945,17 @@ function drawHistory(sel) {
 
 // ---------- 數據狀態 ----------
 function viewSources() { S.jump = 'data-status'; viewRules(); }
+// ETF 流量三方比對：TFTC（主來源）、CoinMarketCap、BGeometrics，單位百萬美元
+function etfCheckHtml() {
+  const e = S.latest.etfSources; if (!e?.check?.length) return '';
+  const f = v => v == null ? '<span class="sub">—</span>' : `${v > 0 ? '+' : ''}${v.toLocaleString('en-US', { maximumFractionDigits: 1 })}`;
+  const U = { tftc: 'TFTC', cmc: 'CMC 初值', bg: 'BGeometrics' };
+  return `<h4>ETF 流量來源比對（百萬美元）</h4>
+    <div class="tbl-wrap"><table class="etfchk"><thead><tr><th>交易日</th><th>TFTC（採用）</th><th>CoinMarketCap</th><th>BGeometrics</th><th>計入</th></tr></thead><tbody>
+    ${e.check.slice(0, 10).map(x => `<tr><td class="mono">${esc(x.date.slice(5))}</td><td class="mono">${f(x.tftc)}</td><td class="mono ${x.flag.includes('cmc') ? 'bad' : ''}">${f(x.cmc)}</td><td class="mono ${x.flag.includes('bg') ? 'bad' : ''}">${f(x.bg)}</td><td class="sub">${U[x.used] || x.used}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="sub">主來源 TFTC 整理 SoSoValue 與 Farside 的各檔基金數字，會回頭修正，不完整的交易日先不發布（目前到 ${esc(e.tftc || '—')}）。TFTC 還沒發布的交易日先用 CoinMarketCap 初值${e.prelim?.length ? `（${e.prelim.map(esc).join('、')}）` : ''}，發布後自動改用 TFTC。紅字＝與採用值差距超過 5,000 萬美元且超過 20%。BGeometrics 只在抓取當下取值、之後不修正，所以近期常有差距。</p>`;
+}
 function sourcesHtml() {
   const src = S.latest.sources || {};
   const ids = Object.keys(src);
@@ -964,6 +976,7 @@ function sourcesHtml() {
           <td>${esc(d.name)}</td><td class="mono">${fmtVal(d, ind)}</td>
           <td class="${ind?.ok ? 'ok' : 'bad'}" style="font-weight:400">${ind?.ok ? '✓' : '✕'}</td>
           <td class="sub mono">${esc(ind?.asOf || ind?.date || '—')}</td></tr>`; }).join('')}</tbody></table></div>
+        ${k === 'etf_tftc' ? etfCheckHtml() : ''}
       </section>`; }).join('')}</div>`;
 }
 

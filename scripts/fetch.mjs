@@ -72,7 +72,7 @@ const pctRank = (arr, x) => ((arr.filter(v => v < x).length + 0.5 * arr.filter(v
 // ---------- 來源狀態與序列快取 ----------
 const meta = await read('data/series/_meta.json', {});
 const status = {};
-const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', etf2: 'ETF 流量補充（bitbo）', okx: 'OKX 合約數據', fred: 'FRED（Fed 資產負債表）', tga: '美國財政部 TGA', rrp: '紐約聯準銀行 逆回購', treasury: '美國財政部 實質利率', fx: '歐洲央行匯率（美元指數）', nasdaq: 'Nasdaq 指數', coinmetrics: 'Coin Metrics 交易所數據', bitbo: 'BitcoinTreasuries 持倉' };
+const NAMES = { deribit: 'Deribit 期權與期貨', coinbase: 'Coinbase 溢價', okxfund: 'OKX 資金費率', eth: 'OKX ETH 日線', price: 'BTC 價格（Blockchain.com + Kraken）', fng: 'Alternative.me 恐懼貪婪', hash: 'Blockchain.com 算力', stable: 'DefiLlama 穩定幣', market: 'CoinGecko 市值', bgcore: 'BGeometrics 核心', bgaux: 'BGeometrics 輔助', etf_tftc: 'ETF 流量（TFTC／SoSoValue・Farside）', etf_cmc: 'ETF 流量比對（CoinMarketCap）', okx: 'OKX 合約數據', fred: 'FRED（Fed 資產負債表）', tga: '美國財政部 TGA', rrp: '紐約聯準銀行 逆回購', treasury: '美國財政部 實質利率', fx: '歐洲央行匯率（美元指數）', nasdaq: 'Nasdaq 指數', coinmetrics: 'Coin Metrics 交易所數據', bitbo: 'BitcoinTreasuries 持倉' };
 const setStatus = (k, ok, error = null) => { status[k] = { name: NAMES[k], ok, error, checkedAt: nowISO }; };
 const S = {};
 const now = {};
@@ -220,37 +220,55 @@ for (const [name, path, prefer, group] of BG) {
 }
 for (const g of ['bgcore', 'bgaux']) setStatus(g, !bgErr[g].length, bgErr[g].join('；') || null);
 
-// ---------- ETF 補充來源：bitbo（BitcoinTreasuries）每日流量表，補上 BGeometrics 還沒給的最近幾天 ----------
-// 表格單位是百萬美元，用當天收盤價換成 BTC；BGeometrics 之後補上同一天時會覆蓋這裡的估計值。
+// ---------- ETF 流量：多來源合併與比對 ----------
+// 主來源：TFTC「The Commoner Bitcoin ETF Tracker」data.json（2024-01-11 起每天，含各檔基金明細、會回頭修正，CC BY 4.0；
+//         資料取自 SoSoValue 與 Farside，不完整的交易日會先保留不發布）
+// 比對：BGeometrics etf-flow-btc（同樣源自 Farside，但只在抓取當下取值、之後不再修正，近期常與最終數字不同，也會漏日）
+//       CoinMarketCap ETF 淨流量（近 30 天，最早出數字，但最近一天常是初值）
+// 合併：每天優先用 TFTC；TFTC 還沒有的最近交易日，先用 CoinMarketCap 初值（標記「初值」），TFTC 發布後自動覆蓋；BGeometrics 只補兩者都沒有的日子。
+// 單位：美元淨流量 ÷ 當天 BTC 收盤價 = BTC。原始美元數字分別存檔（etf_tftc.json、etf_cmc.json），序列只增不刪。
+const etfSrc = { tftc: null, cmc: null };
+await load('etf_tftc'); await load('etf_cmc');
 try {
-  const r = await fetch('https://bitbo.io/treasuries/etf-flows/', { headers: { 'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36', Accept: 'text/html' }, signal: AbortSignal.timeout(40000) });
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const html = await r.text();
-  const tb = html.slice(html.indexOf('<table'), html.indexOf('</table>'));
-  const cells = tb.replace(/<[^>]+>/g, '|').replace(/\s+/g, ' ').split('|').map(x => x.trim()).filter(Boolean);
-  const head = cells.indexOf('Date'), tot = cells.indexOf('Totals');
-  if (head < 0 || tot < 0) throw new Error('表格格式改變');
-  const width = tot - head + 1, MON = { Jan: 1, Feb: 2, Mar: 3, Apr: 4, May: 5, Jun: 6, Jul: 7, Aug: 8, Sep: 9, Oct: 10, Nov: 11, Dec: 12 };
-  const px = new Map(S.price.map(x => [x[0], x[1]]));
-  const rows = [];
-  for (let i = tot + 1; i + width <= cells.length; i += width) {
-    const m = cells[i].match(/^([A-Z][a-z]{2}) (\d{1,2}), (\d{4})$/); if (!m) break;
-    const d = `${m[3]}-${String(MON[m[1]]).padStart(2, '0')}-${m[2].padStart(2, '0')}`;
-    const usdM = Number(cells[i + width - 1].replace(/,/g, '')), p = px.get(d);
-    if (Number.isFinite(usdM) && p) rows.push([d, +(usdM * 1e6 / p).toFixed(2), 'bitbo']);
-  }
+  const j = await getJSON('https://www.tftc.io/bitcoin-etf-flows/data.json', 1);
+  const rows = (j.days || []).filter(d => d.date && Number.isFinite(d.netFlowUsd)).map(d => [d.date, Math.round(d.netFlowUsd), d.btcCloseUsd ?? null]);
+  if (rows.length < 100) throw new Error('資料筆數太少');
+  S.etf_tftc = merge(S.etf_tftc, rows);   // 同一天以最新修正值覆蓋
+  etfSrc.tftc = j.updatedThrough || rows.at(-1)[0];
+  setStatus('etf_tftc', true);
+} catch (e) { setStatus('etf_tftc', false, e.message); console.warn('ETF 主來源（TFTC）失敗：', e.message); }
+try {
+  const j = await getJSON('https://api.coinmarketcap.com/data-api/v3/etf/overview/netflow/chart?category=btc&range=30d', 1);
+  const rows = (j.data?.points || []).map(p => [new Date(+p.timestamp).toISOString().slice(0, 10), Math.round(p.btcValue ?? p.value), p.cryptoPrice ? Math.round(p.cryptoPrice) : null]).filter(r => Number.isFinite(r[1]));
   if (!rows.length) throw new Error('沒有資料');
-  // 與 BGeometrics 重疊的日子比對單位，差太多就不採用
-  const bg = new Map(S.etf.filter(x => x[2] !== 'bitbo').map(x => [x[0], x[1]]));
-  const ov = rows.filter(x => bg.has(x[0]) && Math.abs(bg.get(x[0])) > 1000 && Math.abs(x[1]) > 0);
-  const ratios = ov.map(x => x[1] / bg.get(x[0])).sort((a, b) => a - b), med = ratios.length ? ratios[ratios.length >> 1] : null;
-  if (med != null && (med < 0.5 || med > 2)) throw new Error(`與 BGeometrics 數值不一致（比值 ${med.toFixed(2)}）`);
-  const lastBg = [...bg.keys()].sort().at(-1) || '';
-  const add = rows.filter(x => x[0] > lastBg);
-  S.etf = merge(S.etf.filter(x => x[2] !== 'bitbo' || x[0] > lastBg), add);
-  setStatus('etf2', true);
-  console.log(`ETF 補充（bitbo）：補上 ${add.map(x => x[0]).join('、') || '無'}；重疊 ${ov.length} 天比值 ${med?.toFixed(2) ?? '—'}；BGeometrics 最後一天 ${lastBg}`);
-} catch (e) { setStatus('etf2', false, e.message); console.warn('ETF 補充來源失敗：', e.message); }
+  S.etf_cmc = merge(S.etf_cmc, rows);
+  etfSrc.cmc = rows.at(-1)[0];
+  setStatus('etf_cmc', true);
+} catch (e) { setStatus('etf_cmc', false, e.message); console.warn('ETF 比對來源（CoinMarketCap）失敗：', e.message); }
+{
+  const px = new Map(S.price.map(x => [x[0], x[1]]));
+  const pxAt = (d, alt) => px.get(d) || alt || null;
+  const T = new Map(S.etf_tftc.map(r => [r[0], r])), C = new Map(S.etf_cmc.map(r => [r[0], r])), G = new Map(S.etf.filter(r => r[2] !== 'bitbo').map(r => [r[0], r[1]]));
+  S.etf = S.etf.filter(r => r[2] !== 'bitbo');   // 移除舊的 bitbo 估計值（bitbo 流量表日期與金額對不上，已停用）
+  const lastT = S.etf_tftc.at(-1)?.[0] || '';
+  const out = [];
+  for (const d of [...new Set([...T.keys(), ...C.keys(), ...G.keys()])].sort()) {
+    if (T.has(d)) { const r = T.get(d), p = pxAt(d, r[2]); if (p) out.push([d, +(r[1] / p).toFixed(2), 'tftc']); }
+    else if (d > lastT && C.has(d)) { const r = C.get(d), p = pxAt(d, r[2]); if (p) out.push([d, +(r[1] / p).toFixed(2), 'cmc']); }
+    else if (G.has(d)) out.push([d, G.get(d), 'bg']);
+  }
+  S.etfc = out;
+  // 近 15 個交易日三方比對（百萬美元）；差距超過 max(5,000 萬, 20%) 標記
+  const chk = out.slice(-15).map(([d, , src]) => {
+    const p = pxAt(d), t = T.get(d)?.[1], c = C.get(d)?.[1], g = G.has(d) && p ? G.get(d) * p : null;
+    const m = v => v == null ? null : +(v / 1e6).toFixed(1);
+    const ref = t ?? c, off = (v) => v != null && ref != null && Math.abs(v - ref) > Math.max(5e7, 0.2 * Math.abs(ref));
+    return { date: d, used: src, tftc: m(t), cmc: m(c), bg: m(g), flag: [off(c) && 'cmc', off(g) && 'bg'].filter(Boolean) };
+  }).reverse();
+  etfSrc.check = chk; etfSrc.lastTftc = lastT; etfSrc.prelim = out.filter(r => r[2] === 'cmc').map(r => r[0]);
+  const fl = chk.filter(x => x.flag.length);
+  console.log(`ETF 流量：TFTC 到 ${lastT}、CoinMarketCap 到 ${etfSrc.cmc ?? '—'}、BGeometrics 到 ${S.etf.at(-1)?.[0]}；初值 ${etfSrc.prelim.join('、') || '無'}；近 15 日差異 ${fl.length} 天${fl.length ? '（' + fl.map(x => x.date + ' ' + x.flag.join('/')).join('、') + '）' : ''}`);
+}
 
 let lsr = null;
 try {
@@ -327,22 +345,30 @@ function rsiW(arr) {
   return l === 0 ? 100 : 100 - 100 / (1 + g / l);
 }
 // ---------- 模擬來源延遲：歷史上每一天只用「當天實際拿得到」的數據 ----------
-// BGeometrics 免費方案與 Blockchain.com 算力有數天延遲。量出每個序列目前的延遲天數，
-// 把整段歷史的日期往後挪同樣天數，回測、操作紀錄與今天的判斷就和實際上線時一致。
-const LAGGED = ['mvrv', 'nupl', 'puell', 'funding', 'oi', 'etf', 'liq', 'sthrp', 'profit', 'whale', 'hash'];
+// 歷史回放用固定的「正常延遲」天數，不用今天量到的延遲：
+// 來源某天晚更新時，只影響今天的數值與資料年齡，不會把整段歷史一起往後挪、改寫過去的操作點位。
+// 今天量到的實際延遲仍記在 latest.lags，用於顯示資料年齡。
+const LAGGED = ['mvrv', 'nupl', 'puell', 'funding', 'oi', 'etfc', 'liq', 'sthrp', 'profit', 'whale', 'hash'];
+const LAG_HIST = { mvrv: 7, nupl: 7, puell: 7, funding: 8, oi: 3, etfc: 2, liq: 2, sthrp: 7, profit: 2, whale: 2, hash: 1 };
+const FLOW = new Set(['etfc', 'liq']);
 const LAG = {}, SS = { ...S };
 for (const k of LAGGED) {
   const last = S[k]?.at(-1)?.[0];
-  if (!last) { LAG[k] = 0; continue; }
-  LAG[k] = Math.max(0, Math.min(14, Math.round((Date.parse(cal[N - 1]) - Date.parse(last)) / 86400000)));
-  SS[k] = LAG[k] ? S[k].map(r => [addDays(r[0], LAG[k]), ...r.slice(1)]) : S[k];
+  LAG[k] = last ? Math.max(0, Math.min(14, Math.round((Date.parse(cal[N - 1]) - Date.parse(last)) / 86400000))) : 0;
+  const L = LAG_HIST[k] ?? LAG[k];
+  if (!L || !S[k]?.length) continue;
+  // 位移後超過今天的點：水準類序列併到今天（用最新值），流量類留到之後幾天再計入
+  const end = cal[N - 1], m = new Map();
+  for (const r of S[k]) { let d = addDays(r[0], L); if (d > end) { if (FLOW.has(k)) continue; d = end; } m.set(d, [d, ...r.slice(1)]); }
+  SS[k] = [...m.values()].sort((a, b) => a[0].localeCompare(b[0]));
 }
-console.log('來源延遲（天）：' + LAGGED.map(k => `${k} ${LAG[k]}`).join('、'));
+LAG.etf = LAG.etfc;
+console.log('來源延遲（天，今天實測／歷史回放）：' + LAGGED.map(k => `${k} ${LAG[k]}/${LAG_HIST[k]}`).join('、'));
 const F = {
   eth: align(S.eth, 1, 3),
   fng: align(SS.fng, 1, 3), hash: align(SS.hash, 1, 7), stable: align(SS.stable, 1, 7),
   mvrv: align(SS.mvrv, 1, 7), nupl: align(SS.nupl, 1, 7), puell: align(SS.puell, 1, 7), funding: align(SS.funding, 1, 7), oi: align(SS.oi, 1, 7),
-  etf: align(SS.etf, 1, 0, false), liqL: align(SS.liq, 1, 0, false), liqS: align(SS.liq, 2, 0, false),
+  etf: align(SS.etfc, 1, 0, false), liqL: align(SS.liq, 1, 0, false), liqS: align(SS.liq, 2, 0, false),
   sthrp: align(SS.sthrp, 1, 7), profit: align(SS.profit, 1, 7), whale: align(SS.whale, 1, 7),
 };
 { const a = F.funding.v.filter(v => v != null).map(Math.abs).sort((x, y) => x - y); if (a.length && a[a.length >> 1] < 0.001) F.funding.v = F.funding.v.map(v => v == null ? null : v * 100); }
@@ -415,7 +441,7 @@ for (let i = 0; i < N; i++) {
   if (F.whale.v[i] != null && i >= 30 && F.whale.v[i - 30]) set('whale', (F.whale.v[i] / F.whale.v[i - 30] - 1) * 100);
 }
 // ETF 與清算是「每日事件」：最後一筆真實資料之後的日子視為未知，沿用最後一天的計算結果
-for (const [id, rows] of [['etf_flow', SS.etf], ['liq', SS.liq]]) {
+for (const [id, rows] of [['etf_flow', SS.etfc], ['liq', SS.liq]]) {
   const last = rows.at(-1)?.[0]; if (!last || !V[id]) continue;
   const li = cal.indexOf(last); if (li < 0) continue;
   for (let i = li + 1; i < N && i - li <= 14; i++) { V[id][i] = V[id][li]; FX[i][id] = FX[li][id]; }
@@ -456,7 +482,7 @@ function cycleIndex(i) {
 // 機構資金：ETF 近 30 日淨流量在 ETF 上市以來的百分位（只用當天以前的資料）
 const E30 = new Array(N).fill(null), E30P = new Array(N).fill(null);
 if (etf0 >= 0) {
-  const etfLast = cal.indexOf(SS.etf.at(-1)?.[0]);
+  const etfLast = cal.indexOf(SS.etfc.at(-1)?.[0]);
   for (let i = etf0 + 29; i < N; i++) {
     if (etfLast >= 0 && i > etfLast) { E30[i] = E30[i - 1]; E30P[i] = E30P[i - 1]; continue; }
     let s = 0; for (let k = i - 29; k <= i; k++) s += nz(F.etf.v, k, etf0);
@@ -505,7 +531,7 @@ if (ind.ssr) {
   detail.ssr = p.join('・');
 }
 if (ind.etf_flow) {
-  const f = S.etf.map(r => r[1]); const med = [...f].map(Math.abs).sort((a, b) => a - b)[f.length >> 1] || 0;
+  const f = S.etfc.map(r => r[1]); const med = [...f].map(Math.abs).sort((a, b) => a - b)[f.length >> 1] || 0;
   const fmt = v => med > 1e5 ? `${v < 0 ? '-' : '+'}$${(Math.abs(v) / 1e6).toFixed(0)}M` : `${v < 0 ? '-' : '+'}${Math.round(Math.abs(v)).toLocaleString('en-US')} BTC`;
   let st = 0; for (let k = f.length - 1; k >= 0 && f[k] < 0; k--) st++;
   ind.etf_flow.display = fmt(ind.etf_flow.value);
@@ -526,15 +552,15 @@ for (const [k, v] of Object.entries(MC.ind)) { ind[k] = { value: v.value, fields
 if (lsr != null) { ind.lsr = { value: r4(lsr, 3), fields: {} }; detail.lsr = `多頭帳戶約 ${(lsr / (1 + lsr) * 100).toFixed(0)}%`; }
 
 // 指標對應的來源與資料新鮮度
-const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'bgaux', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth', dvol: 'deribit', skew: 'deribit', pcr: 'deribit', basis: 'deribit', fundapr: 'okxfund', cbprem: 'coinbase', netliq: 'fred', tga: 'tga', realrate: 'treasury', dxy: 'fx', nasdaq: 'nasdaq', ex_reserve: 'coinmetrics', ex_netflow: 'coinmetrics', treasury: 'bitbo', strategy: 'bitbo' };
-const lagOf = { mvrv: 'mvrv', nupl: 'nupl', puell: 'puell', hashribbons: 'hash', funding: 'funding', sth_mvrv: 'sthrp', profit_supply: 'profit', whale: 'whale', etf_flow: 'etf', liq: 'liq' };
+const srcOf = { mvrv: 'bgcore', nupl: 'bgcore', puell: 'bgcore', funding: 'bgcore', etf_flow: 'etf_tftc', liq: 'bgaux', sth_mvrv: 'bgaux', profit_supply: 'bgaux', whale: 'bgaux', fng: 'fng', hashribbons: 'hash', ssr: 'stable', stable30: 'stable', btcdom: 'market', lsr: 'okx', ethbtc: 'eth', dvol: 'deribit', skew: 'deribit', pcr: 'deribit', basis: 'deribit', fundapr: 'okxfund', cbprem: 'coinbase', netliq: 'fred', tga: 'tga', realrate: 'treasury', dxy: 'fx', nasdaq: 'nasdaq', ex_reserve: 'coinmetrics', ex_netflow: 'coinmetrics', treasury: 'bitbo', strategy: 'bitbo' };
+const lagOf = { mvrv: 'mvrv', nupl: 'nupl', puell: 'puell', hashribbons: 'hash', funding: 'funding', sth_mvrv: 'sthrp', profit_supply: 'profit', whale: 'whale', etf_flow: 'etfc', liq: 'liq' };
 const ageOf = { mvrv: F.mvrv, nupl: F.nupl, puell: F.puell, fng: F.fng, hashribbons: F.hash, funding: F.funding, sth_mvrv: F.sthrp, profit_supply: F.profit, whale: F.whale, stable30: F.stable, ssr: F.stable };
-const lastReal = { etf_flow: S.etf.at(-1)?.[0], liq: S.liq.at(-1)?.[0] };
+const lastReal = { etf_flow: S.etfc.at(-1)?.[0], liq: S.liq.at(-1)?.[0] };
 const maxAge = { etf_flow: 10, liq: 10, fng: 3, netliq: 12, tga: 7, realrate: 7, dxy: 7, nasdaq: 7, ex_reserve: 5, ex_netflow: 5, treasury: 3, strategy: 3 };
 latest.indicators = {};
 for (const d of defs) {
   const x = ind[d.id], src = srcOf[d.id] || 'price';
-  let age = (ageOf[d.id]?.age?.[L] ?? 0) + (LAG[lagOf[d.id]] || 0);
+  let age = (ageOf[d.id]?.age?.[L] ?? 0) + (lagOf[d.id] ? (LAG_HIST[lagOf[d.id]] ?? LAG[lagOf[d.id]] ?? 0) : 0);
   if (lastReal[d.id]) age = Math.round((Date.parse(cal[L]) - Date.parse(lastReal[d.id])) / 86400000);
   if (macroAsOf[d.id]) age = Math.max(0, Math.round((Date.parse(cal[L]) - Date.parse(macroAsOf[d.id])) / 86400000));
   const ok = !!x && age <= (maxAge[d.id] ?? 14);
@@ -546,7 +572,8 @@ latest.date = today; latest.updatedAt = nowISO; latest.btcPrice = Math.round(clo
 latest.index = cycleIndex(L);
 latest.indexZone = indexZone(config, latest.index)?.name ?? null;
 latest.bgCalls = bgCalls;
-latest.lags = LAG;
+latest.lags = LAG; latest.lagsHist = LAG_HIST;
+latest.etfSources = { tftc: etfSrc.lastTftc || null, cmc: etfSrc.cmc, bg: S.etf.at(-1)?.[0] || null, prelim: etfSrc.prelim || [], check: etfSrc.check || [] };
 latest.arb = MK.arb;
 latest.events = upcomingEvents((await read('config/events.json', { events: [] })).events, nowISO, 8);
 latest.ethPrice = now.ethPrice ?? latest.ethPrice ?? null;
