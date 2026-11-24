@@ -1,4 +1,4 @@
-import { scoreAll, scoreRule, ruleMax, parts, streak, decide, indexZone, levelFor, signalBoard } from './scoring.js?v=__V__';
+import { scoreAll, scoreRule, ruleMax, parts, streak, decide, indexZone, levelFor, signalBoard, positionStats } from './scoring.js?v=__V__';
 
 const app = document.getElementById('app');
 const S = { config: null, latest: null, history: [], charts: [], sc: null, bt: [], rows: [] };
@@ -57,6 +57,7 @@ async function load() {
     cbsConfirm: S.sc.cbs.confirm.pct, ctsConfirm: S.sc.cts.confirm.pct, ma50w: lastBt?.ma50w ?? null, etf30p: lastBt?.etf30p ?? null, ethPct: S.latest.indicators.ethbtc?.fields?.p ?? lastBt?.ethPct ?? null }]);
   S.dec = decide(S.config, S.sc, S.rows, S.latest.index);
   try { S.sig = signalBoard(S.config, S.rows); } catch (e) { console.warn(e); S.sig = null; }
+  try { S.ps = positionStats(S.config, S.rows, S.dec.ledger); } catch (e) { console.warn(e); S.ps = null; }
 }
 
 // 判讀區間（bands）：依數值落在哪一段給出文字判讀
@@ -345,6 +346,7 @@ function posBlock(d) {
       </div>
       <div class="pos-bar2"><i class="s" style="width:${spot}%"></i><i class="p" style="width:${pool}%"></i></div>
       <div class="pos-src">${src}</div>
+      ${S.ps ? `<div class="pos-cost"><span>指標持倉均價 <b class="mono">$${S.ps.avg.toLocaleString('en-US')}</b></span><span>持倉盈虧 <b class="mono ${S.ps.pnl >= 0 ? 'up-c' : 'dn-c'}">${S.ps.pnl > 0 ? '+' : ''}${S.ps.pnl}%</b></span><span class="sub">依 ${esc(S.ps.from)} 起全部操作計算</span></div>` : ''}
       ${resetHint(d) ? `<div class="pos-meta sub">${resetHint(d)}</div>` : ''}
       <a class="calc-link" href="#calc">用計算工具換算要買賣多少 →</a>
     </div>
@@ -719,6 +721,7 @@ function reviewCard() {
       <div><span class="sub">失效條件被觸發</span><b class="mono">${J.invalidatedRate != null ? J.invalidatedRate + '%' : '—'}</b><span class="sub">越低代表停損位設得合理</span></div>
       ${sys ? `<div><span class="sub">系統目前回撤</span><b class="mono">${sys.drawdownNow}%</b><span class="sub">回測最大 ${sys.maxDrawdown}%（${esc(sys.maxDrawdownAt)}）</span></div>
       <div><span class="sub">回測現貨比例</span><b class="mono">${sys.spotWeight}%</b><span class="sub">依目前規則重算</span></div>` : ''}
+      ${S.ps ? `<div><span class="sub">指標持倉均價／盈虧</span><b class="mono">$${S.ps.avg.toLocaleString('en-US')} / ${S.ps.pnl > 0 ? '+' : ''}${S.ps.pnl}%</b><span class="sub">${esc(S.ps.from)} 起全部操作・資金 ${S.ps.multiple} 倍</span></div>` : ''}
     </div>
     ${J.recent?.length ? `<h4>最近的判斷</h4><div class="tbl-wrap"><table><thead><tr><th>日期</th><th>短線偏向</th><th>信心</th><th>當時價格</th><th>期限</th><th>目標／失效</th><th>最大有利／不利</th><th>目前／到期漲跌</th><th>結果</th></tr></thead><tbody>
       ${J.recent.map(j => `<tr><td class="mono">${esc(j.date.slice(5))}</td><td><span class="chip band ${biasCls(j.bias)}">${esc(j.bias)}</span></td><td>${esc(j.confidence || '')}</td><td class="mono">${money(j.price)}</td><td class="mono">${j.horizonDays ?? R.horizonDays} 天</td><td class="mono">${lv(j)}</td><td class="mono">${j.mfe != null ? '+' + j.mfe + '%' : '—'} / ${j.mae != null ? '−' + j.mae + '%' : '—'}</td><td class="mono">${pct(j.ret7)}</td><td>${mark(j)}${j.invalidated && j.status !== '失誤' ? ' <span class="sub">之後碰到失效價</span>' : ''}</td></tr>`).join('')}</tbody></table></div>

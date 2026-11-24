@@ -103,6 +103,8 @@ function signalBlock(latest, cur, prev) {
   if (g.cycleSell) L.push(`・本輪減倉最高到${esc(g.cycleSell.label)}（${g.cycleSell.start} 起）→ 現貨參考不超過 ${g.cycleSell.target}%`);
   const near = (g.progress || []).filter(x => !x.active).slice(0, 1).concat((g.progress || []).filter(x => !x.active && x.side === 'sell').slice(0, 1));
   if (!on.length && near.length) L.push(...near.map(x => `・${esc(x.label)}進度：${x.progress.map(esc).join('；')}`));
+  const ps = latest.positionStats;
+  if (ps) L.push(`・指標持倉均價 ${usd(ps.avg)}・盈虧 ${ps.pnl > 0 ? '+' : ''}${ps.pnl}%（${ps.from} 起全部操作）`);
   return { head, body: `\n<b>進出場訊號</b>（不分進場時間，對照自己的倉位）\n${L.join('\n')}` };
 }
 function digest(latest, hist, config, combos) {

@@ -2,7 +2,7 @@
 // 做法：把每個來源的「歷史序列」快取在 data/series/，每次執行用同一套邏輯逐日重算所有指標與評分。
 // 好處：今天的數值和回測用的是完全相同的計算；改了門檻，下次執行回測就會跟著更新。
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { scoreAll, indexZone, decide, signalBoard } from '../assets/scoring.js';
+import { scoreAll, indexZone, decide, signalBoard, positionStats } from '../assets/scoring.js';
 import { buildLiqMap, buildLiqMapMulti } from './liqmap.mjs';
 import { fetchMarket } from './market.mjs';
 import { fetchMacro, upcomingEvents } from './macro.mjs';
@@ -602,6 +602,7 @@ const entry = {
   const d = decide(config, s, rows, latest.index);
   entry.decision = { tone: d.tone, title: d.title, action: d.action, notes: d.notes, target: d.target, last: d.position?.last ? { date: d.position.last.date, label: d.position.last.label, target: d.position.last.target, type: d.position.last.type } : null };
   latest.ledger = d.ledger;
+  try { latest.positionStats = positionStats(config, rows, d.ledger); } catch (e) { console.warn('持倉均價計算失敗：', e.message); }
   // 進出場訊號（不分進場時間）：給推播與日報使用
   try { const g = signalBoard(config, rows); entry.signals = g.active; latest.signals = { date: g.date, active: g.active, cycleBuy: g.cycleBuy, cycleSell: g.cycleSell, recent: g.recent, progress: g.items.filter(x => x.side !== 'trend').map(x => ({ side: x.side, label: x.label, target: x.target, active: x.active, progress: x.progress })) }; } catch (e) { console.warn('訊號看板失敗：', e.message); }
 }

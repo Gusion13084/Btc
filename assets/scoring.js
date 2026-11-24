@@ -350,3 +350,23 @@ export function signalBoard(config, rows, { gap = 7 } = {}) {
   const recent = items.flatMap(x => x.episodes.filter(e => !e.ongoing && e.end >= cut).map(e => ({ side: x.side, label: x.label, target: x.target, ...e })));
   return { date: rows[i].date, items, active: active.map(x => ({ side: x.side, label: x.label, target: x.target, since: x.since, sincePrice: x.sincePrice, via: x.via })), topBuy: topBuy && { label: topBuy.label, target: topBuy.target, since: topBuy.since }, topSell: topSell && { label: topSell.label, target: topSell.target, since: topSell.since }, cycleBuy, cycleSell, recent };
 }
+
+// ---------- 指標持倉：依全部操作紀錄（回測起點至今）計算持倉均價與盈虧 ----------
+// 起點以起始現貨比例買入；每一批補到／降到目標比例；套利池依年化複利。
+// 均價用平均成本法：買入時加權平均，減倉時賣出部分按均價扣除，均價不變。
+export function positionStats(config, rows, ledger) {
+  if (!rows?.length) return null;
+  const ev = new Map(); for (const l of ledger || []) (ev.get(l.date) || ev.set(l.date, []).get(l.date)).push(l);
+  const apy = Math.pow(1 + (config.position?.poolApy ?? 8) / 100, 1 / 365), st = config.position?.start ?? 30;
+  let btc = st / 100 / rows[0].price, cash = 1 - st / 100, cost = st / 100, realized = 0;
+  for (const r of rows) {
+    cash *= apy;
+    for (const l of ev.get(r.date) || []) {
+      const sp = btc * r.price, w = (sp + cash) * l.target / 100;
+      if (l.type === 'buy' && sp < w) { const m = Math.min(cash, w - sp); btc += m / r.price; cash -= m; cost += m; }
+      if (l.type === 'sell' && sp > w) { const m = sp - w, q = m / r.price, avg = cost / btc; realized += m - q * avg; cost -= q * avg; btc -= q; cash += m; }
+    }
+  }
+  const last = rows.at(-1), avg = cost / btc, total = btc * last.price + cash;
+  return { date: last.date, price: last.price, avg: Math.round(avg), pnl: +((last.price / avg - 1) * 100).toFixed(1), spot: +(btc * last.price / total * 100).toFixed(1), multiple: +total.toFixed(3), from: rows[0].date, realizedPct: +(realized * 100).toFixed(1) };
+}
