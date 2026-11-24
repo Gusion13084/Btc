@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-23T16:37:51.925Z",
- "date": "2026-11-23",
+ "generatedAt": "2026-11-24T02:10:16.627Z",
+ "date": "2026-11-24",
  "horizonDays": 7,
  "journal": {
   "method": "first-touch",
@@ -48,12 +48,12 @@
   },
   "direction": {
    "d1": {
-    "n": 1,
+    "n": 2,
     "rate": 100
    },
    "d3": {
     "n": 1,
-    "rate": 0
+    "rate": 100
    },
    "horizon": {
     "n": 0,
@@ -125,8 +125,8 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": 3.2,
-    "ret1": null,
+    "ret7": 0.4,
+    "ret1": 0.4,
     "ret3": null,
     "mfe": 6.3,
     "mae": 0.7,
@@ -153,8 +153,8 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 4.5,
-    "ret1": 4.5,
+    "ret7": 1.6,
+    "ret1": 2.1,
     "ret3": null,
     "mfe": null,
     "mae": null,
@@ -181,9 +181,9 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": 6.4,
+    "ret7": 3.4,
     "ret1": 3.8,
-    "ret3": null,
+    "ret3": 3.4,
     "mfe": null,
     "mae": null,
     "hi": 64520.3,
@@ -209,9 +209,9 @@
     "resolvedAt": "2026-11-20",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": 1.1,
+    "ret7": -1.6,
     "ret1": -3,
-    "ret3": 1.1,
+    "ret3": -1.2,
     "mfe": 11.1,
     "mae": 4.2,
     "hi": 64520.3,
@@ -246,8 +246,8 @@
    "name": "恐懼貪婪指數",
    "band": "極度恐懼",
    "tone": "buy",
-   "n": 4,
-   "avg7": -7.4,
+   "n": 5,
+   "avg7": -7.6,
    "up7": 0
   },
   {
@@ -264,8 +264,8 @@
    "name": "DVOL 隱含波動率",
    "band": "正常",
    "tone": "neutral",
-   "n": 7,
-   "avg7": -9.5,
+   "n": 8,
+   "avg7": -9.3,
    "up7": 0
   },
   {
@@ -273,8 +273,8 @@
    "name": "期權偏斜（約 30 天 ±10%）",
    "band": "避險需求偏高",
    "tone": "buy",
-   "n": 6,
-   "avg7": -10.8,
+   "n": 7,
+   "avg7": -10.4,
    "up7": 0
   },
   {
@@ -291,8 +291,8 @@
    "name": "Put/Call 未平倉比",
    "band": "中性",
    "tone": "neutral",
-   "n": 12,
-   "avg7": -10.6,
+   "n": 13,
+   "avg7": -10.5,
    "up7": 0
   },
   {
@@ -300,8 +300,8 @@
    "name": "期現價差年化（基差）",
    "band": "正常",
    "tone": "neutral",
-   "n": 12,
-   "avg7": -10.6,
+   "n": 13,
+   "avg7": -10.5,
    "up7": 0
   },
   {
@@ -318,8 +318,8 @@
    "name": "資金費率年化（即時）",
    "band": "偏低",
    "tone": "neutral",
-   "n": 1,
-   "avg7": -3.3,
+   "n": 2,
+   "avg7": -5.8,
    "up7": 0
   },
   {
@@ -327,8 +327,8 @@
    "name": "Coinbase 溢價",
    "band": "中性",
    "tone": "neutral",
-   "n": 12,
-   "avg7": -10.6,
+   "n": 13,
+   "avg7": -10.5,
    "up7": 0
   }
  ],
@@ -341,8 +341,8 @@
     "name": "恐懼貪婪指數",
     "band": "極度恐懼",
     "tone": "buy",
-    "n": 4,
-    "avg7": -7.4,
+    "n": 5,
+    "avg7": -7.6,
     "up7": 0,
     "agree": false
    },
@@ -361,8 +361,8 @@
     "name": "期權偏斜（約 30 天 ±10%）",
     "band": "避險需求偏高",
     "tone": "buy",
-    "n": 6,
-    "avg7": -10.8,
+    "n": 7,
+    "avg7": -10.4,
     "up7": 0,
     "agree": false
    },
@@ -379,34 +379,34 @@
   ]
  },
  "system": {
-  "from": "2022-11-11",
-  "multiple": 3.559,
-  "maxDrawdown": 30.5,
+  "from": "2022-11-12",
+  "multiple": 3.619,
+  "maxDrawdown": 30,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 26.6,
+  "drawdownNow": 27.3,
   "spotWeight": 64.6,
-  "price": 62656
+  "price": 60925
  },
  "ledger": [
   {
-   "date": "2022-11-13",
+   "date": "2022-11-14",
    "type": "buy",
    "label": "第一批・預警進場",
-   "price": 16776,
+   "price": 16310,
    "target": 45
   },
   {
-   "date": "2022-11-20",
+   "date": "2022-11-21",
    "type": "buy",
    "label": "第二批・確認加碼",
-   "price": 16688,
+   "price": 16260,
    "target": 65
   },
   {
-   "date": "2024-03-08",
+   "date": "2024-03-09",
    "type": "sell",
    "label": "第一批・試探減倉",
-   "price": 66937,
+   "price": 68307,
    "target": 70
   },
   {
@@ -424,6 +424,87 @@
    "target": 35
   },
   {
+   "date": "2026-02-24",
+   "type": "buy",
+   "label": "第一批・預警進場（機構資金路線）",
+   "price": 64062,
+   "target": 45
+  },
+  {
+   "date": "2026-06-26",
+   "type": "buy",
+   "label": "第二批・確認加碼（機構資金路線）",
+   "price": 60009,
+   "target": 65
+  }
+ ],
+ "ledgerChanges": [
+  {
+   "change": "新增",
+   "date": "2022-11-14",
+   "type": "buy",
+   "label": "第一批・預警進場",
+   "price": 16310,
+   "target": 45
+  },
+  {
+   "change": "新增",
+   "date": "2022-11-21",
+   "type": "buy",
+   "label": "第二批・確認加碼",
+   "price": 16260,
+   "target": 65
+  },
+  {
+   "change": "新增",
+   "date": "2024-03-09",
+   "type": "sell",
+   "label": "第一批・試探減倉",
+   "price": 68307,
+   "target": 70
+  },
+  {
+   "change": "新增",
+   "date": "2026-02-24",
+   "type": "buy",
+   "label": "第一批・預警進場（機構資金路線）",
+   "price": 64062,
+   "target": 45
+  },
+  {
+   "change": "新增",
+   "date": "2026-06-26",
+   "type": "buy",
+   "label": "第二批・確認加碼（機構資金路線）",
+   "price": 60009,
+   "target": 65
+  },
+  {
+   "change": "消失",
+   "date": "2022-11-13",
+   "type": "buy",
+   "label": "第一批・預警進場",
+   "price": 16776,
+   "target": 45
+  },
+  {
+   "change": "消失",
+   "date": "2022-11-20",
+   "type": "buy",
+   "label": "第二批・確認加碼",
+   "price": 16688,
+   "target": 65
+  },
+  {
+   "change": "消失",
+   "date": "2024-03-08",
+   "type": "sell",
+   "label": "第一批・試探減倉",
+   "price": 66937,
+   "target": 70
+  },
+  {
+   "change": "消失",
    "date": "2026-02-23",
    "type": "buy",
    "label": "第一批・預警進場（機構資金路線）",
@@ -431,6 +512,7 @@
    "target": 45
   },
   {
+   "change": "消失",
    "date": "2026-06-10",
    "type": "buy",
    "label": "第二批・確認加碼（機構資金路線）",
@@ -438,8 +520,92 @@
    "target": 65
   }
  ],
- "ledgerChanges": [],
  "changeLog": [
+  {
+   "date": "2026-11-24",
+   "changes": [
+    {
+     "change": "新增",
+     "date": "2022-11-14",
+     "type": "buy",
+     "label": "第一批・預警進場",
+     "price": 16310,
+     "target": 45
+    },
+    {
+     "change": "新增",
+     "date": "2022-11-21",
+     "type": "buy",
+     "label": "第二批・確認加碼",
+     "price": 16260,
+     "target": 65
+    },
+    {
+     "change": "新增",
+     "date": "2024-03-09",
+     "type": "sell",
+     "label": "第一批・試探減倉",
+     "price": 68307,
+     "target": 70
+    },
+    {
+     "change": "新增",
+     "date": "2026-02-24",
+     "type": "buy",
+     "label": "第一批・預警進場（機構資金路線）",
+     "price": 64062,
+     "target": 45
+    },
+    {
+     "change": "新增",
+     "date": "2026-06-26",
+     "type": "buy",
+     "label": "第二批・確認加碼（機構資金路線）",
+     "price": 60009,
+     "target": 65
+    },
+    {
+     "change": "消失",
+     "date": "2022-11-13",
+     "type": "buy",
+     "label": "第一批・預警進場",
+     "price": 16776,
+     "target": 45
+    },
+    {
+     "change": "消失",
+     "date": "2022-11-20",
+     "type": "buy",
+     "label": "第二批・確認加碼",
+     "price": 16688,
+     "target": 65
+    },
+    {
+     "change": "消失",
+     "date": "2024-03-08",
+     "type": "sell",
+     "label": "第一批・試探減倉",
+     "price": 66937,
+     "target": 70
+    },
+    {
+     "change": "消失",
+     "date": "2026-02-23",
+     "type": "buy",
+     "label": "第一批・預警進場（機構資金路線）",
+     "price": 64624,
+     "target": 45
+    },
+    {
+     "change": "消失",
+     "date": "2026-06-10",
+     "type": "buy",
+     "label": "第二批・確認加碼（機構資金路線）",
+     "price": 61464,
+     "target": 65
+    }
+   ]
+  },
   {
    "date": "2026-11-21",
    "changes": [
