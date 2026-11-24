@@ -1,0 +1,104 @@
+{
+ "date": "2026-11-24",
+ "snapshotAt": "2026-11-24T02:07:55.957Z",
+ "price": 60925,
+ "bias": "偏空",
+ "confidence": "低",
+ "horizonDays": 3,
+ "horizonReason": "週三 PCE 與感恩節薄量交易是短線掃多單的催化劑，若要下掃應在 3 天內發生",
+ "target": {
+  "price": 58500
+ },
+ "cycleCall": "熊市後段、深度低估區，5 個組合信號成立，數月尺度對持有者有利但底部仍在構築",
+ "summary": "近距多單清算密集、資金逆風，3 天內下掃 58,500",
+ "reasons": [
+  {
+   "id": "liq",
+   "value": "±5% 內多單清算 4.98 億 vs 空單 0.85 億（約 5.9 倍），最大多單區 $58,500（-4%）",
+   "claim": "近距離只有多單可掃，短線較可能先往下"
+  },
+  {
+   "id": "lsr",
+   "value": "多空帳戶比 2.18 → 2.81（多頭帳戶約 74%），Coinbase 7 天內 71% 時間折價",
+   "claim": "反彈後散戶又擠回多單，但現貨買盤沒跟上"
+  },
+  {
+   "id": "etf_flow",
+   "value": "近 30 日 -67,054 BTC（p30 1.8%），上週淨流出約 18 億美元",
+   "claim": "機構持續撤出，反彈缺乏資金支撐"
+  },
+  {
+   "id": "news",
+   "value": "FedWatch 12 月升息機率約 96%；美股單日 +6.5% 時 BTC 僅 +0.08%",
+   "claim": "總經逆風且 BTC 對利多反應遲鈍"
+  }
+ ],
+ "invalidation": {
+  "above": 64600,
+  "below": null
+ },
+ "system": {
+  "decision": "已完成第二批・確認加碼",
+  "floor": 65,
+  "cap": null
+ },
+ "macroWind": "逆風",
+ "combosActive": [
+  "槓桿出清",
+  "投降共振",
+  "情緒＋估值",
+  "期權恐慌",
+  "機構投降＋低估"
+ ],
+ "news": [
+  {
+   "title": "FedWatch 顯示 12 月升息機率約 96%，Ackman 警告升息恐引發衰退",
+   "source": "Fox Business",
+   "date": "2026-11-23",
+   "url": "https://www.foxbusiness.com/economy/bill-ackman-says-federal-reserve-about-make-another-mistake",
+   "impact": "偏空",
+   "note": "升息幾乎確定，美元與實質利率走強壓抑 BTC"
+  },
+  {
+   "title": "美股大漲但 BTC 原地踏步，上週現貨 ETF 淨流出約 18 億美元",
+   "source": "Motley Fool",
+   "date": "2026-11-23",
+   "url": "https://fool.com/coverage/stock-market-today/2026/11/23/crypto-market-today-nov-23-bitcoin-sits-out-wall-street-s-historic-rally-as-usd1-8-billion-etf-exodus-weighs-on-prices",
+   "impact": "偏空",
+   "note": "風險偏好回升帶不動 BTC，機構持續撤出"
+  },
+  {
+   "title": "BTC 衝上 $64,603 後回落，反彈屬空單回補",
+   "source": "crypto.news",
+   "date": "2026-11-23",
+   "url": "https://crypto.news/bitcoin-rally-fades-short-squeeze-64k/",
+   "impact": "偏空",
+   "note": "反彈非新買盤推動，延續性差"
+  },
+  {
+   "title": "Strategy 再買 457 BTC，持倉 851,305 BTC",
+   "source": "The Block",
+   "date": "2026-11-23",
+   "url": "https://www.theblock.co/news/business/2026-11-23-the-dots-arent-done-michael-saylor-bitcoin-444907",
+   "impact": "中性",
+   "note": "持續買進但規模小，資金多用於回購優先股"
+  },
+  {
+   "title": "BTC 跌至 $55,106 後終結連續 18 天高點更低",
+   "source": "CoinDesk",
+   "date": "2026-11-23",
+   "url": "https://www.coindesk.com/markets/2026/11/23/bitcoin-breaks-a-record-streak-of-lower-highs-here-s-what-it-means",
+   "impact": "中性",
+   "note": "下跌動能初步鈍化"
+  },
+  {
+   "title": "美國司法部追討幣安被駭案約 10 億美元 USDC",
+   "source": "crypto.news",
+   "date": "2026-11-23",
+   "url": "https://crypto.news/binance-hack-usdc-forfeiture/",
+   "impact": "中性",
+   "note": "追回贓款降低賣壓疑慮，交易所風險仍在"
+  }
+ ],
+ "report": "https://docs.google.com/document/d/1LKA5oO85adzMX2ACQdGne_5ATEko7Py5_oyxxvTAfk4/edit"
+}
