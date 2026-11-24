@@ -711,7 +711,6 @@ function reviewCard() {
   const O = J.outcomes || {};
   const biasCls = b => b === '偏多' ? 'buy' : b === '偏空' ? 'sell' : 'neu';
   const sig = (R.signals || []).filter(x => x.n >= 3).sort((a, b) => b.n - a.n).slice(0, 12);
-  const chg = (R.changeLog || [])[0];
   return `<section class="panel rv">
     <div class="panel-head"><h3 style="font-size:16px">判斷檢討</h3><span class="sub">每天追蹤日報判斷，看價格先碰到目標價還是失效價；每週盤點一整週的判斷，整理修正提案，經你同意才改動</span></div>
     <div class="rv-k">
@@ -721,7 +720,6 @@ function reviewCard() {
       ${sys ? `<div><span class="sub">系統目前回撤</span><b class="mono">${sys.drawdownNow}%</b><span class="sub">回測最大 ${sys.maxDrawdown}%（${esc(sys.maxDrawdownAt)}）</span></div>
       <div><span class="sub">回測現貨比例</span><b class="mono">${sys.spotWeight}%</b><span class="sub">依目前規則重算</span></div>` : ''}
     </div>
-    ${chg ? `<div class="rv-warn"><b>⚠ ${esc(chg.date)} 回測操作點位有變動</b>：${chg.changes.map(c => `${c.change} ${esc(c.date)} ${esc(c.label)}（$${c.price.toLocaleString('en-US')}，${c.type === 'buy' ? '提高到' : '降到'} ${c.target}%）`).join('；')}。原因通常是來源修正歷史數據或延遲改變，已執行的操作不受影響。</div>` : ''}
     ${J.recent?.length ? `<h4>最近的判斷</h4><div class="tbl-wrap"><table><thead><tr><th>日期</th><th>短線偏向</th><th>信心</th><th>當時價格</th><th>期限</th><th>目標／失效</th><th>最大有利／不利</th><th>目前／到期漲跌</th><th>結果</th></tr></thead><tbody>
       ${J.recent.map(j => `<tr><td class="mono">${esc(j.date.slice(5))}</td><td><span class="chip band ${biasCls(j.bias)}">${esc(j.bias)}</span></td><td>${esc(j.confidence || '')}</td><td class="mono">${money(j.price)}</td><td class="mono">${j.horizonDays ?? R.horizonDays} 天</td><td class="mono">${lv(j)}</td><td class="mono">${j.mfe != null ? '+' + j.mfe + '%' : '—'} / ${j.mae != null ? '−' + j.mae + '%' : '—'}</td><td class="mono">${pct(j.ret7)}</td><td>${mark(j)}${j.invalidated && j.status !== '失誤' ? ' <span class="sub">之後碰到失效價</span>' : ''}</td></tr>`).join('')}</tbody></table></div>
       <p class="sub">判定：用每日 K 線最高／最低價逐日檢查。偏多／偏空先碰到目標價＝成功、先碰到失效價＝失誤，期限內都沒碰到＝未達；中性在期限內沒碰到上下失效價＝成功。同一天兩邊都碰到無法分辨先後，不計入命中率。期限由每天的日報依判斷內容決定。</p>` : '<p class="sub">日報判斷從明天起開始記錄。</p>'}
