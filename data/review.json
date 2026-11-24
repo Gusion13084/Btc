@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-24T02:30:19.433Z",
+ "generatedAt": "2026-11-24T12:54:15.753Z",
  "date": "2026-11-24",
  "horizonDays": 7,
  "journal": {
@@ -61,7 +61,7 @@
    }
   },
   "avgMfe": 8.7,
-  "avgMae": 2.5,
+  "avgMae": 3.3,
   "avgDaysToResolve": 0.7,
   "byIndicator": [
    {
@@ -125,13 +125,13 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -0.4,
+    "ret7": -0.9,
     "ret1": null,
     "ret3": null,
-    "mfe": 0.9,
+    "mfe": 2.6,
     "mae": 1.1,
     "hi": 61592.2,
-    "lo": 60392.1,
+    "lo": 59314.1,
     "hit": null,
     "invalidated": false,
     "intraday": true
@@ -153,13 +153,13 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": 0,
-    "ret1": 0,
+    "ret7": -0.6,
+    "ret1": -0.6,
     "ret3": null,
     "mfe": 6.3,
-    "mae": 0.7,
+    "mae": 2.3,
     "hi": 64520.3,
-    "lo": 60267.6,
+    "lo": 59314.1,
     "hit": true,
     "invalidated": false,
     "intraday": true
@@ -181,7 +181,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 1.2,
+    "ret7": 0.7,
     "ret1": 2.1,
     "ret3": null,
     "mfe": null,
@@ -209,9 +209,9 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": 3.1,
+    "ret7": 2.5,
     "ret1": 3.8,
-    "ret3": 3.1,
+    "ret3": 2.5,
     "mfe": null,
     "mae": null,
     "hi": 64520.3,
@@ -237,7 +237,7 @@
     "resolvedAt": "2026-11-20",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -2,
+    "ret7": -2.5,
     "ret1": -3,
     "ret3": -1.2,
     "mfe": 11.1,
@@ -275,7 +275,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 5,
-   "avg7": -7.7,
+   "avg7": -7.8,
    "up7": 0
   },
   {
@@ -302,7 +302,7 @@
    "band": "避險需求偏高",
    "tone": "buy",
    "n": 7,
-   "avg7": -10.5,
+   "avg7": -10.6,
    "up7": 0
   },
   {
@@ -347,7 +347,7 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 2,
-   "avg7": -6,
+   "avg7": -6.2,
    "up7": 0
   },
   {
@@ -370,7 +370,7 @@
     "band": "極度恐懼",
     "tone": "buy",
     "n": 5,
-    "avg7": -7.7,
+    "avg7": -7.8,
     "up7": 0,
     "agree": false
    },
@@ -390,7 +390,7 @@
     "band": "避險需求偏高",
     "tone": "buy",
     "n": 7,
-    "avg7": -10.5,
+    "avg7": -10.6,
     "up7": 0,
     "agree": false
    },
@@ -408,12 +408,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.461,
+  "multiple": 3.449,
   "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 28.6,
-  "spotWeight": 63.9,
-  "price": 60702
+  "drawdownNow": 28.9,
+  "spotWeight": 63.8,
+  "price": 60368
  },
  "ledger": [
   {
@@ -466,88 +466,7 @@
    "target": 65
   }
  ],
- "ledgerChanges": [
-  {
-   "change": "新增",
-   "date": "2022-11-13",
-   "type": "buy",
-   "label": "第一批・預警進場",
-   "price": 16776,
-   "target": 45
-  },
-  {
-   "change": "新增",
-   "date": "2022-11-20",
-   "type": "buy",
-   "label": "第二批・確認加碼",
-   "price": 16688,
-   "target": 65
-  },
-  {
-   "change": "新增",
-   "date": "2024-03-08",
-   "type": "sell",
-   "label": "第一批・試探減倉",
-   "price": 66937,
-   "target": 70
-  },
-  {
-   "change": "新增",
-   "date": "2026-02-20",
-   "type": "buy",
-   "label": "第一批・預警進場（機構資金路線）",
-   "price": 67998,
-   "target": 45
-  },
-  {
-   "change": "新增",
-   "date": "2026-06-10",
-   "type": "buy",
-   "label": "第二批・確認加碼（機構資金路線）",
-   "price": 61464,
-   "target": 65
-  },
-  {
-   "change": "消失",
-   "date": "2022-11-14",
-   "type": "buy",
-   "label": "第一批・預警進場",
-   "price": 16310,
-   "target": 45
-  },
-  {
-   "change": "消失",
-   "date": "2022-11-21",
-   "type": "buy",
-   "label": "第二批・確認加碼",
-   "price": 16260,
-   "target": 65
-  },
-  {
-   "change": "消失",
-   "date": "2024-03-09",
-   "type": "sell",
-   "label": "第一批・試探減倉",
-   "price": 68307,
-   "target": 70
-  },
-  {
-   "change": "消失",
-   "date": "2026-02-24",
-   "type": "buy",
-   "label": "第一批・預警進場（機構資金路線）",
-   "price": 64062,
-   "target": 45
-  },
-  {
-   "change": "消失",
-   "date": "2026-06-26",
-   "type": "buy",
-   "label": "第二批・確認加碼（機構資金路線）",
-   "price": 60009,
-   "target": 65
-  }
- ],
+ "ledgerChanges": [],
  "changeLog": [
   {
    "date": "2026-11-24",
