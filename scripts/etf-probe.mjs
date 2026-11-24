@@ -2,17 +2,15 @@
 import { writeFile, mkdir } from 'node:fs/promises';
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
 const T = [
-  ['bitbo', 'https://bitbo.io/treasuries/etf-flows/'],
-  ['farside_all', 'https://farside.co.uk/bitcoin-etf-flow-all-data/'],
-  ['farside_btc', 'https://farside.co.uk/btc/'],
-  ['tftc_month', 'https://www.tftc.io/bitcoin-etf-flows/november-2026'],
-  ['tftc_today', 'https://www.tftc.io/bitcoin-etf-flows'],
-  ['cmc', 'https://api.coinmarketcap.com/data-api/v3/etf/overview/netflow/chart?category=btc&range=30d'],
-  ['cmc2', 'https://api.coinmarketcap.com/data-api/v3/etf/overview/netflow/chart?category=btc'],
-  ['theblock', 'https://www.theblock.co/api/charts/chart/crypto-markets/spot/spot-bitcoin-etf-flows'],
-  ['sosovalue', 'https://api.sosovalue.xyz/openapi/v2/etf/historicalInflowChart', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ type: 'us-btc-spot' }) }],
-  ['coinglass', 'https://capi.coinglass.com/api/etf/flow'],
-  ['bg_etf', 'https://bitcoin-data.com/v1/etf-flow-btc/last'],
+  ['tftc_data', 'https://www.tftc.io/bitcoin-etf-flows/data.json'],
+  ['tftc_latest', 'https://www.tftc.io/bitcoin-etf-flows/latest.json'],
+  ['tftc_method', 'https://www.tftc.io/bitcoin-etf-flows/methodology'],
+  ['tftc_jun26', 'https://www.tftc.io/bitcoin-etf-flows/june-2026'],
+  ['cmc_all', 'https://api.coinmarketcap.com/data-api/v3/etf/overview/netflow/chart?category=btc&range=all'],
+  ['cmc_1y', 'https://api.coinmarketcap.com/data-api/v3/etf/overview/netflow/chart?category=btc&range=1y'],
+  ['cg_flow', 'https://capi.coinglass.com/api/etf/bitcoin/flow-history'],
+  ['cg_list', 'https://capi.coinglass.com/api/etf/flow/history?symbol=BTC'],
+  ['bg_usd', 'https://bitcoin-data.com/v1/etf-flow-usd/last'],
 ];
 await mkdir('probe', { recursive: true });
 const sum = [];
