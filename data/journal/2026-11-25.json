@@ -1,0 +1,104 @@
+{
+ "date": "2026-11-25",
+ "snapshotAt": "2026-11-25T02:07:56.724Z",
+ "price": 59013,
+ "bias": "偏空",
+ "confidence": "中",
+ "horizonDays": 3,
+ "horizonReason": "下方多單清算區距現價僅 1–4%，感恩節薄量交易容易放大掃單，若要下掃應在 3 天內發生",
+ "target": {
+  "price": 56700
+ },
+ "cycleCall": "熊市後段、深度低估區，5 個組合信號成立，數月尺度對持有者有利但底部仍在構築",
+ "summary": "下方多單清算密集、總經逆風，3 天內下掃 56,700",
+ "reasons": [
+  {
+   "id": "liq",
+   "value": "±5% 內多單清算 6.21 億 vs 空單 1.41 億（4.4 倍），多單區 $58,500／$57,600／$56,700",
+   "claim": "近距離只有多單可掃，短線較可能先往下"
+  },
+  {
+   "id": "etf_flow",
+   "value": "近 7 日 -38,653 BTC、近 30 日 -72,978 BTC（p30 0.9%），連續流出 6 天",
+   "claim": "機構持續撤出，反彈缺乏資金支撐"
+  },
+  {
+   "id": "lsr",
+   "value": "多空帳戶比 2.58 → 2.63（多頭帳戶約 72%）",
+   "claim": "散戶多單仍未洗淨，提供下掃燃料"
+  },
+  {
+   "id": "news",
+   "value": "11 月 ETF 流出創紀錄 47.1 億美元；12 月升息幾乎確定；關稅消息再起",
+   "claim": "消息面與總經同時逆風"
+  }
+ ],
+ "invalidation": {
+  "above": 62500,
+  "below": null
+ },
+ "system": {
+  "decision": "已完成第二批・確認加碼",
+  "floor": 65,
+  "cap": null
+ },
+ "macroWind": "逆風",
+ "combosActive": [
+  "槓桿出清",
+  "投降共振",
+  "情緒＋估值",
+  "期權恐慌",
+  "機構投降＋低估"
+ ],
+ "news": [
+  {
+   "title": "美國現貨 BTC ETF 11 月淨流出 47.1 億美元創單月紀錄，連續 5 天流出",
+   "source": "CoinDesk",
+   "date": "2026-11-24",
+   "url": "https://coindesk.com/daybook-us/2026/11/24/bitcoin-drops-as-november-spot-etf-outflows-increase-to-record-usd4-71-billion",
+   "impact": "偏空",
+   "note": "機構仍在撤出，反彈缺乏增量資金"
+  },
+  {
+   "title": "美國可能本週對中、日、韓等經濟體調高關稅，BTC 跌破 6 萬",
+   "source": "CoinDesk",
+   "date": "2026-11-24",
+   "url": "https://www.coindesk.com/tech/2026/11/24/live-updates-bitcoin-pulls-back-to-usd60-000-as-stock-rally-fails-to-budge-crypto",
+   "impact": "偏空",
+   "note": "關稅重回焦點，風險資產同步承壓"
+  },
+  {
+   "title": "12 月 Fed 升息幾乎確定，Williams 稱通膨仍太高，美元走強",
+   "source": "CoinDesk",
+   "date": "2026-11-24",
+   "url": "https://coindesk.com/daybook-us/2026/11/24/bitcoin-drops-as-november-spot-etf-outflows-increase-to-record-usd4-71-billion",
+   "impact": "偏空",
+   "note": "升息與強美元是最直接的總經逆風"
+  },
+  {
+   "title": "Strategy 再買 457 BTC，總持有 851,305 BTC",
+   "source": "Ted Pillows Substack",
+   "date": "2026-11-24",
+   "url": "https://tedpillows.substack.com/p/crypto-and-finance-market-report-559",
+   "impact": "中性",
+   "note": "仍在買但規模小，撐不住 ETF 流出"
+  },
+  {
+   "title": "CFTC 允許 BTC、ETH 與支付型穩定幣計入交易所與清算機構資本要求",
+   "source": "AMBCrypto",
+   "date": "2026-11-24",
+   "url": "https://ambcrypto.com/no-clarity-act-how-cftc-moves-ahead-with-new-crypto-guidance/",
+   "impact": "偏多",
+   "note": "監管面長期利多，短線影響有限"
+  },
+  {
+   "title": "南韓公布數位資產法草案，解除 ICO 禁令並規範韓元穩定幣",
+   "source": "crypto.news",
+   "date": "2026-11-24",
+   "url": "https://crypto.news/south-korea-crypto-bill-ico-ban-stablecoin-rules",
+   "impact": "中性",
+   "note": "亞洲主要市場監管框架成形，屬中長期消息"
+  }
+ ],
+ "report": "https://docs.google.com/document/d/1jZInTD3V5O34mNYux01mDU_fWWBQcFmEgjkHS4cdbaM/edit"
+}
