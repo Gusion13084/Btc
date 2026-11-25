@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-25T11:40:54.116Z",
+ "generatedAt": "2026-11-25T16:16:35.400Z",
  "date": "2026-11-25",
  "from": "2023-01-30",
  "base": {
@@ -16,8 +16,8 @@
    "conds": [
     {
      "label": "資金費率年化 ≤ 1%",
-     "met": false,
-     "value": "1.0%"
+     "met": true,
+     "value": "0.9%"
     },
     {
      "label": "未平倉量比 90 日高點少 20% 以上",
@@ -27,13 +27,13 @@
     {
      "label": "30 天跌幅超過 10%",
      "met": true,
-     "value": "-27.0%"
+     "value": "-26.7%"
     }
    ],
-   "met": 2,
+   "met": 3,
    "total": 3,
-   "active": false,
-   "since": null,
+   "active": true,
+   "since": "2026-11-25",
    "stats": {
     "events": 6,
     "avg7": 1.8,
@@ -101,7 +101,7 @@
     {
      "label": "獲利籌碼 < 55%",
      "met": true,
-     "value": "46.3%"
+     "value": "44.6%"
     },
     {
      "label": "恐懼貪婪 ≤ 20",
@@ -162,7 +162,7 @@
     {
      "label": "MVRV Z-Score ≤ 1",
      "met": true,
-     "value": "0.37"
+     "value": "0.31"
     }
    ],
    "met": 2,
@@ -212,7 +212,7 @@
     {
      "label": "14 天跌幅超過 10%",
      "met": true,
-     "value": "-21.0%"
+     "value": "-20.7%"
     }
    ],
    "met": 2,
@@ -274,7 +274,7 @@
     {
      "label": "週期指數 < 20",
      "met": true,
-     "value": "13.2"
+     "value": "13.0"
     }
    ],
    "met": 2,
