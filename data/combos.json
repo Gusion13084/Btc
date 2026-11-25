@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-25T02:10:13.510Z",
+ "generatedAt": "2026-11-25T11:40:54.116Z",
  "date": "2026-11-25",
  "from": "2023-01-30",
  "base": {
@@ -16,8 +16,8 @@
    "conds": [
     {
      "label": "資金費率年化 ≤ 1%",
-     "met": true,
-     "value": "0.8%"
+     "met": false,
+     "value": "1.0%"
     },
     {
      "label": "未平倉量比 90 日高點少 20% 以上",
@@ -27,13 +27,13 @@
     {
      "label": "30 天跌幅超過 10%",
      "met": true,
-     "value": "-26.2%"
+     "value": "-27.0%"
     }
    ],
-   "met": 3,
+   "met": 2,
    "total": 3,
-   "active": true,
-   "since": "2026-11-25",
+   "active": false,
+   "since": null,
    "stats": {
     "events": 6,
     "avg7": 1.8,
@@ -96,7 +96,7 @@
     {
      "label": "短期持有者成本線 < 0.85",
      "met": true,
-     "value": "0.80"
+     "value": "0.79"
     },
     {
      "label": "獲利籌碼 < 55%",
@@ -207,12 +207,12 @@
     {
      "label": "DVOL 在一年 80% 百分位以上",
      "met": true,
-     "value": "90.4%"
+     "value": "97.3%"
     },
     {
      "label": "14 天跌幅超過 10%",
      "met": true,
-     "value": "-20.2%"
+     "value": "-21.0%"
     }
    ],
    "met": 2,
@@ -274,7 +274,7 @@
     {
      "label": "週期指數 < 20",
      "met": true,
-     "value": "13.5"
+     "value": "13.2"
     }
    ],
    "met": 2,

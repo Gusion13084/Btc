@@ -1,24 +1,24 @@
 {
- "generatedAt": "2026-11-25T02:10:13.626Z",
+ "generatedAt": "2026-11-25T11:40:54.232Z",
  "date": "2026-11-25",
  "horizonDays": 7,
  "journal": {
   "method": "first-touch",
-  "total": 5,
-  "matured": 3,
-  "scored": 3,
-  "hitRate": 66.7,
+  "total": 6,
+  "matured": 4,
+  "scored": 4,
+  "hitRate": 75,
   "outcomes": {
-   "成功": 2,
+   "成功": 3,
    "失誤": 1,
    "未達": 0,
    "同日觸及": 0,
    "進行中": 2
   },
-  "invalidatedRate": 33.3,
+  "invalidatedRate": 25,
   "byBias": {
    "偏空": {
-    "n": 1,
+    "n": 2,
     "hitRate": 100
    },
    "中性": {
@@ -32,8 +32,8 @@
   },
   "byConfidence": {
    "低": {
-    "n": 3,
-    "hitRate": 66.7
+    "n": 4,
+    "hitRate": 75
    }
   },
   "byHorizon": {
@@ -42,6 +42,10 @@
     "hitRate": 50
    },
    "4 天": {
+    "n": 1,
+    "hitRate": 100
+   },
+   "3 天": {
     "n": 1,
     "hitRate": 100
    }
@@ -60,21 +64,27 @@
     "rate": null
    }
   },
-  "avgMfe": 8.7,
-  "avgMae": 3.5,
-  "avgDaysToResolve": 0.7,
+  "avgMfe": 7.2,
+  "avgMae": 3,
+  "avgDaysToResolve": 0.8,
   "byIndicator": [
    {
     "id": "liq",
     "name": "多空清算",
-    "n": 3,
-    "hitRate": 66.7
+    "n": 4,
+    "hitRate": 75
    },
    {
     "id": "lsr",
     "name": "多空帳戶比",
-    "n": 2,
-    "hitRate": 50
+    "n": 3,
+    "hitRate": 66.7
+   },
+   {
+    "id": "etf_flow",
+    "name": "現貨 ETF 淨流量",
+    "n": 3,
+    "hitRate": 66.7
    },
    {
     "id": "dxy",
@@ -89,12 +99,6 @@
     "hitRate": 50
    },
    {
-    "id": "etf_flow",
-    "name": "現貨 ETF 淨流量",
-    "n": 2,
-    "hitRate": 50
-   },
-   {
     "id": "nasdaq",
     "name": "那斯達克 30 日漲跌",
     "n": 1,
@@ -105,9 +109,43 @@
     "name": "恐懼貪婪指數",
     "n": 1,
     "hitRate": 100
+   },
+   {
+    "id": "news",
+    "name": "news",
+    "n": 1,
+    "hitRate": 100
    }
   ],
   "recent": [
+   {
+    "date": "2026-11-25",
+    "bias": "偏空",
+    "confidence": "中",
+    "price": 59013,
+    "summary": "下方多單清算密集、總經逆風，3 天內下掃 56,700",
+    "horizonDays": 3,
+    "endDate": "2026-11-28",
+    "target": 56700,
+    "invalidation": {
+     "above": 62500,
+     "below": null
+    },
+    "status": "進行中",
+    "resolvedAt": null,
+    "daysToResolve": null,
+    "matured": false,
+    "ret7": -1,
+    "ret1": null,
+    "ret3": null,
+    "mfe": 1.1,
+    "mae": 1.3,
+    "hi": 59751.7,
+    "lo": 58372.1,
+    "hit": null,
+    "invalidated": false,
+    "intraday": true
+   },
    {
     "date": "2026-11-24",
     "bias": "偏空",
@@ -121,18 +159,18 @@
      "above": 64600,
      "below": null
     },
-    "status": "進行中",
-    "resolvedAt": null,
-    "daysToResolve": null,
-    "matured": false,
-    "ret7": -3.1,
-    "ret1": -3.1,
+    "status": "成功",
+    "resolvedAt": "2026-11-25",
+    "daysToResolve": 1,
+    "matured": true,
+    "ret7": -4.1,
+    "ret1": -4.1,
     "ret3": null,
-    "mfe": 3.2,
+    "mfe": 4.2,
     "mae": 1.1,
     "hi": 61592.2,
-    "lo": 58990.2,
-    "hit": null,
+    "lo": 58372.1,
+    "hit": true,
     "invalidated": false,
     "intraday": true
    },
@@ -153,13 +191,13 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -2.8,
+    "ret7": -3.8,
     "ret1": -1.6,
     "ret3": null,
     "mfe": 6.3,
-    "mae": 2.8,
+    "mae": 3.8,
     "hi": 64520.3,
-    "lo": 58990.2,
+    "lo": 58372.1,
     "hit": true,
     "invalidated": false,
     "intraday": true
@@ -181,13 +219,13 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -1.6,
+    "ret7": -2.5,
     "ret1": 2.1,
-    "ret3": -1.6,
+    "ret3": -2.5,
     "mfe": null,
     "mae": null,
     "hi": 64520.3,
-    "lo": 58649.8,
+    "lo": 58372.1,
     "hit": null,
     "invalidated": false,
     "intraday": true
@@ -209,7 +247,7 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": 0.2,
+    "ret7": -0.8,
     "ret1": 3.8,
     "ret3": 1.4,
     "mfe": null,
@@ -237,7 +275,7 @@
     "resolvedAt": "2026-11-20",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -4.7,
+    "ret7": -5.7,
     "ret1": -3,
     "ret3": -1.2,
     "mfe": 11.1,
@@ -275,7 +313,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 6,
-   "avg7": -7.7,
+   "avg7": -7.9,
    "up7": 0
   },
   {
@@ -293,7 +331,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 9,
-   "avg7": -9.2,
+   "avg7": -9.3,
    "up7": 0
   },
   {
@@ -302,7 +340,7 @@
    "band": "避險需求偏高",
    "tone": "buy",
    "n": 8,
-   "avg7": -10.2,
+   "avg7": -10.3,
    "up7": 0
   },
   {
@@ -320,7 +358,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 14,
-   "avg7": -10.3,
+   "avg7": -10.4,
    "up7": 0
   },
   {
@@ -329,7 +367,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 14,
-   "avg7": -10.3,
+   "avg7": -10.4,
    "up7": 0
   },
   {
@@ -347,7 +385,7 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 3,
-   "avg7": -6.6,
+   "avg7": -6.9,
    "up7": 0
   },
   {
@@ -356,7 +394,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 14,
-   "avg7": -10.3,
+   "avg7": -10.4,
    "up7": 0
   }
  ],
@@ -370,7 +408,7 @@
     "band": "極度恐懼",
     "tone": "buy",
     "n": 6,
-    "avg7": -7.7,
+    "avg7": -7.9,
     "up7": 0,
     "agree": false
    },
@@ -390,7 +428,7 @@
     "band": "避險需求偏高",
     "tone": "buy",
     "n": 8,
-    "avg7": -10.2,
+    "avg7": -10.3,
     "up7": 0,
     "agree": false
    },
@@ -408,12 +446,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.4,
+  "multiple": 3.378,
   "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 29.9,
-  "spotWeight": 63.2,
-  "price": 59013
+  "drawdownNow": 30.3,
+  "spotWeight": 63,
+  "price": 58427
  },
  "ledger": [
   {
