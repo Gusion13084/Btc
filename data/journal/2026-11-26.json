@@ -1,0 +1,106 @@
+{
+ "date": "2026-11-26",
+ "snapshotAt": "2026-11-26T05:55:44.603Z",
+ "price": 60719,
+ "bias": "中性",
+ "confidence": "低",
+ "horizonDays": 6,
+ "horizonReason": "感恩節薄量與 11/27 期權到期帶來雙向掃單，趨勢性事件要等 12/4 非農，在非農前重新評估",
+ "target": null,
+ "cycleCall": "熊市後段深度低估區，MVRV、NUPL 進入最低 10%，4 個組合信號成立，數月尺度有利但底部仍在構築",
+ "summary": "清算不再單邊、ETF 流出壓頂，55,000–66,100 震盪",
+ "reasons": [
+  {
+   "id": "liq",
+   "value": "±5% 內空單 3.33 億 vs 多單 2.37 億（1.4 倍）；近 7 天已清算多單 9.00 億 vs 空單 4.08 億；上方空單區 $64,800／$65,700／$66,000",
+   "claim": "近距離多單已洗，下掃燃料減少，上方有空單可掃，短線不再單邊偏空"
+  },
+  {
+   "id": "etf_flow",
+   "value": "近 7 日 −38,831 BTC、近 30 日 −76,854 BTC（p30 0.3%），連續流出 7 天",
+   "claim": "機構持續撤出，限制反彈高度"
+  },
+  {
+   "id": "dxy",
+   "value": "美元指數 30 天 +2.06%、那斯達克 30 天 −9.9%",
+   "claim": "總經逆風，難以形成趨勢性上漲"
+  },
+  {
+   "id": "news",
+   "value": "10 月核心 PCE 連 3 個月 +0.3%，12 月升息預期強化；11 月 ETF 流出近 50 億美元",
+   "claim": "消息面偏空，抵銷清算結構的上行潛力"
+  },
+  {
+   "id": "lsr",
+   "value": "多空帳戶比 2.57（多頭帳戶約 72%）",
+   "claim": "散戶多單仍擠，下方仍有下探風險，支持中性而非偏多"
+  }
+ ],
+ "invalidation": {
+  "above": 66100,
+  "below": 55000
+ },
+ "system": {
+  "decision": "已完成第二批・確認加碼",
+  "floor": 65,
+  "cap": null
+ },
+ "macroWind": "逆風",
+ "combosActive": [
+  "投降共振",
+  "情緒＋估值",
+  "期權恐慌",
+  "機構投降＋低估"
+ ],
+ "news": [
+  {
+   "title": "10 月核心 PCE 月增 0.3%、連續 3 個月，12 月升息預期強化；BTC 反彈主要來自空單回補",
+   "source": "Motley Fool",
+   "date": "2026-11-25",
+   "url": "https://www.fool.com/coverage/stock-market-today/2026/11/25/crypto-market-today-nov-25-bitcoin-ethereum-and-solana-as-short-liquidations-fuel-fragile-rebound/",
+   "impact": "偏空",
+   "note": "通膨黏著、升息預期是壓住風險資產的主因"
+  },
+  {
+   "title": "現貨 BTC ETF 11/23 單日淨流出 5.70 億美元，IBIT −5.09 億",
+   "source": "The Block",
+   "date": "2026-11-24",
+   "url": "https://www.theblock.co/news/markets/2026-11-24-bitcoin-etfs-another-570-million-net-outflows-november-total-nears-5-billion-btc-dips-below-60k-445548",
+   "impact": "偏空",
+   "note": "機構賣壓遠大於鏈上大戶承接"
+  },
+  {
+   "title": "11 月截至 24 日 BTC ETF 淨流出 49.4 億美元，IBIT 恐創最差單月",
+   "source": "Business Today",
+   "date": "2026-11-25",
+   "url": "https://www.businesstoday.in/crypto/token/story/crypto-winter-again-bitcoin-price-below-60000-as-etf-outflows-hit-4-94-billion-in-november-569441-2026-11-25",
+   "impact": "偏空",
+   "note": "上市以來最差月份，反彈缺乏增量資金"
+  },
+  {
+   "title": "BTC 算力年減 8%，Riot、CleanSpark 等礦企持續賣幣",
+   "source": "The Crypto Desk",
+   "date": "2026-11-25",
+   "url": "https://thecryptodesk.substack.com/p/the-crypto-desk-wednesday-25-november",
+   "impact": "偏空",
+   "note": "礦工投降帶來短線賣壓，與 Hash Ribbons 一致"
+  },
+  {
+   "title": "CFTC 釐清受監管衍生品交易所與清算所可將 BTC、ETH 計入部分財務資源要求",
+   "source": "Motley Fool",
+   "date": "2026-11-25",
+   "url": "https://www.fool.com/coverage/stock-market-today/2026/11/25/crypto-market-today-nov-25-bitcoin-ethereum-and-solana-as-short-liquidations-fuel-fragile-rebound/",
+   "impact": "偏多",
+   "note": "長期結構利多，短線影響有限"
+  },
+  {
+   "title": "11/27 Deribit 約 66 億美元 BTC 期權到期，美股感恩節休市",
+   "source": "The Crypto Desk",
+   "date": "2026-11-25",
+   "url": "https://thecryptodesk.substack.com/p/the-crypto-desk-wednesday-25-november",
+   "impact": "中性",
+   "note": "薄量加大額到期，容易放大波動"
+  }
+ ],
+ "report": "https://docs.google.com/document/d/1tL8blgXK3tCIe0x-ejcPHRsPWOXi8sIiiGP4U1VzUY4/edit?usp=drivesdk"
+}
