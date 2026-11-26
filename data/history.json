@@ -4820,70 +4820,70 @@
  },
  {
   "date": "2026-11-26",
-  "btcPrice": 58614,
-  "cbs": 11,
+  "btcPrice": 60719,
+  "cbs": 8,
   "cts": 0,
-  "cbsConfirm": 43,
-  "ctsConfirm": 14,
-  "idx": 13,
-  "cbsLevel": "預警信號",
+  "cbsConfirm": 36,
+  "ctsConfirm": 7,
+  "idx": 14.1,
+  "cbsLevel": "觀察期",
   "ctsLevel": "無信號",
-  "action": "停止新增套利倉位，保留現金",
+  "action": "開始關注市場，準備資金",
   "values": {
    "mvrv": 0.3085,
    "nupl": 0.1514,
    "puell": 0.9248,
    "hashribbons": "capitulation",
-   "ssr": 4.17415,
-   "rsi_w": 33.54324,
-   "wma200": 0.85857,
-   "pi_bottom": 1.199,
-   "pi_top": 0.51119,
-   "fng": 13,
+   "ssr": 4.32762,
+   "rsi_w": 35.06372,
+   "wma200": 0.88925,
+   "pi_bottom": 1.19827,
+   "pi_top": 0.51163,
+   "fng": 11,
    "funding": 0.00357,
-   "etf_flow": -38653.21,
-   "liq": 97022953.89514,
-   "sth_mvrv": 0.79356,
+   "etf_flow": -38830.74,
+   "liq": 41912845.6656,
+   "sth_mvrv": 0.82204,
    "profit_supply": 44.55932,
-   "whale": -0.87445,
-   "mayer": 0.81386,
-   "lsr": 2.7,
-   "btcdom": 57.56,
-   "stable30": -5.89551,
-   "ethbtc": 0.02818,
-   "dvol": 56.4,
-   "skew": 12.3,
-   "pcr": 0.806,
-   "basis": 4.25,
-   "fundapr": 0.88,
-   "cbprem": -0.007,
-   "netliq": 5.842,
-   "tga": 8988,
-   "realrate": 2.79,
+   "whale": -0.73416,
+   "mayer": 0.84424,
+   "lsr": 2.57,
+   "btcdom": 57.9,
+   "stable30": -5.75269,
+   "ethbtc": 0.02789,
+   "dvol": 52,
+   "skew": 7,
+   "pcr": 0.807,
+   "basis": 4.61,
+   "fundapr": 1.46,
+   "cbprem": -0.005,
+   "netliq": 5.783,
+   "tga": 9584,
+   "realrate": 2.73,
    "dxy": 104.04,
-   "nasdaq": -8.56,
-   "ex_reserve": 271,
-   "ex_netflow": -9423,
-   "treasury": 3694469,
+   "nasdaq": -9.87,
+   "ex_reserve": 271.3,
+   "ex_netflow": -1776,
+   "treasury": 3693791,
    "strategy": 851305,
    "oi": 25.91
   },
   "pct": {
-   "mvrv": 8.5,
-   "nupl": 7.8,
+   "mvrv": 8.4,
+   "nupl": 7.7,
    "puell": 38.4,
-   "ssr": 16.7,
-   "rsi_w": 3.9,
-   "wma200": 3.9,
-   "pi_bottom": 26.9,
+   "ssr": 21.6,
+   "rsi_w": 7.2,
+   "wma200": 5.1,
+   "pi_bottom": 26.7,
    "pi_top": 32.6,
-   "fng": 5.4,
-   "sth_mvrv": 3,
+   "fng": 3.1,
+   "sth_mvrv": 5.1,
    "profit_supply": 0.1,
-   "mayer": 8.3,
-   "ethbtc": 15.4,
-   "dvol": 76.5,
-   "ex_reserve": 25.6
+   "mayer": 13,
+   "ethbtc": 13.8,
+   "dvol": 58.4,
+   "ex_reserve": 26.2
   },
   "items": {
    "mvrv": [
@@ -4903,15 +4903,15 @@
     null
    ],
    "ssr": [
-    1,
+    0,
     0
    ],
    "rsi_w": [
-    2,
+    1,
     0
    ],
    "wma200": [
-    2,
+    1,
     0
    ],
    "pi_bottom": [
@@ -4936,10 +4936,10 @@
    ],
    "liq": [
     0,
-    1
+    0
    ],
    "sth_mvrv": [
-    2,
+    1,
     0
    ],
    "profit_supply": [
@@ -5050,6 +5050,15 @@
     "type": "buy"
    }
   },
-  "signals": []
+  "signals": [
+   {
+    "side": "buy",
+    "label": "第一批・預警進場",
+    "target": 45,
+    "since": "2026-11-26",
+    "sincePrice": 60719,
+    "via": "index"
+   }
+  ]
  }
 ]

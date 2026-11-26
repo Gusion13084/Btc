@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-25T16:16:35.513Z",
- "date": "2026-11-25",
+ "generatedAt": "2026-11-26T05:58:03.546Z",
+ "date": "2026-11-26",
  "horizonDays": 7,
  "journal": {
   "method": "first-touch",
@@ -52,12 +52,12 @@
   },
   "direction": {
    "d1": {
-    "n": 3,
-    "rate": 66.7
+    "n": 4,
+    "rate": 50
    },
    "d3": {
-    "n": 1,
-    "rate": 100
+    "n": 2,
+    "rate": 50
    },
    "horizon": {
     "n": 0,
@@ -135,12 +135,12 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -0.7,
-    "ret1": null,
+    "ret7": 2.9,
+    "ret1": 2.9,
     "ret3": null,
     "mfe": 3.1,
-    "mae": 1.3,
-    "hi": 59751.7,
+    "mae": 4.3,
+    "hi": 61533.1,
     "lo": 57210.7,
     "hit": null,
     "invalidated": false,
@@ -163,8 +163,8 @@
     "resolvedAt": "2026-11-25",
     "daysToResolve": 1,
     "matured": true,
-    "ret7": -3.8,
-    "ret1": -3.8,
+    "ret7": -0.3,
+    "ret1": -0.9,
     "ret3": null,
     "mfe": 6.1,
     "mae": 1.1,
@@ -191,9 +191,9 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -3.5,
+    "ret7": 0,
     "ret1": -1.6,
-    "ret3": null,
+    "ret3": 0,
     "mfe": 6.3,
     "mae": 5.8,
     "hi": 64520.3,
@@ -219,9 +219,9 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -2.2,
+    "ret7": 1.3,
     "ret1": 2.1,
-    "ret3": -2.2,
+    "ret3": 0.7,
     "mfe": null,
     "mae": null,
     "hi": 64520.3,
@@ -247,7 +247,7 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": -0.5,
+    "ret7": 3.1,
     "ret1": 3.8,
     "ret3": 1.4,
     "mfe": null,
@@ -275,7 +275,7 @@
     "resolvedAt": "2026-11-20",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -5.4,
+    "ret7": -2,
     "ret1": -3,
     "ret3": -1.2,
     "mfe": 11.1,
@@ -312,8 +312,8 @@
    "name": "恐懼貪婪指數",
    "band": "極度恐懼",
    "tone": "buy",
-   "n": 6,
-   "avg7": -7.8,
+   "n": 7,
+   "avg7": -6.6,
    "up7": 0
   },
   {
@@ -330,8 +330,8 @@
    "name": "DVOL 隱含波動率",
    "band": "正常",
    "tone": "neutral",
-   "n": 9,
-   "avg7": -9.2,
+   "n": 10,
+   "avg7": -8.2,
    "up7": 0
   },
   {
@@ -339,8 +339,8 @@
    "name": "期權偏斜（約 30 天 ±10%）",
    "band": "避險需求偏高",
    "tone": "buy",
-   "n": 8,
-   "avg7": -10.2,
+   "n": 9,
+   "avg7": -9,
    "up7": 0
   },
   {
@@ -357,8 +357,8 @@
    "name": "Put/Call 未平倉比",
    "band": "中性",
    "tone": "neutral",
-   "n": 14,
-   "avg7": -10.3,
+   "n": 15,
+   "avg7": -9.6,
    "up7": 0
   },
   {
@@ -366,8 +366,8 @@
    "name": "期現價差年化（基差）",
    "band": "正常",
    "tone": "neutral",
-   "n": 14,
-   "avg7": -10.3,
+   "n": 15,
+   "avg7": -9.6,
    "up7": 0
   },
   {
@@ -384,8 +384,8 @@
    "name": "資金費率年化（即時）",
    "band": "偏低",
    "tone": "neutral",
-   "n": 3,
-   "avg7": -6.8,
+   "n": 4,
+   "avg7": -4.9,
    "up7": 0
   },
   {
@@ -393,8 +393,8 @@
    "name": "Coinbase 溢價",
    "band": "中性",
    "tone": "neutral",
-   "n": 14,
-   "avg7": -10.3,
+   "n": 15,
+   "avg7": -9.6,
    "up7": 0
   }
  ],
@@ -407,8 +407,8 @@
     "name": "恐懼貪婪指數",
     "band": "極度恐懼",
     "tone": "buy",
-    "n": 6,
-    "avg7": -7.8,
+    "n": 7,
+    "avg7": -6.6,
     "up7": 0,
     "agree": false
    },
@@ -427,8 +427,8 @@
     "name": "期權偏斜（約 30 天 ±10%）",
     "band": "避險需求偏高",
     "tone": "buy",
-    "n": 8,
-    "avg7": -10.2,
+    "n": 9,
+    "avg7": -9,
     "up7": 0,
     "agree": false
    },
@@ -446,12 +446,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.385,
+  "multiple": 3.462,
   "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 30.2,
-  "spotWeight": 63.1,
-  "price": 58614
+  "drawdownNow": 28.6,
+  "spotWeight": 63.9,
+  "price": 60719
  },
  "ledger": [
   {
