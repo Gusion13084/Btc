@@ -1,0 +1,32 @@
+{
+ "date": "2026-11-27",
+ "snapshotAt": "2026-11-27T02:08:33.433Z",
+ "price": 61154,
+ "bias": "中性",
+ "confidence": "低",
+ "horizonDays": 7,
+ "horizonReason": "感恩節後流動性偏薄，趨勢性事件要等 12/4 非農，期限涵蓋非農公布當天後再評估 FOMC",
+ "target": null,
+ "cycleCall": "熊市後段深度低估區，MVRV、NUPL、週線 RSI、200 週均線比率進入最低 10%，4 個組合信號成立，數月尺度有利但機構仍在流出、底部構築中",
+ "summary": "空單堆上方但 ETF 與升息壓頂，55,000–66,000 震盪",
+ "reasons": [
+  {"id": "liq", "value": "±10% 內空單 17.90 億 vs 多單 8.29 億（2.2 倍）；近 7 天已清算多單 8.41 億、空單 4.09 億；最大空單區 $66,000（+7.5%）", "claim": "下方多單已洗，往下燃料不足，上方有軋空空間"},
+  {"id": "etf_flow", "value": "近 30 日 −85,739 BTC（p30 0%），連續流出 7 天", "claim": "機構持續撤出，限制反彈高度"},
+  {"id": "news", "value": "11 月 ETF 流出 53.9 億美元創紀錄；Waller 提出 12 月 FOMC 升息 50 基點", "claim": "消息面偏空，抵銷清算結構的上行潛力"},
+  {"id": "dxy", "value": "美元指數 30 天 +1.52%、那斯達克 30 天 −9.9%", "claim": "總經逆風，難形成趨勢性上漲"},
+  {"id": "lsr", "value": "多空帳戶比 2.35 → 2.46（多頭帳戶約 71%）", "claim": "散戶多單又變擠，下方仍有下探風險，不給偏多"}
+ ],
+ "invalidation": {"above": 66000, "below": 55000},
+ "system": {"decision": "已完成第二批・確認加碼", "floor": 65, "cap": null},
+ "macroWind": "逆風",
+ "combosActive": ["投降共振", "情緒＋估值", "期權恐慌", "機構投降＋低估"],
+ "news": [
+  {"title": "11 月美國現貨 BTC ETF 淨流出 53.9 億美元，創上市以來最差單月；11/25 單日流出 4.53 億美元", "source": "Coincu", "date": "2026-11-27", "url": "https://www.coincu.com/market-macro-us-session-roundup-2026-11-26/", "impact": "偏空", "note": "機構撤資創紀錄，反彈缺少增量買盤"},
+  {"title": "Fed 理事 Waller 提出 12 月 FOMC 可能升息 50 基點；Polymarket 2026 年至少升息一次機率 93%", "source": "Coincu", "date": "2026-11-27", "url": "https://www.coincu.com/market-macro-us-session-roundup-2026-11-26/", "impact": "偏空", "note": "升息預期壓住風險資產"},
+  {"title": "美國 10 月 PCE 年增 3.8%，核心 3.3% 高於預期 3.2%", "source": "FameEX", "date": "2026-11-26", "url": "https://www.fameex.com/en-US/news/crypto-news-recap-20261126", "impact": "偏空", "note": "通膨黏著，支撐 Fed 鷹派"},
+  {"title": "戰略比特幣儲備法案 H.R. 8957 送交眾議院全院，可進行表決", "source": "Yahoo Finance", "date": "2026-11-26", "url": "https://finance.yahoo.com/markets/crypto/articles/btc-news-today-us-bitcoin-160925633.html", "impact": "偏多", "note": "長期政策利多，距成為法律仍遠"},
+  {"title": "11 月穩定幣供給減少約 147.5 億美元", "source": "Coincu", "date": "2026-11-27", "url": "https://www.coincu.com/market-macro-us-session-roundup-2026-11-26/", "impact": "偏空", "note": "場內購買力流失"},
+  {"title": "BTC 感恩節休市期間重回 6 萬美元以上，無確認的推升原因", "source": "CryptoTicker", "date": "2026-11-26", "url": "https://cryptoticker.io/en/crypto-news-bitcoin-back-above-60000-near-12-percent/", "impact": "中性", "note": "薄量反彈，持續性存疑"}
+ ],
+ "report": "https://docs.google.com/document/d/1NPxz2dq7KvDqDOLxsI41veF2iI7H_PjPfL1MajXDk2k/edit?usp=drivesdk"
+}
