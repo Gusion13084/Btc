@@ -5063,12 +5063,12 @@
  },
  {
   "date": "2026-11-27",
-  "btcPrice": 61525,
-  "cbs": 9,
+  "btcPrice": 60023,
+  "cbs": 11,
   "cts": 0,
   "cbsConfirm": 36,
-  "ctsConfirm": 0,
-  "idx": 13.4,
+  "ctsConfirm": 7,
+  "idx": 12.3,
   "cbsLevel": "預警信號",
   "ctsLevel": "無信號",
   "action": "停止新增套利倉位，保留現金",
@@ -5077,33 +5077,33 @@
    "nupl": 0.0958,
    "puell": 0.8184,
    "hashribbons": "capitulation",
-   "ssr": 4.39041,
-   "rsi_w": 35.90332,
-   "wma200": 0.90101,
-   "pi_bottom": 1.19746,
-   "pi_top": 0.51198,
+   "ssr": 4.28276,
+   "rsi_w": 34.54606,
+   "wma200": 0.87911,
+   "pi_bottom": 1.19718,
+   "pi_top": 0.51192,
    "fng": 12,
    "funding": 0.00179,
    "etf_flow": -41471.6,
    "liq": 74062557.85237,
-   "sth_mvrv": 0.84132,
+   "sth_mvrv": 0.82078,
    "profit_supply": 46.54851,
    "whale": -0.3397,
-   "mayer": 0.85667,
-   "lsr": 2.47,
-   "btcdom": 58.77,
-   "stable30": -5.86917,
-   "ethbtc": 0.028,
-   "dvol": 49.1,
-   "skew": 7.6,
+   "mayer": 0.83584,
+   "lsr": 3,
+   "btcdom": 57.74,
+   "stable30": -5.85946,
+   "ethbtc": 0.02787,
+   "dvol": 52.1,
+   "skew": 9.3,
    "pcr": 0.8,
-   "basis": 4.49,
+   "basis": 4.56,
    "fundapr": 2.7,
    "cbprem": -0.005,
    "netliq": 5.783,
    "tga": 9584,
    "realrate": 2.73,
-   "dxy": 103.74,
+   "dxy": 103.87,
    "nasdaq": -9.87,
    "ex_reserve": 271,
    "ex_netflow": -2799,
@@ -5115,17 +5115,17 @@
    "mvrv": 5,
    "nupl": 4.8,
    "puell": 26.7,
-   "ssr": 24.2,
-   "rsi_w": 9,
-   "wma200": 5.2,
+   "ssr": 19.6,
+   "rsi_w": 5.6,
+   "wma200": 4.6,
    "pi_bottom": 26.5,
    "pi_top": 32.6,
    "fng": 4.5,
-   "sth_mvrv": 6.9,
+   "sth_mvrv": 5,
    "profit_supply": 0.5,
-   "mayer": 15.4,
-   "ethbtc": 14.4,
-   "dvol": 49.4,
+   "mayer": 11.7,
+   "ethbtc": 13.8,
+   "dvol": 58.4,
    "ex_reserve": 26
   },
   "items": {
@@ -5146,7 +5146,7 @@
     null
    ],
    "ssr": [
-    0,
+    1,
     0
    ],
    "rsi_w": [
@@ -5154,7 +5154,7 @@
     0
    ],
    "wma200": [
-    1,
+    2,
     0
    ],
    "pi_bottom": [
@@ -5199,7 +5199,7 @@
    ],
    "lsr": [
     0,
-    0
+    1
    ],
    "btcdom": [
     null,
@@ -5280,7 +5280,7 @@
    "title": "已完成第二批・確認加碼",
    "action": "系統在 2026-06-10（約 $61,464）觸發此批次（現貨提高到 65%）。持有並等待：CBS 連續 3 天達到 20 分，或價格較第一批再跌 30% 以上，即啟動第三批・深度加碼（現貨提高到 85%）。",
    "notes": [
-    "週期指數 30 天下降 30 點，市場明顯轉弱。"
+    "週期指數 30 天下降 31 點，市場明顯轉弱。"
    ],
    "target": {
     "floor": 65,

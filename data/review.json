@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-27T11:22:00.424Z",
+ "generatedAt": "2026-11-27T15:42:33.461Z",
  "date": "2026-11-27",
  "horizonDays": 7,
  "journal": {
@@ -57,7 +57,7 @@
    },
    "d3": {
     "n": 3,
-    "rate": 33.3
+    "rate": 66.7
    },
    "horizon": {
     "n": 3,
@@ -135,13 +135,13 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 0.6,
+    "ret7": -1.8,
     "ret1": null,
     "ret3": null,
     "mfe": null,
     "mae": null,
     "hi": 62139.1,
-    "lo": 60393.5,
+    "lo": 58728.7,
     "hit": null,
     "invalidated": false,
     "intraday": true
@@ -163,13 +163,13 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 1.3,
-    "ret1": 1.3,
+    "ret7": -1.1,
+    "ret1": -1.1,
     "ret3": null,
     "mfe": null,
     "mae": null,
     "hi": 62139.1,
-    "lo": 59850,
+    "lo": 58728.7,
     "hit": null,
     "invalidated": false,
     "intraday": true
@@ -191,7 +191,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 4.3,
+    "ret7": 1.7,
     "ret1": 2.5,
     "ret3": null,
     "mfe": 3.1,
@@ -219,9 +219,9 @@
     "resolvedAt": "2026-11-25",
     "daysToResolve": 1,
     "matured": true,
-    "ret7": 1,
+    "ret7": -1.5,
     "ret1": -0.9,
-    "ret3": 1,
+    "ret3": -1.5,
     "mfe": 6.1,
     "mae": 2,
     "hi": 62139.1,
@@ -247,7 +247,7 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": 1.3,
+    "ret7": -1.1,
     "ret1": -1.6,
     "ret3": -0.3,
     "mfe": 6.3,
@@ -275,7 +275,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 2.6,
+    "ret7": 0.1,
     "ret1": 2.1,
     "ret3": 0.7,
     "mfe": null,
@@ -303,7 +303,7 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": 4.4,
+    "ret7": 1.9,
     "ret1": 3.8,
     "ret3": 1.4,
     "mfe": null,
@@ -331,7 +331,7 @@
     "resolvedAt": "2026-11-20",
     "daysToResolve": 0,
     "matured": true,
-    "ret7": -0.7,
+    "ret7": -3.1,
     "ret1": -3,
     "ret3": -1.2,
     "mfe": 11.1,
@@ -369,7 +369,7 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 8,
-   "avg7": -5.2,
+   "avg7": -5.5,
    "up7": 12.5
   },
   {
@@ -387,7 +387,7 @@
    "band": "正常",
    "tone": "neutral",
    "n": 11,
-   "avg7": -7.1,
+   "avg7": -7.3,
    "up7": 9.1
   },
   {
@@ -405,7 +405,7 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 7,
-   "avg7": -8.3,
+   "avg7": -8.7,
    "up7": 14.3
   },
   {
@@ -423,7 +423,7 @@
    "band": "避險升溫",
    "tone": "buy",
    "n": 1,
-   "avg7": 4.6,
+   "avg7": 2.1,
    "up7": 100
   },
   {
@@ -441,7 +441,7 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 1,
-   "avg7": 4.6,
+   "avg7": 2.1,
    "up7": 100
   },
   {
@@ -459,7 +459,7 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 5,
-   "avg7": -3.1,
+   "avg7": -3.6,
    "up7": 20
   },
   {
@@ -468,7 +468,7 @@
    "band": "中性",
    "tone": "neutral",
    "n": 16,
-   "avg7": -8.7,
+   "avg7": -8.9,
    "up7": 6.3
   },
   {
@@ -477,7 +477,7 @@
    "band": "走弱",
    "tone": "warn",
    "n": 1,
-   "avg7": 4.6,
+   "avg7": 2.1,
    "up7": 100
   }
  ],
@@ -491,7 +491,7 @@
     "band": "極度恐懼",
     "tone": "buy",
     "n": 8,
-    "avg7": -5.2,
+    "avg7": -5.5,
     "up7": 12.5,
     "agree": false
    },
@@ -521,7 +521,7 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 7,
-    "avg7": -8.3,
+    "avg7": -8.7,
     "up7": 14.3,
     "agree": false
    }
@@ -529,12 +529,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.492,
+  "multiple": 3.437,
   "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 28,
-  "spotWeight": 64.2,
-  "price": 61525
+  "drawdownNow": 29.1,
+  "spotWeight": 63.6,
+  "price": 60023
  },
  "ledger": [
   {
