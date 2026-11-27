@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-26T15:54:53.054Z",
- "date": "2026-11-26",
+ "generatedAt": "2026-11-27T02:11:07.935Z",
+ "date": "2026-11-27",
  "from": "2023-01-30",
  "base": {
   "avg30": 3.4,
@@ -17,17 +17,17 @@
     {
      "label": "資金費率年化 ≤ 1%",
      "met": false,
-     "value": "1.8%"
+     "value": "2.3%"
     },
     {
      "label": "未平倉量比 90 日高點少 20% 以上",
      "met": true,
-     "value": "−33.5%"
+     "value": "−34.1%"
     },
     {
      "label": "30 天跌幅超過 10%",
      "met": true,
-     "value": "-25.1%"
+     "value": "-24.8%"
     }
    ],
    "met": 2,
@@ -96,17 +96,17 @@
     {
      "label": "短期持有者成本線 < 0.85",
      "met": true,
-     "value": "0.82"
+     "value": "0.84"
     },
     {
      "label": "獲利籌碼 < 55%",
      "met": true,
-     "value": "44.6%"
+     "value": "46.5%"
     },
     {
      "label": "恐懼貪婪 ≤ 20",
      "met": true,
-     "value": "11"
+     "value": "12"
     }
    ],
    "met": 3,
@@ -157,12 +157,12 @@
     {
      "label": "恐懼貪婪 ≤ 15",
      "met": true,
-     "value": "11"
+     "value": "12"
     },
     {
      "label": "MVRV Z-Score ≤ 1",
      "met": true,
-     "value": "0.31"
+     "value": "0.18"
     }
    ],
    "met": 2,
@@ -207,12 +207,12 @@
     {
      "label": "DVOL 在一年 80% 百分位以上",
      "met": true,
-     "value": "84.9%"
+     "value": "81.9%"
     },
     {
      "label": "14 天跌幅超過 10%",
      "met": true,
-     "value": "-15.2%"
+     "value": "-10.4%"
     }
    ],
    "met": 2,
@@ -269,12 +269,12 @@
     {
      "label": "ETF 30 日淨流量百分位 ≤ 10",
      "met": true,
-     "value": "0.3%"
+     "value": "0.0%"
     },
     {
      "label": "週期指數 < 20",
      "met": true,
-     "value": "13.9"
+     "value": "13.1"
     }
    ],
    "met": 2,
