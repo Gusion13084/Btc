@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-28T10:49:59.260Z",
+ "generatedAt": "2026-11-28T14:38:53.026Z",
  "date": "2026-11-28",
  "horizonDays": 7,
  "journal": {
@@ -139,13 +139,13 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -1.5,
+    "ret7": -1.4,
     "ret1": null,
     "ret3": null,
-    "mfe": 1.7,
+    "mfe": 2,
     "mae": 0.1,
     "hi": 60203.9,
-    "lo": 59070.9,
+    "lo": 58890,
     "hit": null,
     "invalidated": false,
     "intraday": true
@@ -167,8 +167,8 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -3.2,
-    "ret1": -3.2,
+    "ret7": -3.1,
+    "ret1": -3.1,
     "ret3": null,
     "mfe": null,
     "mae": null,
@@ -195,7 +195,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -2.5,
+    "ret7": -2.4,
     "ret1": -1.4,
     "ret3": null,
     "mfe": null,
@@ -223,9 +223,9 @@
     "resolvedAt": "2026-11-28",
     "daysToResolve": 3,
     "matured": true,
-    "ret7": 0.3,
+    "ret7": 0.4,
     "ret1": 2.5,
-    "ret3": 0.3,
+    "ret3": 0.4,
     "mfe": 3.1,
     "mae": 5.3,
     "hi": 62139.1,
@@ -307,7 +307,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -1.3,
+    "ret7": -1.2,
     "ret1": 2.1,
     "ret3": 0.7,
     "mfe": null,
@@ -335,7 +335,7 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": 0.5,
+    "ret7": 0.6,
     "ret1": 3.8,
     "ret3": 1.4,
     "mfe": null,
@@ -455,7 +455,7 @@
    "band": "避險升溫",
    "tone": "buy",
    "n": 2,
-   "avg7": 0.1,
+   "avg7": 0.2,
    "up7": 50
   },
   {
@@ -473,7 +473,7 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 2,
-   "avg7": 0.1,
+   "avg7": 0.2,
    "up7": 50
   },
   {
@@ -491,7 +491,7 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 6,
-   "avg7": -3.3,
+   "avg7": -3.2,
    "up7": 16.7
   },
   {
@@ -518,7 +518,7 @@
    "band": "急跌，風險偏好轉弱",
    "tone": "sell",
    "n": 1,
-   "avg7": -1.5,
+   "avg7": -1.4,
    "up7": 0
   }
  ],
@@ -570,12 +570,12 @@
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.407,
+  "multiple": 3.41,
   "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 29.8,
+  "drawdownNow": 29.7,
   "spotWeight": 63.3,
-  "price": 59184
+  "price": 59260
  },
  "ledger": [
   {
