@@ -1,7 +1,7 @@
 {
  "date": "2026-11-28",
- "updatedAt": "2026-11-28T02:08:21.433Z",
- "btcPrice": 60115,
+ "updatedAt": "2026-11-28T10:47:38.245Z",
+ "btcPrice": 59184,
  "legacy": false,
  "indicators": {
   "mvrv": {
@@ -13,7 +13,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-21",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgcore",
    "age": 7
   },
@@ -26,7 +26,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-21",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgcore",
    "age": 7
   },
@@ -39,7 +39,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-21",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgcore",
    "age": 7
   },
@@ -50,74 +50,74 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-26",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "hash",
    "age": 2
   },
   "ssr": {
-   "value": 4.28583,
+   "value": 4.23124,
    "fields": {
-    "pct": 19.6,
-    "p": 19.6,
-    "usdtd": 8.31
+    "pct": 17.8,
+    "p": 17.8,
+    "usdtd": 8.53
    },
-   "detail": "4 年百分位 19.6%・穩定幣 $283.7B・USDT.D 8.31%",
+   "detail": "4 年百分位 17.8%・穩定幣 $282.8B・USDT.D 8.53%",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "stable",
    "age": 0
   },
   "rsi_w": {
-   "value": 34.61379,
+   "value": 33.94166,
    "fields": {
-    "p": 5.7
+    "p": 4.3
    },
    "detail": "週收盤 $61,170",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "price",
    "age": 0
   },
   "wma200": {
-   "value": 0.88045,
+   "value": 0.86687,
    "fields": {
-    "p": 4.6
+    "p": 3.9
    },
-   "detail": "BTC $60,115 / 200WMA $68,278",
+   "detail": "BTC $59,184 / 200WMA $68,273",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "price",
    "age": 0
   },
   "pi_bottom": {
-   "value": 1.19601,
+   "value": 1.19583,
    "fields": {
     "p": 26.4
    },
-   "detail": "150EMA $73,595 / 471DMA×0.745 $61,534",
+   "detail": "150EMA $73,583 / 471DMA×0.745 $61,533",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "price",
    "age": 0
   },
   "pi_top": {
-   "value": 0.51222,
+   "value": 0.51218,
    "fields": {
     "p": 32.7
    },
-   "detail": "111DMA $76,038 / 350DMA×2 $148,448",
+   "detail": "111DMA $76,030 / 350DMA×2 $148,442",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "price",
    "age": 0
   },
@@ -131,7 +131,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "fng",
    "age": 0
   },
@@ -147,22 +147,22 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-20",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgcore",
    "age": 8
   },
   "etf_flow": {
-   "value": -32068.26,
+   "value": -41471.6,
    "fields": {
-    "pct7": 3.1,
+    "pct7": 0.3,
     "p30": 0
    },
-   "display": "-32,068 BTC",
-   "detail": "近 7 日 -32,068 BTC・最近一日 -685 BTC・半年百分位 3.1%・近 30 日 -87,917 BTC（上市以來 0% 百分位）",
+   "display": "-41,472 BTC",
+   "detail": "近 7 日 -41,472 BTC・最近一日 -6,499 BTC・連續流出 8 天・半年百分位 0.3%・近 30 日 -85,739 BTC（上市以來 0% 百分位）",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-27",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "etf_tftc",
    "age": 1
   },
@@ -177,20 +177,20 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-26",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgaux",
    "age": 2
   },
   "sth_mvrv": {
-   "value": 0.82544,
+   "value": 0.81266,
    "fields": {
-    "p": 5.7
+    "p": 4.2
    },
    "detail": "短期持有者成本 $72,828",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-21",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgaux",
    "age": 7
   },
@@ -203,7 +203,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-26",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgaux",
    "age": 2
   },
@@ -214,132 +214,132 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-26",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bgaux",
    "age": 2
   },
   "mayer": {
-   "value": 0.83832,
+   "value": 0.82539,
    "fields": {
-    "p": 12.1
+    "p": 9.8
    },
-   "detail": "200DMA $71,709",
+   "detail": "200DMA $71,704",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "price",
    "age": 0
   },
   "lsr": {
-   "value": 3.03,
+   "value": 2.84,
    "fields": {},
-   "detail": "多頭帳戶約 75%",
+   "detail": "多頭帳戶約 74%",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "okx",
    "age": 0
   },
   "btcdom": {
-   "value": 57.82,
+   "value": 58.42,
    "fields": {},
    "detail": "",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "market",
    "age": 0
   },
   "stable30": {
-   "value": -5.29311,
+   "value": -5.4365,
    "fields": {},
-   "detail": "$297.9B → $282.2B",
+   "detail": "$297.5B → $281.4B",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "stable",
    "age": 0
   },
   "ethbtc": {
-   "value": 0.02775,
+   "value": 0.02786,
    "fields": {
-    "p": 13.5
+    "p": 13.9
    },
    "detail": "",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "eth",
    "age": 0
   },
   "dvol": {
-   "value": 51.9,
+   "value": 53.3,
    "fields": {
-    "p": 57.8
+    "p": 63.1
    },
    "detail": "近 4 年 1460 天：最低 32、最高 83・7 天前 58.0",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "deribit",
    "age": 0
   },
   "skew": {
-   "value": 9.4,
+   "value": 8.3,
    "fields": {
-    "atm": 47.9,
+    "atm": 48.9,
     "days": 27
    },
-   "detail": "27 天到期：賣權 54,000 IV 54.5%・買權 66,000 IV 45.1%・ATM 47.9%",
+   "detail": "27 天到期：賣權 54,000 IV 55.1%・買權 65,000 IV 46.7%・ATM 48.9%",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "deribit",
    "age": 0
   },
   "pcr": {
-   "value": 0.812,
+   "value": 0.805,
    "fields": {},
-   "detail": "賣權 155,952 BTC・買權 192,078 BTC（全部到期日）",
+   "detail": "賣權 153,815 BTC・買權 190,987 BTC（全部到期日）",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "deribit",
    "age": 0
   },
   "basis": {
-   "value": 4.7,
+   "value": 4.52,
    "fields": {
     "days": 90,
-    "prem": 1.16
+    "prem": 1.11
    },
-   "detail": "BTC-26FEB27（90 天）溢價 1.16%・期貨 $60,814 / 指數 $60,115",
+   "detail": "BTC-26FEB27（90 天）溢價 1.11%・期貨 $59,839 / 指數 $59,180",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "deribit",
    "age": 0
   },
   "fundapr": {
-   "value": 3.09,
+   "value": 3.52,
    "fields": {
     "apr30": 4.96,
-    "next": 0.0057
+    "next": 0.0058
    },
-   "detail": "近 30 天平均年化 5.0%・本期 0.0057%（8 小時）",
+   "detail": "近 30 天平均年化 5.0%・本期 0.0058%（8 小時）",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "okxfund",
    "age": 0
   },
@@ -347,13 +347,13 @@
    "value": -0.007,
    "fields": {
     "p24": -0.013,
-    "last": -0.014
+    "last": 0.073
    },
-   "detail": "近 24 小時 -0.013%・最近一小時 -0.014%・7 天內 82% 時間為折價・已用 USDT/USD 匯率校正",
+   "detail": "近 24 小時 -0.013%・最近一小時 +0.073%・7 天內 85% 時間為折價・已用 USDT/USD 匯率校正",
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "coinbase",
    "age": 0
   },
@@ -367,7 +367,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-25",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "fred",
    "age": 3
   },
@@ -380,7 +380,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-25",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "tga",
    "age": 3
   },
@@ -393,7 +393,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-27",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "treasury",
    "age": 1
   },
@@ -406,23 +406,23 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-27",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "fx",
    "age": 1
   },
   "nasdaq": {
-   "value": -9.87,
+   "value": -9.12,
    "fields": {
-    "close": 23585.8,
-    "corr60": 0.68
+    "close": 24129.5,
+    "corr60": 0.67
    },
-   "detail": "那斯達克 23,585.8・30 天 -9.9%・與 BTC 60 日相關係數 0.68",
+   "detail": "那斯達克 24,129.5・30 天 -9.1%・與 BTC 60 日相關係數 0.67",
    "ok": true,
    "date": "2026-11-28",
-   "asOf": "2026-11-25",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "asOf": "2026-11-27",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "nasdaq",
-   "age": 3
+   "age": 1
   },
   "ex_reserve": {
    "value": 270.9,
@@ -434,22 +434,22 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-27",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "coinmetrics",
    "age": 1
   },
   "ex_netflow": {
-   "value": -2799,
+   "value": -3508,
    "fields": {
-    "pct": 65.6
+    "pct": 62.1
    },
-   "detail": "近 7 日淨流出交易所 2,799 BTC・一年百分位 66%",
+   "detail": "近 7 日淨流出交易所 3,508 BTC・一年百分位 62%",
    "ok": true,
    "date": "2026-11-28",
-   "asOf": "2026-11-26",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "asOf": "2026-11-27",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "coinmetrics",
-   "age": 2
+   "age": 1
   },
   "treasury": {
    "value": 3687473,
@@ -462,7 +462,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bitbo",
    "age": 0
   },
@@ -476,7 +476,7 @@
    "ok": true,
    "date": "2026-11-28",
    "asOf": "2026-11-28",
-   "fetchedAt": "2026-11-28T02:08:21.433Z",
+   "fetchedAt": "2026-11-28T10:47:38.245Z",
    "source": "bitbo",
    "age": 0
   }
@@ -486,146 +486,146 @@
    "name": "BTC 價格（Blockchain.com + Kraken）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "eth": {
    "name": "OKX ETH 日線",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "fng": {
    "name": "Alternative.me 恐懼貪婪",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "hash": {
    "name": "Blockchain.com 算力",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "stable": {
    "name": "DefiLlama 穩定幣",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "market": {
    "name": "CoinGecko 市值",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "bgcore": {
    "name": "BGeometrics 核心",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "bgaux": {
    "name": "BGeometrics 輔助",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "etf_tftc": {
    "name": "ETF 流量（TFTC／SoSoValue・Farside）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "etf_cmc": {
    "name": "ETF 流量比對（CoinMarketCap）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "okx": {
    "name": "OKX 合約數據",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "deribit": {
    "name": "Deribit 期權與期貨",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "coinbase": {
    "name": "Coinbase 溢價",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "okxfund": {
    "name": "OKX 資金費率",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "fred": {
    "name": "FRED（Fed 資產負債表）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "tga": {
    "name": "美國財政部 TGA",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "rrp": {
    "name": "紐約聯準銀行 逆回購",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "treasury": {
    "name": "美國財政部 實質利率",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "fx": {
    "name": "歐洲央行匯率（美元指數）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "nasdaq": {
    "name": "Nasdaq 指數",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "coinmetrics": {
    "name": "Coin Metrics 交易所數據",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "bitbo": {
    "name": "BitcoinTreasuries 持倉",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   },
   "okxliq": {
    "name": "清算地圖（Binance、Bybit、OKX、Deribit、Hyperliquid）",
    "ok": true,
    "error": null,
-   "checkedAt": "2026-11-28T02:08:21.433Z"
+   "checkedAt": "2026-11-28T10:47:38.245Z"
   }
  },
- "index": 13,
+ "index": 12.4,
  "indexZone": "深度低估",
- "bgCalls": 10,
+ "bgCalls": 0,
  "pending": false,
- "snapshotAt": "2026-11-28T02:08:21.433Z",
+ "snapshotAt": "2026-11-28T10:47:38.245Z",
  "ledger": [
   {
    "date": "2022-11-13",
@@ -712,27 +712,25 @@
   "hash": 2,
   "etf": 1
  },
- "ethPrice": 1668.13,
+ "ethPrice": 1648.94,
  "arb": {
-  "funding": 3.09,
-  "fundingMedian": 2.96,
-  "basis": 4.7,
+  "funding": 3.52,
+  "fundingMedian": 3.24,
+  "basis": 4.52,
   "basisDays": 90,
   "best": {
-   "kind": "basis",
-   "venue": "OKX",
-   "days": 62,
-   "apr": 4.71
+   "kind": "funding",
+   "venue": "Binance",
+   "days": null,
+   "apr": 4.87
   },
-  "advice": "套利年化最高 4.7%（OKX 期現套利（62 天期）），收益偏低。 各交易所資金費率差距大（Binance 4.3% 對 Deribit -0.8%），選費率高的交易所做空永續。",
+  "advice": "套利年化最高 4.9%（Binance 資金費率套利），收益偏低。",
   "venues": [
    {
-    "kind": "basis",
-    "venue": "OKX",
-    "contract": "BTC-USD-270129",
-    "days": 62,
-    "apr": 4.71,
-    "note": "幣本位",
+    "kind": "funding",
+    "venue": "Binance",
+    "apr": 4.87,
+    "note": "Coinalyze",
     "apr30": null
    },
    {
@@ -740,149 +738,145 @@
     "venue": "Deribit",
     "contract": "BTC-26FEB27",
     "days": 90,
-    "apr": 4.7,
+    "apr": 4.52,
+    "note": "幣本位",
+    "apr30": null
+   },
+   {
+    "kind": "basis",
+    "venue": "OKX",
+    "contract": "BTC-USD-270129",
+    "days": 62,
+    "apr": 4,
     "note": "幣本位",
     "apr30": null
    },
    {
     "kind": "funding",
-    "venue": "Binance",
-    "apr": 4.3,
-    "note": "Coinalyze",
-    "apr30": null
-   },
-   {
-    "kind": "funding",
-    "venue": "Hyperliquid",
-    "apr": 3.23,
-    "note": "鏈上交易所",
-    "apr30": null
-   },
-   {
-    "kind": "funding",
     "venue": "OKX",
-    "apr": 3.09,
+    "apr": 3.52,
     "apr30": 4.96
-   },
-   {
-    "kind": "lend",
-    "venue": "Aave USDC",
-    "apr": 3.05,
-    "apr30": 3.93,
-    "note": "鏈上"
    },
    {
     "kind": "funding",
     "venue": "Gate",
-    "apr": 2.96,
-    "apr30": 5.31
+    "apr": 3.44,
+    "apr30": 5.28
+   },
+   {
+    "kind": "funding",
+    "venue": "Hyperliquid",
+    "apr": 3.24,
+    "note": "鏈上交易所",
+    "apr30": null
+   },
+   {
+    "kind": "lend",
+    "venue": "Aave USDC",
+    "apr": 3.01,
+    "apr30": 3.92,
+    "note": "鏈上"
    },
    {
     "kind": "lend",
     "venue": "Aave USDT",
-    "apr": 2.76,
-    "apr30": 3.85,
+    "apr": 2.78,
+    "apr30": 3.84,
     "note": "鏈上"
    },
    {
     "kind": "funding",
     "venue": "Bybit",
-    "apr": 1.95,
+    "apr": 2.32,
     "note": "Coinalyze",
     "apr30": null
    },
    {
     "kind": "funding",
     "venue": "Bitget",
-    "apr": 1.21,
-    "apr30": 4.13
+    "apr": 1.31,
+    "apr30": 4.02
    },
    {
     "kind": "funding",
     "venue": "Deribit",
-    "apr": -0.83,
+    "apr": 0.24,
     "note": "幣本位",
     "apr30": null
    }
   ],
   "curve": [
    {
-    "venue": "Deribit",
-    "contract": "BTC-18DEC26",
-    "days": 20,
-    "apr": 3.13
-   },
-   {
     "venue": "OKX",
     "contract": "BTC-USD-261225",
     "days": 27,
-    "apr": 4.13
+    "apr": 3.86
    },
    {
     "venue": "Deribit",
     "contract": "BTC-25DEC26",
     "days": 27,
-    "apr": 3.79
+    "apr": 3.85
    },
    {
     "venue": "OKX",
     "contract": "BTC-USD-270129",
     "days": 62,
-    "apr": 4.71
+    "apr": 4
    },
    {
     "venue": "Deribit",
     "contract": "BTC-29JAN27",
     "days": 62,
-    "apr": 4.41
+    "apr": 4.32
    },
    {
     "venue": "Deribit",
     "contract": "BTC-26FEB27",
     "days": 90,
-    "apr": 4.7
+    "apr": 4.52
    },
    {
     "venue": "OKX",
     "contract": "BTC-USD-270326",
     "days": 118,
-    "apr": 4.74
+    "apr": 4.61
    },
    {
     "venue": "Deribit",
     "contract": "BTC-26MAR27",
     "days": 118,
-    "apr": 4.85
+    "apr": 4.74
    },
    {
     "venue": "OKX",
     "contract": "BTC-USD-270625",
     "days": 209,
-    "apr": 5.48
+    "apr": 5.97
    },
    {
     "venue": "Deribit",
     "contract": "BTC-25JUN27",
     "days": 209,
-    "apr": 5.28
+    "apr": 5.21
    },
    {
     "venue": "OKX",
     "contract": "BTC-USD-270924",
     "days": 300,
-    "apr": 5.45
+    "apr": 5.44
    },
    {
     "venue": "Deribit",
     "contract": "BTC-24SEP27",
     "days": 300,
-    "apr": 5.51
+    "apr": 5.43
    },
    {
     "venue": "OKX",
     "contract": "BTC-USD-271231",
     "days": 398,
-    "apr": 5.66
+    "apr": 5.88
    }
   ],
   "errors": {}
@@ -955,6 +949,14 @@
     "since": "2026-11-26",
     "sincePrice": 60499,
     "via": "index"
+   },
+   {
+    "side": "buy",
+    "label": "第二批・確認加碼",
+    "target": 65,
+    "since": "2026-11-28",
+    "sincePrice": 59184,
+    "via": "index"
    }
   ],
   "cycleBuy": {
@@ -981,10 +983,10 @@
     "side": "buy",
     "label": "第二批・確認加碼",
     "target": 65,
-    "active": false,
+    "active": true,
     "progress": [
      "CBS ≥ 16：近 7 天 0/3 天",
-     "週期指數 < 13＋ETF 最低 5%：近 10 天 1/2 天"
+     "週期指數 < 13＋ETF 最低 5%：近 10 天 2/2 天"
     ]
    },
    {
@@ -1048,27 +1050,16 @@
   "hash": 1
  },
  "etfSources": {
-  "tftc": "2026-11-25",
+  "tftc": "2026-11-27",
   "cmc": "2026-11-27",
   "bg": "2026-11-25",
-  "prelim": [
-   "2026-11-26",
-   "2026-11-27"
-  ],
+  "prelim": [],
   "check": [
    {
     "date": "2026-11-27",
-    "used": "cmc",
-    "tftc": null,
-    "cmc": -41,
-    "bg": null,
-    "flag": []
-   },
-   {
-    "date": "2026-11-26",
-    "used": "cmc",
-    "tftc": null,
-    "cmc": 0,
+    "used": "tftc",
+    "tftc": -389,
+    "cmc": -389,
     "bg": null,
     "flag": []
    },
@@ -1183,16 +1174,24 @@
     "cmc": -220.6,
     "bg": -193.8,
     "flag": []
+   },
+   {
+    "date": "2026-11-06",
+    "used": "tftc",
+    "tftc": -411.9,
+    "cmc": -411.5,
+    "bg": null,
+    "flag": []
    }
   ]
  },
  "positionStats": {
   "date": "2026-11-28",
-  "price": 60115,
+  "price": 59184,
   "avg": 44836,
-  "pnl": 34.1,
-  "spot": 63.7,
-  "multiple": 3.441,
+  "pnl": 32,
+  "spot": 63.3,
+  "multiple": 3.407,
   "from": "2022-11-11",
   "realizedPct": 158.5
  }

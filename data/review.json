@@ -1,10 +1,10 @@
 {
- "generatedAt": "2026-11-28T02:10:45.425Z",
+ "generatedAt": "2026-11-28T10:49:59.260Z",
  "date": "2026-11-28",
  "horizonDays": 7,
  "journal": {
   "method": "first-touch",
-  "total": 8,
+  "total": 9,
   "matured": 5,
   "scored": 5,
   "hitRate": 60,
@@ -13,7 +13,7 @@
    "失誤": 1,
    "未達": 1,
    "同日觸及": 0,
-   "進行中": 3
+   "進行中": 4
   },
   "invalidatedRate": 40,
   "byBias": {
@@ -123,6 +123,34 @@
   ],
   "recent": [
    {
+    "date": "2026-11-28",
+    "bias": "偏空",
+    "confidence": "低",
+    "price": 60115,
+    "summary": "ETF 流出、升息預期壓頂，6 天內下探 56,700",
+    "horizonDays": 6,
+    "endDate": "2026-12-04",
+    "target": 56700,
+    "invalidation": {
+     "above": 63600,
+     "below": null
+    },
+    "status": "進行中",
+    "resolvedAt": null,
+    "daysToResolve": null,
+    "matured": false,
+    "ret7": -1.5,
+    "ret1": null,
+    "ret3": null,
+    "mfe": 1.7,
+    "mae": 0.1,
+    "hi": 60203.9,
+    "lo": 59070.9,
+    "hit": null,
+    "invalidated": false,
+    "intraday": true
+   },
+   {
     "date": "2026-11-27",
     "bias": "中性",
     "confidence": "低",
@@ -139,8 +167,8 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -1.7,
-    "ret1": -1.7,
+    "ret7": -3.2,
+    "ret1": -3.2,
     "ret3": null,
     "mfe": null,
     "mae": null,
@@ -167,7 +195,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": -1,
+    "ret7": -2.5,
     "ret1": -1.4,
     "ret3": null,
     "mfe": null,
@@ -195,9 +223,9 @@
     "resolvedAt": "2026-11-28",
     "daysToResolve": 3,
     "matured": true,
-    "ret7": 1.9,
+    "ret7": 0.3,
     "ret1": 2.5,
-    "ret3": 1.9,
+    "ret3": 0.3,
     "mfe": 3.1,
     "mae": 5.3,
     "hi": 62139.1,
@@ -279,7 +307,7 @@
     "resolvedAt": null,
     "daysToResolve": null,
     "matured": false,
-    "ret7": 0.3,
+    "ret7": -1.3,
     "ret1": 2.1,
     "ret3": 0.7,
     "mfe": null,
@@ -307,7 +335,7 @@
     "resolvedAt": "2026-11-23",
     "daysToResolve": 2,
     "matured": true,
-    "ret7": 2.1,
+    "ret7": 0.5,
     "ret1": 3.8,
     "ret3": 1.4,
     "mfe": null,
@@ -373,8 +401,8 @@
    "band": "極度恐懼",
    "tone": "buy",
    "n": 9,
-   "avg7": -4.9,
-   "up7": 22.2
+   "avg7": -5.1,
+   "up7": 11.1
   },
   {
    "id": "dvol",
@@ -391,8 +419,8 @@
    "band": "正常",
    "tone": "neutral",
    "n": 12,
-   "avg7": -6.7,
-   "up7": 16.7
+   "avg7": -6.9,
+   "up7": 8.3
   },
   {
    "id": "skew",
@@ -409,8 +437,8 @@
    "band": "恐慌避險",
    "tone": "buy",
    "n": 8,
-   "avg7": -7.6,
-   "up7": 25
+   "avg7": -7.8,
+   "up7": 12.5
   },
   {
    "id": "pcr",
@@ -427,8 +455,8 @@
    "band": "避險升溫",
    "tone": "buy",
    "n": 2,
-   "avg7": 0.9,
-   "up7": 100
+   "avg7": 0.1,
+   "up7": 50
   },
   {
    "id": "basis",
@@ -445,8 +473,8 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 2,
-   "avg7": 0.9,
-   "up7": 100
+   "avg7": 0.1,
+   "up7": 50
   },
   {
    "id": "fundapr",
@@ -463,8 +491,8 @@
    "band": "偏低",
    "tone": "neutral",
    "n": 6,
-   "avg7": -3,
-   "up7": 33.3
+   "avg7": -3.3,
+   "up7": 16.7
   },
   {
    "id": "cbprem",
@@ -472,8 +500,8 @@
    "band": "中性",
    "tone": "neutral",
    "n": 17,
-   "avg7": -8.4,
-   "up7": 11.8
+   "avg7": -8.5,
+   "up7": 5.9
   },
   {
    "id": "nasdaq",
@@ -490,8 +518,8 @@
    "band": "急跌，風險偏好轉弱",
    "tone": "sell",
    "n": 1,
-   "avg7": 0,
-   "up7": 100
+   "avg7": -1.5,
+   "up7": 0
   }
  ],
  "agreement": {
@@ -504,8 +532,8 @@
     "band": "極度恐懼",
     "tone": "buy",
     "n": 9,
-    "avg7": -4.9,
-    "up7": 22.2,
+    "avg7": -5.1,
+    "up7": 11.1,
     "agree": false
    },
    {
@@ -534,20 +562,20 @@
     "band": "恐慌避險",
     "tone": "buy",
     "n": 8,
-    "avg7": -7.6,
-    "up7": 25,
+    "avg7": -7.8,
+    "up7": 12.5,
     "agree": false
    }
   ]
  },
  "system": {
   "from": "2022-11-11",
-  "multiple": 3.441,
+  "multiple": 3.407,
   "maxDrawdown": 31.1,
   "maxDrawdownAt": "2026-06-30",
-  "drawdownNow": 29.1,
-  "spotWeight": 63.7,
-  "price": 60115
+  "drawdownNow": 29.8,
+  "spotWeight": 63.3,
+  "price": 59184
  },
  "ledger": [
   {

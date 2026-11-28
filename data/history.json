@@ -5306,12 +5306,12 @@
  },
  {
   "date": "2026-11-28",
-  "btcPrice": 60115,
-  "cbs": 10,
+  "btcPrice": 59184,
+  "cbs": 11,
   "cts": 0,
-  "cbsConfirm": 29,
-  "ctsConfirm": 14,
-  "idx": 13,
+  "cbsConfirm": 36,
+  "ctsConfirm": 7,
+  "idx": 12.4,
   "cbsLevel": "預警信號",
   "ctsLevel": "無信號",
   "action": "停止新增套利倉位，保留現金",
@@ -5320,36 +5320,36 @@
    "nupl": 0.1179,
    "puell": 0.8895,
    "hashribbons": "capitulation",
-   "ssr": 4.28583,
-   "rsi_w": 34.61379,
-   "wma200": 0.88045,
-   "pi_bottom": 1.19601,
-   "pi_top": 0.51222,
+   "ssr": 4.23124,
+   "rsi_w": 33.94166,
+   "wma200": 0.86687,
+   "pi_bottom": 1.19583,
+   "pi_top": 0.51218,
    "fng": 10,
    "funding": 0.00255,
-   "etf_flow": -32068.26,
+   "etf_flow": -41471.6,
    "liq": 23221288.03229,
-   "sth_mvrv": 0.82544,
+   "sth_mvrv": 0.81266,
    "profit_supply": 46.01297,
    "whale": -0.10285,
-   "mayer": 0.83832,
-   "lsr": 3.03,
-   "btcdom": 57.82,
-   "stable30": -5.29311,
-   "ethbtc": 0.02775,
-   "dvol": 51.9,
-   "skew": 9.4,
-   "pcr": 0.812,
-   "basis": 4.7,
-   "fundapr": 3.09,
+   "mayer": 0.82539,
+   "lsr": 2.84,
+   "btcdom": 58.42,
+   "stable30": -5.4365,
+   "ethbtc": 0.02786,
+   "dvol": 53.3,
+   "skew": 8.3,
+   "pcr": 0.805,
+   "basis": 4.52,
+   "fundapr": 3.52,
    "cbprem": -0.007,
    "netliq": 5.808,
    "tga": 9236,
    "realrate": 2.79,
    "dxy": 103.87,
-   "nasdaq": -9.87,
+   "nasdaq": -9.12,
    "ex_reserve": 270.9,
-   "ex_netflow": -2799,
+   "ex_netflow": -3508,
    "treasury": 3687473,
    "strategy": 851305,
    "oi": 25.62
@@ -5358,17 +5358,17 @@
    "mvrv": 6.3,
    "nupl": 5.7,
    "puell": 34.9,
-   "ssr": 19.6,
-   "rsi_w": 5.7,
-   "wma200": 4.6,
+   "ssr": 17.8,
+   "rsi_w": 4.3,
+   "wma200": 3.9,
    "pi_bottom": 26.4,
    "pi_top": 32.7,
    "fng": 2,
-   "sth_mvrv": 5.7,
+   "sth_mvrv": 4.2,
    "profit_supply": 0.3,
-   "mayer": 12.1,
-   "ethbtc": 13.5,
-   "dvol": 57.8,
+   "mayer": 9.8,
+   "ethbtc": 13.9,
+   "dvol": 63.1,
    "ex_reserve": 25.6
   },
   "items": {
@@ -5393,7 +5393,7 @@
     0
    ],
    "rsi_w": [
-    1,
+    2,
     0
    ],
    "wma200": [
@@ -5417,7 +5417,7 @@
     0
    ],
    "etf_flow": [
-    1,
+    2,
     0
    ],
    "liq": [
@@ -5442,7 +5442,7 @@
    ],
    "lsr": [
     0,
-    2
+    1
    ],
    "btcdom": [
     null,
@@ -5543,6 +5543,14 @@
     "target": 45,
     "since": "2026-11-26",
     "sincePrice": 60499,
+    "via": "index"
+   },
+   {
+    "side": "buy",
+    "label": "第二批・確認加碼",
+    "target": 65,
+    "since": "2026-11-28",
+    "sincePrice": 59184,
     "via": "index"
    }
   ]
