@@ -1,0 +1,23 @@
+{"date":"2026-11-28","snapshotAt":"2026-11-28T02:08:21.433Z","price":60115,"bias":"偏空","confidence":"低",
+ "horizonDays":6,"horizonReason":"預期下探在 12/4 非農公布前後完成，事件後需重新評估",
+ "target":{"price":56700},
+ "cycleCall":"深度低估區的熊市後段築底：估值便宜、三個抄底組合成立，但趨勢與資金流仍向下",
+ "summary":"ETF 流出、升息預期壓頂，6 天內下探 56,700",
+ "reasons":[
+  {"id":"etf_flow","value":"近 30 日 -87,917 BTC（p30 0%）、近 7 日 -32,068 BTC","claim":"機構資金持續撤出，美國現貨買盤未回"},
+  {"id":"cbprem","value":"-0.013%（7 天內 82% 時間折價）","claim":"美股大漲時 BTC 仍跑輸，美國現貨需求弱"},
+  {"id":"realrate","value":"2.79%（30 天 +12 基點）","claim":"總經逆風，實質利率上升加上 Fed 12 月升息預期"},
+  {"id":"liq","value":"近 7 天最大實際清算 $56,700 多單 1.38 億；近 24h 多單清算為空單 2.2 倍","claim":"下方有止損密集區，多單仍在被洗"},
+  {"id":"news","value":"美國現貨 BTC ETF 11 月淨流出約 53.9 億美元創紀錄；市場預期 Fed 12 月升息","claim":"消息面偏空"}
+ ],
+ "invalidation":{"above":63600,"below":null},
+ "system":{"decision":"已完成第二批・確認加碼","floor":65,"cap":null},
+ "macroWind":"逆風","combosActive":["投降共振","情緒＋估值","機構投降＋低估"],
+ "news":[
+  {"title":"美股強勢反彈，BTC 卻跌回 6 萬以下；約 70 億美元期權到期","source":"Motley Fool","date":"2026-11-27","url":"https://www.fool.com/coverage/stock-market-today/2026/11/27/crypto-market-today-nov-27-bitcoin-falls-below-usd60-000-as-crypto-markets-struggle-despite-wall-street-s-biggest-rally-in-over-a-year/","impact":"偏空","note":"風險資產回暖時 BTC 仍跑輸，買盤弱"},
+  {"title":"美國現貨 BTC ETF 連 7 日流出，11 月淨流出 53.9 億美元創紀錄","source":"KuCoin","date":"2026-11-27","url":"https://www.kucoin.com/news/articles/crypto-daily-market-report-november-27-2026","impact":"偏空","note":"機構資金持續撤出"},
+  {"title":"核心 PCE 3.3%、GDP 上修 4.3%，市場預期 Fed 12 月升息；韓國央行升息","source":"KuCoin","date":"2026-11-27","url":"https://www.kucoin.com/news/articles/crypto-daily-market-report-november-27-2026","impact":"偏空","note":"全球央行轉鷹，壓抑無收益資產"},
+  {"title":"BTC 死亡交叉將至，過去 13 次之後跌幅中位數約 24%","source":"CoinDesk","date":"2026-11-27","url":"https://www.coindesk.com/daybook-us/2026/11/27/bitcoin-death-cross-is-coming-here-s-what-happened-after-previous-13","impact":"偏空","note":"技術面轉空可能引發趨勢賣壓，但訊號落後"},
+  {"title":"巴西將穩定幣交易納入外匯監管、B3 推雷亞爾穩定幣","source":"Rio Times","date":"2026-11-27","url":"https://www.riotimesonline.com/crypto-markets-bitcoin-majors-friday-november-27-2026/","impact":"中性","note":"穩定幣合規化，短期對 BTC 影響小"}
+ ],
+ "report":"https://docs.google.com/document/d/1AxiaQt3BNBRlWmEDLoKVweMY1jADqbI1J4Fc8ezyOEU/edit"}
